@@ -120,6 +120,13 @@ const L = (p: string) => localize(p, lang);
     gap: clamp(32px, 6vw, 72px);
     align-items: start;
   }
+  .two > * {
+    min-width: 0;
+  }
+  .card li a,
+  .card li span {
+    overflow-wrap: anywhere;
+  }
   .form {
     display: grid;
     gap: 18px;

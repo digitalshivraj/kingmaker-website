@@ -43,8 +43,12 @@ const { photo, variant, title, eager = false, lang = 'en' } = Astro.props;
     filter: drop-shadow(0 24px 40px rgba(10, 24, 48, 0.35));
   }
   @media (max-width: 480px) {
+    .pm {
+      padding-bottom: 18%;
+      padding-right: 0;
+    }
     .mk {
-      width: 82%;
+      width: 90%;
     }
   }
 </style>
