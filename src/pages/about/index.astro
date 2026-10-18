@@ -1,0 +1,144 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { site } from '../../data/site';
+import { projects } from '../../data/portfolio';
+const live = projects.filter((p) => p.status === 'Live').length;
+---
+
+<Base title="About" description="Kingmaker Enterprises is a software and digital services firm from Parbhani, Maharashtra, registered since 2019, building systems for government, healthcare, political organisations and businesses.">
+  <PageHead
+    title="A software firm from Parbhani, working across Maharashtra"
+    marathi="आमच्याबद्दल"
+    intro="We started in 2019 and today build and run software for police departments, MLA offices, hospitals, dealers, logistics companies and political organisations, in Marathi and English."
+    crumbs={[{ label: 'About', href: '/about/' }]}
+  />
+
+  <section class="section">
+    <div class="wrap two">
+      <div class="prose">
+        <h2>What we believe</h2>
+        <p>
+          Most software sold to small offices in India is built in a city for a city. It assumes fast internet, English, a
+          laptop on every desk and a help desk a phone call away. A police station in Marathwada, a sprinkler dealer in a
+          taluka town or a 30-bed hospital has none of that.
+        </p>
+        <p>
+          We build the other way round. Screens that work on a mid-range phone. Marathi where the user reads Marathi.
+          WhatsApp for updates because that is what people open. A demo you can touch before you pay. Hosting that costs
+          a few hundred rupees a month, on a server you own.
+        </p>
+        <h2>How the team works</h2>
+        <p>
+          Kingmaker Enterprises is run by {site.proprietor} from Parbhani, who handles client relationships, proposals and
+          on-site work with offices and departments across Marathwada. The product and engineering team works from Pune
+          with more than ten years of experience across digital marketing, web and mobile development, automation and
+          AI systems, and has shipped {live} live systems in the last two years alone.
+        </p>
+        <p>
+          Design, development, hosting and support sit in one team, so nothing is lost in a handover and there is one
+          number to call when something needs changing.
+        </p>
+        <h2>Where we work</h2>
+        <p>
+          In person across Parbhani, Nanded, Hingoli, Latur, Beed and Chhatrapati Sambhajinagar. On call anywhere in
+          Maharashtra and India, and for clients abroad in the UK and the Middle East.
+        </p>
+      </div>
+      <aside>
+        <div class="fact">
+          <b>{site.since}</b>
+          <span>Year the firm was registered</span>
+        </div>
+        <div class="fact">
+          <b>{projects.length}</b>
+          <span>Projects delivered or in progress</span>
+        </div>
+        <div class="fact">
+          <b>9</b>
+          <span>Sectors, from police to prop trading</span>
+        </div>
+        <div class="fact">
+          <b>2</b>
+          <span>Languages on every screen we ship: Marathi and English</span>
+        </div>
+        <div class="reg">
+          <h3>Registrations</h3>
+          <ul>
+            <li><span>Udyam</span>{site.udyam}</li>
+            <li><span>GSTIN</span>{site.gstin}</li>
+            <li><span>Shop Act</span>{site.shopAct}</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .two {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+  aside {
+    display: grid;
+    gap: 14px;
+  }
+  .fact {
+    display: grid;
+    gap: 2px;
+    padding: 18px 22px;
+    background: var(--paper);
+    border-radius: var(--r);
+  }
+  .fact b {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .fact span {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .reg {
+    padding: 18px 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+  }
+  .reg h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  .reg ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    font-size: 0.95rem;
+  }
+  .reg li {
+    display: grid;
+  }
+  .reg span {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  @media (max-width: 860px) {
+    .two {
+      grid-template-columns: 1fr;
+    }
+    aside {
+      grid-template-columns: 1fr 1fr;
+    }
+    .reg {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

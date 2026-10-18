@@ -1,0 +1,361 @@
+---
+import Icon from './Icon.astro';
+import { site, whatsappLink } from '../data/site';
+const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a software project.');
+---
+
+<section class="hero">
+  <div class="wrap grid">
+    <div class="copy">
+      <p class="marathi intro">किंगमेकर एंटरप्रायझेस, परभणी</p>
+      <h1>Software for the offices that run Maharashtra, and the businesses that grow here.</h1>
+      <p class="lede">
+        Police lodge registers, citizen service dashboards, hospital systems, subsidy trackers, campaign platforms
+        and AI automation. Built in Marathi and English, demonstrated free before you pay, hosted in India.
+      </p>
+      <div class="actions">
+        <a class="btn gold" href={wa} target="_blank" rel="noopener">
+          <Icon name="whatsapp" />
+          <span>Talk on WhatsApp</span>
+        </a>
+        <a class="btn ghost-light" href="/products/">See our products</a>
+      </div>
+      <ul class="facts">
+        <li>Udyam registered MSME</li>
+        <li>GST registered</li>
+        <li>Working since {site.since}</li>
+      </ul>
+    </div>
+
+    <div class="panel" aria-label="Illustration of a Kingmaker control room screen for a district police office">
+      <div class="panel-top">
+        <span class="live"><i></i>Live</span>
+        <span>Maha-Stay 360, Nanded district</span>
+        <span class="time">21:14</span>
+      </div>
+      <div class="kpis">
+        <div class="kpi" style="--d: 0.3s">
+          <b data-count="212">0</b>
+          <span>Lodges online</span>
+        </div>
+        <div class="kpi" style="--d: 0.45s">
+          <b data-count="1480">0</b>
+          <span>Guests registered today</span>
+        </div>
+        <div class="kpi alert" style="--d: 0.6s">
+          <b data-count="3">0</b>
+          <span>Alerts to review</span>
+        </div>
+      </div>
+      <div class="chart" style="--d: 0.75s" aria-hidden="true">
+        <span class="lbl">Entries per hour</span>
+        <svg viewBox="0 0 320 70" preserveAspectRatio="none">
+          <path
+            class="line"
+            d="M0 60 L27 56 L53 58 L80 48 L107 44 L133 50 L160 38 L187 30 L213 34 L240 22 L267 18 L293 24 L320 12"
+          ></path>
+          <path
+            class="fill"
+            d="M0 60 L27 56 L53 58 L80 48 L107 44 L133 50 L160 38 L187 30 L213 34 L240 22 L267 18 L293 24 L320 12 V70 H0 Z"
+          ></path>
+        </svg>
+      </div>
+      <ul class="feed" aria-hidden="true">
+        <li style="--d: 0.9s"><span>हॉटेल साई, नांदेड</span><span>Guest added</span><span>21:10</span></li>
+        <li style="--d: 1.05s"><span>लॉज गोदावरी, देगलूर</span><span>Guest added</span><span>21:04</span></li>
+        <li class="flag" style="--d: 1.2s"><span>हॉटेल प्रिया, भोकर</span><span>ID missing</span><span>20:52</span></li>
+        <li style="--d: 1.35s"><span>लॉज श्रीराम, मुखेड</span><span>Night report sent</span><span>20:41</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(900px 500px at 85% 10%, rgba(127, 178, 232, 0.18), transparent 60%),
+      radial-gradient(600px 400px at 10% 90%, rgba(201, 149, 46, 0.14), transparent 60%),
+      var(--ink);
+    color: var(--on-dark);
+    padding-block: clamp(56px, 8vw, 104px);
+    overflow: hidden;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 70% 40%, #000 20%, transparent 70%);
+    pointer-events: none;
+  }
+  .grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(32px, 5vw, 72px);
+    align-items: center;
+  }
+  .intro {
+    color: var(--gold-2);
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+  }
+  h1 {
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+  .lede {
+    color: var(--on-dark-muted);
+    margin-bottom: 28px;
+  }
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .facts {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    color: var(--on-dark-muted);
+    font-size: 0.95rem;
+  }
+  .facts li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .facts li::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .panel {
+    background: linear-gradient(160deg, var(--navy-2), var(--navy));
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7);
+    display: grid;
+    gap: 14px;
+    animation: panel-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .panel-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.85rem;
+    color: var(--on-dark-muted);
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #8fe3b4;
+    font-weight: 600;
+  }
+  .live i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3ccf7a;
+    box-shadow: 0 0 0 0 rgba(60, 207, 122, 0.6);
+    animation: pulse 2.4s infinite;
+  }
+  .time {
+    margin-left: auto;
+  }
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .kpi {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: grid;
+    gap: 2px;
+    animation: rise 0.6s var(--d) both;
+  }
+  .kpi b {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    color: var(--white);
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi span {
+    font-size: 0.78rem;
+    color: var(--on-dark-muted);
+  }
+  .kpi.alert b {
+    color: var(--gold-2);
+  }
+  .chart {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 10px 14px 6px;
+    animation: rise 0.6s var(--d) both;
+  }
+  .chart .lbl {
+    font-size: 0.78rem;
+    color: var(--on-dark-muted);
+  }
+  .chart svg {
+    width: 100%;
+    height: 70px;
+    margin-top: 4px;
+  }
+  .line {
+    fill: none;
+    stroke: var(--signal);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-dasharray: 420;
+    stroke-dashoffset: 420;
+    animation: draw 1.4s 1s ease-out forwards;
+  }
+  .fill {
+    fill: var(--signal);
+    opacity: 0;
+    animation: fade-in 0.8s 2s forwards;
+  }
+  .feed {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+    font-size: 0.85rem;
+  }
+  .feed li {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr auto;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    animation: rise 0.5s var(--d) both;
+  }
+  .feed li span:nth-child(2) {
+    color: var(--on-dark-muted);
+  }
+  .feed li span:last-child {
+    color: var(--on-dark-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .feed .flag {
+    background: rgba(201, 149, 46, 0.16);
+    border: 1px solid rgba(201, 149, 46, 0.4);
+  }
+  .feed .flag span:nth-child(2) {
+    color: var(--gold-2);
+    font-weight: 600;
+  }
+
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes fade-in {
+    to {
+      opacity: 0.14;
+    }
+  }
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(60, 207, 122, 0.6);
+    }
+    70% {
+      box-shadow: 0 0 0 9px rgba(60, 207, 122, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(60, 207, 122, 0);
+    }
+  }
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .panel {
+      max-width: 560px;
+    }
+  }
+  @media (max-width: 480px) {
+    .kpis {
+      grid-template-columns: 1fr 1fr;
+    }
+    .kpi:last-child {
+      grid-column: 1 / -1;
+    }
+    .feed li {
+      grid-template-columns: 1fr auto;
+    }
+    .feed li span:nth-child(2) {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .line {
+      stroke-dashoffset: 0;
+    }
+    .fill {
+      opacity: 0.14;
+    }
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLElement>('.kpi b[data-count]').forEach((el) => {
+    const target = Number(el.dataset.count);
+    if (reduce) {
+      el.textContent = target.toLocaleString('en-IN');
+      return;
+    }
+    const start = performance.now() + 500;
+    const dur = 1300;
+    const tick = (now: number) => {
+      const t = Math.min(1, Math.max(0, (now - start) / dur));
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(target * eased).toLocaleString('en-IN');
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+</script>

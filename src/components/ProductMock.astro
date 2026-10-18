@@ -1,0 +1,422 @@
+---
+interface Props {
+  variant: 'lodge' | 'citizen' | 'booth' | 'subsidy' | 'idcard' | 'opd' | 'queue' | 'logistics';
+  title: string;
+  compact?: boolean;
+}
+const { variant, title, compact = false } = Astro.props;
+---
+
+<div class:list={['mock', variant, { compact }]} role="img" aria-label={`Illustration of the ${title} screen`}>
+  <div class="chrome">
+    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <span class="ttl">{title}</span>
+  </div>
+  <div class="body">
+    {
+      variant === 'lodge' && (
+        <>
+          <div class="stats">
+            <div><b>212</b><span>Lodges online</span></div>
+            <div><b>1,480</b><span>Guests today</span></div>
+            <div class="warn"><b>3</b><span>Alerts</span></div>
+          </div>
+          <div class="rows">
+            <div class="row hd"><span>Lodge</span><span>Guest</span><span>ID</span><span>In</span></div>
+            <div class="row"><span>हॉटेल साई, नांदेड</span><span>र. पाटील</span><span>Aadhaar</span><span>21:10</span></div>
+            <div class="row"><span>लॉज गोदावरी</span><span>स. शेख</span><span>DL</span><span>21:04</span></div>
+            <div class="row flag"><span>हॉटेल प्रिया</span><span>अ. कुमार</span><span>Missing</span><span>20:52</span></div>
+            <div class="row"><span>लॉज श्रीराम</span><span>व. जाधव</span><span>Voter</span><span>20:41</span></div>
+          </div>
+        </>
+      )
+    }
+    {
+      variant === 'citizen' && (
+        <>
+          <div class="tabs"><span class="on">तक्रारी</span><span>भेटी</span><span>योजना</span><span>कार्यक्रम</span></div>
+          <div class="tickets">
+            <div class="ticket"><i class="st open"></i><div><b>रस्ता दुरुस्ती, वॉर्ड 4</b><span>पाठवले: बांधकाम विभाग</span></div><em>2 दिवस</em></div>
+            <div class="ticket"><i class="st prog"></i><div><b>पाणीपुरवठा, गावठाण</b><span>प्रगतीत: नगरपरिषद</span></div><em>5 दिवस</em></div>
+            <div class="ticket"><i class="st done"></i><div><b>पथदिवे, शिवाजी नगर</b><span>निकाली</span></div><em>पूर्ण</em></div>
+            <div class="ticket"><i class="st open"></i><div><b>शिधापत्रिका नाव जोडणे</b><span>पाठवले: तहसील</span></div><em>1 दिवस</em></div>
+          </div>
+        </>
+      )
+    }
+    {
+      variant === 'booth' && (
+        <>
+          <div class="stats">
+            <div><b>351</b><span>Booths</span></div>
+            <div><b>298</b><span>Committees formed</span></div>
+            <div><b>12,340</b><span>New members</span></div>
+          </div>
+          <div class="wall" aria-hidden="true">
+            {Array.from({ length: 60 }).map((_, i) => (
+              <i class={i % 7 === 3 || i % 11 === 5 ? 'pending' : i % 13 === 2 ? 'gap' : ''} />
+            ))}
+          </div>
+        </>
+      )
+    }
+    {
+      variant === 'subsidy' && (
+        <>
+          <div class="steps">
+            <span class="done">अर्ज</span><span class="done">कागदपत्रे</span><span class="done">पूर्वसंमती</span><span class="on">खरेदी</span><span>तपासणी</span><span>अनुदान जमा</span>
+          </div>
+          <div class="rows">
+            <div class="row hd"><span>शेतकरी</span><span>गाव</span><span>टप्पा</span><span>रक्कम</span></div>
+            <div class="row"><span>संतोष मोरे</span><span>चाटोरी</span><span>खरेदी</span><span>₹ 18,500</span></div>
+            <div class="row"><span>सुनीता राऊत</span><span>आडगाव</span><span>तपासणी</span><span>₹ 22,000</span></div>
+            <div class="row"><span>बालाजी वाघ</span><span>पालम</span><span>जमा</span><span>₹ 18,500</span></div>
+          </div>
+        </>
+      )
+    }
+    {
+      variant === 'idcard' && (
+        <div class="cards">
+          {['Aarav Kumar', 'Priya Singh', 'Rohan Das'].map((n) => (
+            <div class="card">
+              <i class="photo" />
+              <b>{n}</b>
+              <span>Class 6, PM SHRI School</span>
+              <i class="qr" />
+            </div>
+          ))}
+          <div class="qc">QC: 1,204 approved, 36 to recheck</div>
+        </div>
+      )
+    }
+    {
+      variant === 'opd' && (
+        <>
+          <div class="stats">
+            <div><b>47</b><span>OPD today</span></div>
+            <div><b>12</b><span>Waiting</span></div>
+            <div><b>8</b><span>IPD beds</span></div>
+          </div>
+          <div class="rows">
+            <div class="row hd"><span>Token</span><span>Patient</span><span>Doctor</span><span>Status</span></div>
+            <div class="row"><span>A-21</span><span>रमेश काळे</span><span>Dr. Deshmukh</span><span>In room</span></div>
+            <div class="row"><span>A-22</span><span>सविता जोशी</span><span>Dr. Deshmukh</span><span>Waiting</span></div>
+            <div class="row"><span>B-07</span><span>अजय पवार</span><span>Dr. Rane</span><span>Pharmacy</span></div>
+          </div>
+        </>
+      )
+    }
+    {
+      variant === 'queue' && (
+        <div class="phone">
+          <div class="ph-top">देवदूत</div>
+          <div class="token">
+            <span>तुमचा टोकन</span>
+            <b>14</b>
+            <span>सध्या सुरू: 11</span>
+          </div>
+          <div class="eta">अंदाजे वेळ: 25 मिनिटे</div>
+          <div class="doc">डॉ. ए. देशमुख, बालरोग</div>
+        </div>
+      )
+    }
+    {
+      variant === 'logistics' && (
+        <>
+          <div class="stats">
+            <div><b>128</b><span>Bookings today</span></div>
+            <div><b>19</b><span>Franchises</span></div>
+            <div><b>96%</b><span>On time</span></div>
+          </div>
+          <div class="track">
+            <span class="done">Booked</span><span class="done">Picked up</span><span class="on">In transit</span><span>Out for delivery</span><span>Delivered</span>
+          </div>
+          <div class="rows">
+            <div class="row hd"><span>AWB</span><span>Route</span><span>Franchise</span><span>Status</span></div>
+            <div class="row"><span>MH 48213</span><span>Pune to Patna</span><span>Hadapsar</span><span>In transit</span></div>
+            <div class="row"><span>MH 48219</span><span>Mumbai to Muzaffarpur</span><span>Thane</span><span>Picked up</span></div>
+          </div>
+        </>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .mock {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .chrome {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: var(--navy);
+    color: var(--on-dark);
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+  }
+  .ttl {
+    margin-left: 8px;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .body {
+    padding: 14px;
+    display: grid;
+    gap: 12px;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .stats div {
+    background: var(--paper);
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: grid;
+  }
+  .stats b {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--navy);
+  }
+  .stats span {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .stats .warn b {
+    color: #b43c1e;
+  }
+  .rows {
+    display: grid;
+    gap: 2px;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 0.9fr 0.7fr;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .row span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row.hd {
+    color: var(--muted);
+    font-size: 11px;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+  }
+  .row:not(.hd):nth-child(odd) {
+    background: var(--paper);
+  }
+  .row.flag {
+    background: #fdf1ec;
+    color: #8f2d13;
+  }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 6px;
+  }
+  .tabs span {
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: var(--muted);
+  }
+  .tabs .on {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .tickets {
+    display: grid;
+    gap: 6px;
+  }
+  .ticket {
+    display: grid;
+    grid-template-columns: 10px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 10px;
+    background: var(--paper);
+    border-radius: 8px;
+  }
+  .ticket div {
+    display: grid;
+  }
+  .ticket span {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .ticket em {
+    font-style: normal;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .st {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .st.open {
+    background: #d9822b;
+  }
+  .st.prog {
+    background: var(--signal);
+  }
+  .st.done {
+    background: #2e9e63;
+  }
+  .wall {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    gap: 4px;
+  }
+  .wall i {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    background: #2e9e63;
+  }
+  .wall i.pending {
+    background: var(--gold);
+  }
+  .wall i.gap {
+    background: var(--line);
+  }
+  .steps,
+  .track {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .steps span,
+  .track span {
+    flex: 1;
+    text-align: center;
+    padding: 5px 4px;
+    font-size: 11px;
+    background: var(--paper-2);
+    color: var(--muted);
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .steps .done,
+  .track .done {
+    background: #dff3e7;
+    color: #1f6b43;
+  }
+  .steps .on,
+  .track .on {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+    display: grid;
+    gap: 3px;
+    font-size: 11px;
+    background: linear-gradient(var(--navy) 0 18px, var(--white) 18px);
+    padding-top: 24px;
+  }
+  .card .photo {
+    width: 34px;
+    height: 40px;
+    background: var(--paper-2);
+    border-radius: 4px;
+    border: 1px solid var(--line);
+  }
+  .card b {
+    font-size: 12px;
+  }
+  .card span {
+    color: var(--muted);
+  }
+  .card .qr {
+    width: 22px;
+    height: 22px;
+    background:
+      linear-gradient(90deg, var(--navy) 50%, transparent 50%) 0 0/6px 6px,
+      linear-gradient(var(--navy) 50%, transparent 50%) 0 0/6px 6px;
+    justify-self: end;
+  }
+  .qc {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 4px;
+    border-top: 1px solid var(--line);
+  }
+  .phone {
+    width: 170px;
+    margin: 0 auto;
+    border: 2px solid var(--navy);
+    border-radius: 18px;
+    padding: 10px;
+    display: grid;
+    gap: 8px;
+    text-align: center;
+  }
+  .ph-top {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .token {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 10px;
+    display: grid;
+  }
+  .token b {
+    font-family: var(--font-display);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--gold-2);
+    margin: 4px 0;
+  }
+  .token span {
+    font-size: 11px;
+  }
+  .eta,
+  .doc {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .compact {
+    font-size: 11px;
+  }
+  .compact .body {
+    padding: 10px;
+    gap: 8px;
+  }
+  .compact .stats b {
+    font-size: 15px;
+  }
+</style>

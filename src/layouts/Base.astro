@@ -1,0 +1,101 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  image?: string;
+  noindex?: boolean;
+}
+
+const { title, description, type = 'website', publishedTime, image = '/og.png', noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = title === site.name ? `${site.name}: software for government, healthcare and business in Maharashtra` : `${title} | ${site.name}`;
+const ogImage = new URL(image, Astro.site);
+
+const org = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: site.name,
+  alternateName: site.marathiName,
+  url: site.url,
+  logo: new URL('/logo.svg', Astro.site).toString(),
+  email: site.email,
+  telephone: site.phoneIntl,
+  foundingDate: String(site.since),
+  founder: { '@type': 'Person', name: site.proprietor },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'House No. 46, Adgaon, Tal. Palam',
+    addressLocality: 'Parbhani',
+    addressRegion: 'Maharashtra',
+    postalCode: '431536',
+    addressCountry: 'IN',
+  },
+  areaServed: 'Maharashtra, India',
+  sameAs: [site.whatsapp],
+  identifier: [
+    { '@type': 'PropertyValue', propertyID: 'Udyam', value: site.udyam },
+    { '@type': 'PropertyValue', propertyID: 'GSTIN', value: site.gstin },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#0f2747" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="en_IN" />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" set:html={JSON.stringify(org)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <style>
+      .skip {
+        position: absolute;
+        left: 16px;
+        top: -60px;
+        background: var(--gold);
+        color: var(--ink);
+        padding: 10px 16px;
+        border-radius: 8px;
+        z-index: 100;
+        font-weight: 600;
+      }
+      .skip:focus {
+        top: 12px;
+      }
+    </style>
+  </body>
+</html>

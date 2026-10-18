@@ -1,0 +1,17 @@
+{
+  "name": "kingmaker-enterprises-website",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.4.0",
+    "@fontsource/mukta": "^5.2.5",
+    "@fontsource/sora": "^5.2.5",
+    "astro": "^5.13.0"
+  }
+}

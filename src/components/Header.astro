@@ -1,0 +1,163 @@
+---
+import Icon from './Icon.astro';
+import { site, nav, whatsappLink } from '../data/site';
+const path = Astro.url.pathname;
+const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a software project.');
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="Kingmaker Enterprises home">
+      <img src="/logo-white.svg" alt="Kingmaker Enterprises" width="204" height="65" />
+    </a>
+    <nav class="primary" aria-label="Main">
+      <ul>
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <a class="btn gold cta" href={wa} target="_blank" rel="noopener">
+      <Icon name="whatsapp" size={20} />
+      <span>WhatsApp</span>
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+      <Icon name="menu" size={26} />
+    </button>
+  </div>
+  <nav id="mobile-nav" class="mobile" aria-label="Main (mobile)" hidden>
+    <ul>
+      {
+        nav.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))
+      }
+      <li class="contact-line">
+        <a href={wa} target="_blank" rel="noopener">WhatsApp {site.phoneDisplay}</a>
+      </li>
+      <li class="contact-line">
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--ink);
+    border-bottom: 1px solid var(--line-dark);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 76px;
+  }
+  .brand img {
+    height: 50px;
+    width: auto;
+  }
+  .primary {
+    margin-left: auto;
+  }
+  .primary ul {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .primary a {
+    display: block;
+    padding: 10px 14px;
+    color: var(--on-dark);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+  .primary a:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--white);
+  }
+  .primary a[aria-current='page'] {
+    color: var(--gold-2);
+  }
+  .cta {
+    min-height: 42px;
+    padding: 6px 18px;
+  }
+  .menu-btn {
+    display: none;
+    background: none;
+    border: 0;
+    color: var(--white);
+    padding: 8px;
+    margin-left: auto;
+    cursor: pointer;
+  }
+  .mobile {
+    background: var(--navy);
+    border-top: 1px solid var(--line-dark);
+  }
+  .mobile ul {
+    list-style: none;
+    margin: 0;
+    padding: 8px var(--gutter) 16px;
+  }
+  .mobile a {
+    display: block;
+    padding: 14px 4px;
+    color: var(--white);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--line-dark);
+  }
+  .contact-line a {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--gold-2);
+    border-bottom: 0;
+    padding: 10px 4px;
+  }
+  @media (max-width: 900px) {
+    .primary,
+    .cta {
+      display: none;
+    }
+    .menu-btn {
+      display: inline-flex;
+    }
+    .bar {
+      height: 66px;
+    }
+    .brand img {
+      height: 42px;
+    }
+  }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
+  const panel = document.getElementById('mobile-nav');
+  btn?.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!open));
+    btn.setAttribute('aria-label', open ? 'Open menu' : 'Close menu');
+    if (panel) panel.hidden = open;
+  });
+</script>

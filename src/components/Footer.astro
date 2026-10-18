@@ -1,0 +1,149 @@
+---
+import Icon from './Icon.astro';
+import { site, nav } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div class="col about">
+      <img src="/logo-white.svg" alt="Kingmaker Enterprises" width="204" height="65" />
+      <p class="marathi">{site.marathiName}</p>
+      <p>
+        Software, web portals, mobile apps and AI automation for government offices, hospitals, political
+        organisations and growing businesses. Based in Parbhani, working across Maharashtra and India.
+      </p>
+    </div>
+    <div class="col">
+      <h4>Pages</h4>
+      <ul>
+        {nav.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+        <li><a href="/privacy/">Privacy policy</a></li>
+        <li><a href="/terms/">Terms of service</a></li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>Contact</h4>
+      <ul class="contact">
+        <li>
+          <Icon name="whatsapp" size={18} />
+          <a href={site.whatsapp} target="_blank" rel="noopener">{site.phoneDisplay} (WhatsApp)</a>
+        </li>
+        <li>
+          <Icon name="phone" size={18} />
+          <a href={`tel:${site.phoneIntl}`}>{site.phoneDisplay}</a>
+        </li>
+        <li>
+          <Icon name="mail" size={18} />
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </li>
+        <li>
+          <Icon name="pin" size={18} />
+          <span>{site.address}</span>
+        </li>
+        <li>
+          <Icon name="clock" size={18} />
+          <span>{site.hours}</span>
+        </li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>Registered business</h4>
+      <ul class="reg">
+        <li><span>Legal name</span>{site.legalName}</li>
+        <li><span>Udyam (MSME)</span>{site.udyam}</li>
+        <li><span>GSTIN</span>{site.gstin}</li>
+        <li><span>Shop Act (Maharashtra)</span>{site.shopAct}</li>
+        <li><span>In business since</span>{site.since}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap legal">
+    <span>Copyright {year} {site.name}. All rights reserved.</span>
+    <span>Parbhani, Maharashtra, India</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    color: var(--on-dark-muted);
+    padding-top: clamp(48px, 7vw, 80px);
+    font-size: 0.95rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1.4fr 0.7fr 1.1fr 1.1fr;
+    gap: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--line-dark);
+  }
+  .about img {
+    height: 54px;
+    width: auto;
+    margin-bottom: 12px;
+  }
+  .about .marathi {
+    color: var(--gold-2);
+    margin-bottom: 10px;
+  }
+  .about p {
+    max-width: 38ch;
+  }
+  h4 {
+    color: var(--white);
+    margin-bottom: 14px;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 9px;
+  }
+  a {
+    color: var(--on-dark);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--gold-2);
+  }
+  .contact li {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .contact svg {
+    margin-top: 4px;
+    color: var(--gold-2);
+  }
+  .reg li {
+    display: grid;
+    gap: 1px;
+    color: var(--on-dark);
+  }
+  .reg span {
+    font-size: 0.8rem;
+    color: var(--on-dark-muted);
+  }
+  .legal {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-block: 20px 28px;
+    font-size: 0.88rem;
+  }
+  @media (max-width: 960px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+  }
+</style>

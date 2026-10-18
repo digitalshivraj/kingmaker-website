@@ -1,0 +1,77 @@
+---
+interface Props {
+  title: string;
+  marathi?: string;
+  intro?: string;
+  crumbs?: { label: string; href: string }[];
+}
+const { title, marathi, intro, crumbs = [] } = Astro.props;
+---
+
+<section class="page-head">
+  <div class="wrap">
+    {
+      crumbs.length > 0 && (
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li>
+              <a href="/">Home</a>
+            </li>
+            {crumbs.map((c) => (
+              <li>
+                <a href={c.href}>{c.label}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+    {marathi && <p class="marathi sub">{marathi}</p>}
+    <h1>{title}</h1>
+    {intro && <p class="lede">{intro}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-head {
+    background:
+      radial-gradient(700px 300px at 90% 0%, rgba(127, 178, 232, 0.16), transparent 60%),
+      var(--ink);
+    color: var(--on-dark);
+    padding-block: clamp(40px, 6vw, 72px);
+  }
+  .crumbs ol {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 0.9rem;
+  }
+  .crumbs li + li::before {
+    content: '/';
+    color: var(--on-dark-muted);
+    margin-right: 6px;
+  }
+  .crumbs a {
+    color: var(--on-dark-muted);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--gold-2);
+  }
+  .sub {
+    color: var(--gold-2);
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  h1 {
+    color: var(--white);
+    font-size: clamp(2rem, 4.5vw, 3rem);
+  }
+  .lede {
+    color: var(--on-dark-muted);
+  }
+</style>
