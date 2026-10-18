@@ -110,7 +110,6 @@ const listLd = {
             return (
               <article class:list={['feature', { flip: i % 2 === 1 }]} data-reveal>
                 <div class="text">
-                  <p class="marathi sector">{p.data.marathi}</p>
                   <h3>
                     <a href={href}>{p.data.title}</a>
                   </h3>
@@ -126,7 +125,7 @@ const listLd = {
                   </a>
                 </div>
                 <div class="visual">
-                  <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} />
+                  <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} lang={lang} />
                 </div>
               </article>
             );

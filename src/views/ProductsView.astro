@@ -18,7 +18,6 @@ const L = (p: string) => localize(p, lang);
 const products = byLang(await getCollection('products'), lang).sort((a, b) => a.data.order - b.data.order);
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 const projName = (p: (typeof projects)[number]) => (lang === 'mr' && p.marathi ? p.marathi : p.name);
-const projAlt = (p: (typeof projects)[number]) => (lang === 'mr' ? (p.marathi ? p.name : undefined) : p.marathi);
 ---
 
 <Base lang={lang} title={ui.productsPage.title} description={ui.productsPage.desc(products.length, projects.length)}>
@@ -47,9 +46,8 @@ const projAlt = (p: (typeof projects)[number]) => (lang === 'mr' ? (p.marathi ? 
             return (
               <article class="flag" data-reveal style={`--rd: ${(i % 2) * 0.08}s`}>
                 <a href={href} class="vis" aria-label={p.data.title}>
-                  <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} />
+                  <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} lang={lang} />
                 </a>
-                <p class="marathi sub">{p.data.marathi}</p>
                 <h3>
                   <a href={href}>{p.data.title}</a>
                 </h3>
@@ -80,7 +78,6 @@ const projAlt = (p: (typeof projects)[number]) => (lang === 'mr' ? (p.marathi ? 
                   <li data-reveal>
                     <div class="name">
                       <b>{p.product ? <a href={L(`/products/${p.product}/`)}>{projName(p)}</a> : projName(p)}</b>
-                      {projAlt(p) && <span class="marathi">{projAlt(p)}</span>}
                     </div>
                     <p>{lang === 'mr' ? p.summaryMr : p.summary}</p>
                     <div class="meta">

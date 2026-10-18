@@ -1,10 +1,38 @@
 ---
+import type { Lang } from '../i18n/utils';
 interface Props {
   variant: 'lodge' | 'citizen' | 'booth' | 'subsidy' | 'idcard' | 'opd' | 'queue' | 'logistics';
   title: string;
   compact?: boolean;
+  lang?: Lang;
 }
-const { variant, title, compact = false } = Astro.props;
+const { variant, title, compact = false, lang = 'en' } = Astro.props;
+
+const strings = {
+  en: {
+    lodge: { stats: ['Lodges online', 'Guests today', 'Alerts'], hd: ['Lodge', 'Guest', 'ID', 'In'], rows: [['Hotel Sai, Nanded', 'R. Patil', 'Aadhaar'], ['Lodge Godavari', 'S. Shaikh', 'DL'], ['Hotel Priya', 'A. Kumar', 'Missing'], ['Lodge Shriram', 'V. Jadhav', 'Voter']] },
+    citizen: { tabs: ['Complaints', 'Meetings', 'Schemes', 'Events'], tickets: [['Road repair, Ward 4', 'Sent: PWD', '2 days'], ['Water supply, Gaothan', 'In progress: Nagar Parishad', '5 days'], ['Street lights, Shivaji Nagar', 'Resolved', 'Done'], ['Add name to ration card', 'Sent: Tahsil', '1 day']] },
+    booth: { stats: ['Booths', 'Committees formed', 'New members'] },
+    subsidy: { steps: ['Application', 'Documents', 'Pre-sanction', 'Purchase', 'Inspection', 'Subsidy credited'], hd: ['Farmer', 'Village', 'Stage', 'Amount'], rows: [['Santosh More', 'Chatori', 'Purchase'], ['Sunita Raut', 'Adgaon', 'Inspection'], ['Balaji Wagh', 'Palam', 'Credited']] },
+    idcard: { cls: 'Class 6, PM SHRI School', qc: 'QC: 1,204 approved, 36 to recheck' },
+    opd: { stats: ['OPD today', 'Waiting', 'IPD beds'], hd: ['Token', 'Patient', 'Doctor', 'Status'], rows: [['A-21', 'Ramesh Kale', 'Dr. Deshmukh', 'In room'], ['A-22', 'Savita Joshi', 'Dr. Deshmukh', 'Waiting'], ['B-07', 'Ajay Pawar', 'Dr. Rane', 'Pharmacy']] },
+    queue: { app: 'Devdoot', token: 'Your token', now: 'Now serving: 11', eta: 'Estimated wait: 25 minutes', doc: 'Dr. A. Deshmukh, Paediatrics' },
+    logistics: { stats: ['Bookings today', 'Franchises', 'On time'] },
+  },
+  mr: {
+    lodge: { stats: ['लॉज ऑनलाइन', 'आजचे पाहुणे', 'अलर्ट'], hd: ['लॉज', 'पाहुणा', 'ओळखपत्र', 'वेळ'], rows: [['हॉटेल साई, नांदेड', 'र. पाटील', 'आधार'], ['लॉज गोदावरी', 'स. शेख', 'DL'], ['हॉटेल प्रिया', 'अ. कुमार', 'नाही'], ['लॉज श्रीराम', 'व. जाधव', 'मतदार']] },
+    citizen: { tabs: ['तक्रारी', 'भेटी', 'योजना', 'कार्यक्रम'], tickets: [['रस्ता दुरुस्ती, वॉर्ड 4', 'पाठवले: बांधकाम विभाग', '2 दिवस'], ['पाणीपुरवठा, गावठाण', 'प्रगतीत: नगरपरिषद', '5 दिवस'], ['पथदिवे, शिवाजी नगर', 'निकाली', 'पूर्ण'], ['शिधापत्रिका नाव जोडणे', 'पाठवले: तहसील', '1 दिवस']] },
+    booth: { stats: ['बूथ', 'समित्या तयार', 'नवे सदस्य'] },
+    subsidy: { steps: ['अर्ज', 'कागदपत्रे', 'पूर्वसंमती', 'खरेदी', 'तपासणी', 'अनुदान जमा'], hd: ['शेतकरी', 'गाव', 'टप्पा', 'रक्कम'], rows: [['संतोष मोरे', 'चाटोरी', 'खरेदी'], ['सुनीता राऊत', 'आडगाव', 'तपासणी'], ['बालाजी वाघ', 'पालम', 'जमा']] },
+    idcard: { cls: 'इयत्ता 6, PM SHRI शाळा', qc: 'तपासणी: 1,204 मंजूर, 36 पुन्हा तपासायचे' },
+    opd: { stats: ['आज OPD', 'प्रतीक्षेत', 'IPD खाटा'], hd: ['टोकन', 'रुग्ण', 'डॉक्टर', 'स्थिती'], rows: [['A-21', 'रमेश काळे', 'डॉ. देशमुख', 'आत'], ['A-22', 'सविता जोशी', 'डॉ. देशमुख', 'प्रतीक्षेत'], ['B-07', 'अजय पवार', 'डॉ. राणे', 'औषधालय']] },
+    queue: { app: 'देवदूत', token: 'तुमचा टोकन', now: 'सध्या सुरू: 11', eta: 'अंदाजे वेळ: 25 मिनिटे', doc: 'डॉ. ए. देशमुख, बालरोग' },
+    logistics: { stats: ['आजची बुकिंग', 'फ्रँचायझी', 'वेळेवर'] },
+  },
+};
+const T = strings[lang];
+const times = ['21:10', '21:04', '20:52', '20:41'];
+const amounts = ['₹ 18,500', '₹ 22,000', '₹ 18,500'];
 ---
 
 <div class:list={['mock', variant, { compact }]} role="img" aria-label={`Illustration of the ${title} screen`}>
@@ -17,16 +45,15 @@ const { variant, title, compact = false } = Astro.props;
       variant === 'lodge' && (
         <>
           <div class="stats">
-            <div><b>212</b><span>Lodges online</span></div>
-            <div><b>1,480</b><span>Guests today</span></div>
-            <div class="warn"><b>3</b><span>Alerts</span></div>
+            <div><b>212</b><span>{T.lodge.stats[0]}</span></div>
+            <div><b>1,480</b><span>{T.lodge.stats[1]}</span></div>
+            <div class="warn"><b>3</b><span>{T.lodge.stats[2]}</span></div>
           </div>
           <div class="rows">
-            <div class="row hd"><span>Lodge</span><span>Guest</span><span>ID</span><span>In</span></div>
-            <div class="row"><span>हॉटेल साई, नांदेड</span><span>र. पाटील</span><span>Aadhaar</span><span>21:10</span></div>
-            <div class="row"><span>लॉज गोदावरी</span><span>स. शेख</span><span>DL</span><span>21:04</span></div>
-            <div class="row flag"><span>हॉटेल प्रिया</span><span>अ. कुमार</span><span>Missing</span><span>20:52</span></div>
-            <div class="row"><span>लॉज श्रीराम</span><span>व. जाधव</span><span>Voter</span><span>20:41</span></div>
+            <div class="row hd">{T.lodge.hd.map((h) => <span>{h}</span>)}</div>
+            {T.lodge.rows.map((r, i) => (
+              <div class:list={['row', { flag: i === 2 }]}><span>{r[0]}</span><span>{r[1]}</span><span>{r[2]}</span><span>{times[i]}</span></div>
+            ))}
           </div>
         </>
       )
@@ -34,12 +61,11 @@ const { variant, title, compact = false } = Astro.props;
     {
       variant === 'citizen' && (
         <>
-          <div class="tabs"><span class="on">तक्रारी</span><span>भेटी</span><span>योजना</span><span>कार्यक्रम</span></div>
+          <div class="tabs">{T.citizen.tabs.map((t, i) => <span class:list={{ on: i === 0 }}>{t}</span>)}</div>
           <div class="tickets">
-            <div class="ticket"><i class="st open"></i><div><b>रस्ता दुरुस्ती, वॉर्ड 4</b><span>पाठवले: बांधकाम विभाग</span></div><em>2 दिवस</em></div>
-            <div class="ticket"><i class="st prog"></i><div><b>पाणीपुरवठा, गावठाण</b><span>प्रगतीत: नगरपरिषद</span></div><em>5 दिवस</em></div>
-            <div class="ticket"><i class="st done"></i><div><b>पथदिवे, शिवाजी नगर</b><span>निकाली</span></div><em>पूर्ण</em></div>
-            <div class="ticket"><i class="st open"></i><div><b>शिधापत्रिका नाव जोडणे</b><span>पाठवले: तहसील</span></div><em>1 दिवस</em></div>
+            {T.citizen.tickets.map((t, i) => (
+              <div class="ticket"><i class:list={['st', ['open', 'prog', 'done', 'open'][i]]} /><div><b>{t[0]}</b><span>{t[1]}</span></div><em>{t[2]}</em></div>
+            ))}
           </div>
         </>
       )
@@ -48,9 +74,9 @@ const { variant, title, compact = false } = Astro.props;
       variant === 'booth' && (
         <>
           <div class="stats">
-            <div><b>351</b><span>Booths</span></div>
-            <div><b>298</b><span>Committees formed</span></div>
-            <div><b>12,340</b><span>New members</span></div>
+            <div><b>351</b><span>{T.booth.stats[0]}</span></div>
+            <div><b>298</b><span>{T.booth.stats[1]}</span></div>
+            <div><b>12,340</b><span>{T.booth.stats[2]}</span></div>
           </div>
           <div class="wall" aria-hidden="true">
             {Array.from({ length: 60 }).map((_, i) => (
@@ -64,13 +90,13 @@ const { variant, title, compact = false } = Astro.props;
       variant === 'subsidy' && (
         <>
           <div class="steps">
-            <span class="done">अर्ज</span><span class="done">कागदपत्रे</span><span class="done">पूर्वसंमती</span><span class="on">खरेदी</span><span>तपासणी</span><span>अनुदान जमा</span>
+            {T.subsidy.steps.map((st, i) => <span class:list={{ done: i < 3, on: i === 3 }}>{st}</span>)}
           </div>
           <div class="rows">
-            <div class="row hd"><span>शेतकरी</span><span>गाव</span><span>टप्पा</span><span>रक्कम</span></div>
-            <div class="row"><span>संतोष मोरे</span><span>चाटोरी</span><span>खरेदी</span><span>₹ 18,500</span></div>
-            <div class="row"><span>सुनीता राऊत</span><span>आडगाव</span><span>तपासणी</span><span>₹ 22,000</span></div>
-            <div class="row"><span>बालाजी वाघ</span><span>पालम</span><span>जमा</span><span>₹ 18,500</span></div>
+            <div class="row hd">{T.subsidy.hd.map((h) => <span>{h}</span>)}</div>
+            {T.subsidy.rows.map((r, i) => (
+              <div class="row"><span>{r[0]}</span><span>{r[1]}</span><span>{r[2]}</span><span>{amounts[i]}</span></div>
+            ))}
           </div>
         </>
       )
@@ -82,11 +108,11 @@ const { variant, title, compact = false } = Astro.props;
             <div class="card">
               <i class="photo" />
               <b>{n}</b>
-              <span>Class 6, PM SHRI School</span>
+              <span>{T.idcard.cls}</span>
               <i class="qr" />
             </div>
           ))}
-          <div class="qc">QC: 1,204 approved, 36 to recheck</div>
+          <div class="qc">{T.idcard.qc}</div>
         </div>
       )
     }
@@ -94,15 +120,15 @@ const { variant, title, compact = false } = Astro.props;
       variant === 'opd' && (
         <>
           <div class="stats">
-            <div><b>47</b><span>OPD today</span></div>
-            <div><b>12</b><span>Waiting</span></div>
-            <div><b>8</b><span>IPD beds</span></div>
+            <div><b>47</b><span>{T.opd.stats[0]}</span></div>
+            <div><b>12</b><span>{T.opd.stats[1]}</span></div>
+            <div><b>8</b><span>{T.opd.stats[2]}</span></div>
           </div>
           <div class="rows">
-            <div class="row hd"><span>Token</span><span>Patient</span><span>Doctor</span><span>Status</span></div>
-            <div class="row"><span>A-21</span><span>रमेश काळे</span><span>Dr. Deshmukh</span><span>In room</span></div>
-            <div class="row"><span>A-22</span><span>सविता जोशी</span><span>Dr. Deshmukh</span><span>Waiting</span></div>
-            <div class="row"><span>B-07</span><span>अजय पवार</span><span>Dr. Rane</span><span>Pharmacy</span></div>
+            <div class="row hd">{T.opd.hd.map((h) => <span>{h}</span>)}</div>
+            {T.opd.rows.map((r) => (
+              <div class="row"><span>{r[0]}</span><span>{r[1]}</span><span>{r[2]}</span><span>{r[3]}</span></div>
+            ))}
           </div>
         </>
       )
@@ -110,14 +136,14 @@ const { variant, title, compact = false } = Astro.props;
     {
       variant === 'queue' && (
         <div class="phone">
-          <div class="ph-top">देवदूत</div>
+          <div class="ph-top">{T.queue.app}</div>
           <div class="token">
-            <span>तुमचा टोकन</span>
+            <span>{T.queue.token}</span>
             <b>14</b>
-            <span>सध्या सुरू: 11</span>
+            <span>{T.queue.now}</span>
           </div>
-          <div class="eta">अंदाजे वेळ: 25 मिनिटे</div>
-          <div class="doc">डॉ. ए. देशमुख, बालरोग</div>
+          <div class="eta">{T.queue.eta}</div>
+          <div class="doc">{T.queue.doc}</div>
         </div>
       )
     }
@@ -125,9 +151,9 @@ const { variant, title, compact = false } = Astro.props;
       variant === 'logistics' && (
         <>
           <div class="stats">
-            <div><b>128</b><span>Bookings today</span></div>
-            <div><b>19</b><span>Franchises</span></div>
-            <div><b>96%</b><span>On time</span></div>
+            <div><b>128</b><span>{T.logistics.stats[0]}</span></div>
+            <div><b>19</b><span>{T.logistics.stats[1]}</span></div>
+            <div><b>96%</b><span>{T.logistics.stats[2]}</span></div>
           </div>
           <div class="track">
             <span class="done">Booked</span><span class="done">Picked up</span><span class="on">In transit</span><span>Out for delivery</span><span>Delivered</span>

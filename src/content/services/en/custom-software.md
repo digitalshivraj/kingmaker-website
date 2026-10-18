@@ -23,7 +23,7 @@ Most of our products started as custom software for one client: a lodge register
 
 ## How a project runs
 
-1. We sit with your team (in person in Marathwada, on call elsewhere) and write down the process, the roles and the reports.
+1. We sit with your team (in person anywhere in Maharashtra, on call elsewhere) and write down the process, the roles and the reports.
 2. You get a working demo on a free link within the first phase, so you can click through it before paying for a full build.
 3. We build in stages, each stage usable on its own.
 4. We deploy on a server you control, or one we manage for you, and hand over documentation.

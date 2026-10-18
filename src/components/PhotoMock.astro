@@ -2,20 +2,22 @@
 import Photo from './Photo.astro';
 import ProductMock from './ProductMock.astro';
 import type { PhotoKey } from '../data/images';
+import type { Lang } from '../i18n/utils';
 
 interface Props {
   photo: PhotoKey;
   variant: 'lodge' | 'citizen' | 'booth' | 'subsidy' | 'idcard' | 'opd' | 'queue' | 'logistics';
   title: string;
   eager?: boolean;
+  lang?: Lang;
 }
-const { photo, variant, title, eager = false } = Astro.props;
+const { photo, variant, title, eager = false, lang = 'en' } = Astro.props;
 ---
 
 <div class="pm">
   <Photo name={photo} w={720} h={520} class="ph" eager={eager} />
   <div class="mk">
-    <ProductMock variant={variant} title={title} compact />
+    <ProductMock variant={variant} title={title} compact lang={lang} />
   </div>
 </div>
 

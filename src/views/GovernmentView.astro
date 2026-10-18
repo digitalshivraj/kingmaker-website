@@ -18,7 +18,7 @@ const L = (p: string) => localize(p, lang);
 const gov = projects.filter((p) => p.sector === 'Government and police' || p.name === 'JanSeva');
 const wa = whatsappLink(g.docsMsg);
 const projName = (p: (typeof projects)[number]) => (lang === 'mr' && p.marathi ? p.marathi : p.name);
-const tradeName = lang === 'mr' ? `${site.marathiName} (${site.name})` : `${site.name} (${site.marathiName})`;
+const tradeName = lang === 'mr' ? `${site.marathiName} (${site.name})` : site.name;
 ---
 
 <Base lang={lang} title={lang === 'mr' ? 'शासकीय आणि GeM' : 'Government and GeM'} description={g.desc}>
