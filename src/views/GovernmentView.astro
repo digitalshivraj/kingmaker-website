@@ -38,7 +38,7 @@ const tradeName = lang === 'mr' ? `${site.marathiName} (${site.name})` : site.na
             <tr><th>{g.rows.gstin}</th><td>{site.gstin}</td></tr>
             <tr><th>{g.rows.shop}</th><td>{g.rows.shopV(site.shopAct)}</td></tr>
             <tr><th>{g.rows.activities}</th><td>{g.rows.activitiesV}</td></tr>
-            <tr><th>{g.rows.address}</th><td>{ui.common.address}</td></tr>
+            <tr><th>{g.rows.address}</th><td>{lang === 'mr' ? 'परभणी, महाराष्ट्र. संपूर्ण पत्ता GST आणि उद्यम प्रमाणपत्रावर, कार्यादेशासोबत दिला जातो.' : 'Parbhani, Maharashtra. Full address as on the GST and Udyam certificates, supplied with the work order.'}</td></tr>
             <tr><th>{g.rows.contact}</th><td>{site.email}, {site.phoneDisplay}</td></tr>
           </tbody>
         </table>

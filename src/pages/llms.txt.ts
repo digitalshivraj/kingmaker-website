@@ -18,7 +18,7 @@ export const GET: APIRoute = async () => {
     '',
     `- Website: ${base}/ (English) and ${base}/mr/ (Marathi)`,
     `- Contact: ${site.email}, WhatsApp ${site.phoneDisplay} (${site.whatsapp})`,
-    `- Address: ${site.address}`,
+    `- Locations: ${site.address}`,
     `- Proprietor: ${site.proprietor}`,
     `- Hours: ${site.hours}`,
     '',
