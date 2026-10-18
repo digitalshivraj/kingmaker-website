@@ -39,7 +39,6 @@ const stats = [
 ];
 
 const faqLd = {
-  '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: ui.faq.items.map(([q, a]) => ({
     '@type': 'Question',
@@ -47,10 +46,20 @@ const faqLd = {
     acceptedAnswer: { '@type': 'Answer', text: a },
   })),
 };
+const origin = Astro.site?.origin ?? '';
+const listLd = {
+  '@type': 'ItemList',
+  name: ui.products.eyebrow,
+  itemListElement: products.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: p.data.title,
+    url: origin + L(`/products/${entrySlug(p.id)}/`),
+  })),
+};
 ---
 
-<Base lang={lang} title={lang === 'mr' ? site.marathiName : site.name} description={ui.common.siteDesc}>
-  <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+<Base lang={lang} title={lang === 'mr' ? site.marathiName : site.name} description={ui.common.siteDesc} jsonLd={[faqLd, listLd]}>
   <Hero lang={lang} />
 
   <section class="stats" aria-label="Key facts">

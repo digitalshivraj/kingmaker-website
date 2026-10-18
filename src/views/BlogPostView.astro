@@ -5,6 +5,7 @@ import CtaBand from '../components/CtaBand.astro';
 import Photo from '../components/Photo.astro';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { site } from '../data/site';
+import { photos, px, type PhotoKey } from '../data/images';
 import { t } from '../i18n/ui';
 import { localize, byLang, entrySlug, fmtDate, otherLang, type Lang } from '../i18n/utils';
 
@@ -33,8 +34,10 @@ const article = {
   description: post.data.description,
   datePublished: post.data.date.toISOString(),
   inLanguage: lang,
-  author: { '@type': 'Organization', name: post.data.author },
-  publisher: { '@type': 'Organization', name: site.name, url: site.url },
+  image: px(photos[post.data.cover as PhotoKey].id, 1200, 630),
+  keywords: post.data.tags.join(', '),
+  author: { '@type': 'Organization', name: post.data.author, url: site.url },
+  publisher: { '@id': `${site.url}/#organization` },
   mainEntityOfPage: new URL(L(`/blog/${slug}/`), site.url).toString(),
 };
 ---

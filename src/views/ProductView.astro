@@ -21,9 +21,25 @@ const all = byLang(await getCollection('products'), lang).sort((a, b) => a.data.
 const others = all.filter((p) => p.id !== product.id).slice(0, 3);
 const wa = whatsappLink(ui.productPage.demoMsg(product.data.title));
 const slug = entrySlug(product.id);
+const origin = Astro.site?.origin ?? '';
+const productLd = {
+  '@type': 'SoftwareApplication',
+  name: product.data.title,
+  alternateName: product.data.marathi,
+  description: `${product.data.tagline} ${product.data.highlights.join('. ')}.`,
+  url: origin + L(`/products/${slug}/`),
+  inLanguage: lang,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web, Android',
+  featureList: product.data.highlights,
+  audience: { '@type': 'Audience', audienceType: product.data.users.join(', ') },
+  author: { '@id': `${origin}/#organization` },
+  provider: { '@id': `${origin}/#organization` },
+  offers: { '@type': 'Offer', availability: 'https://schema.org/InStock', priceCurrency: 'INR', description: ui.productPage.ctaText },
+};
 ---
 
-<Base lang={lang} title={product.data.title} description={`${product.data.title}: ${product.data.tagline} ${product.data.highlights[0]}.`}>
+<Base lang={lang} title={product.data.title} description={`${product.data.title}: ${product.data.tagline} ${product.data.highlights[0]}.`} jsonLd={[productLd]}>
   <PageHead
     lang={lang}
     title={product.data.title}

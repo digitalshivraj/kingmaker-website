@@ -1,0 +1,14 @@
+{
+  "name": "Kingmaker Enterprises",
+  "short_name": "Kingmaker",
+  "description": "Software for government offices, hospitals and businesses in Maharashtra.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0a1830",
+  "theme_color": "#0a1830",
+  "icons": [
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

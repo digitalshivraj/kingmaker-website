@@ -13,8 +13,23 @@ interface Props {
 }
 const { lang = 'en', title, marathi, intro, crumbs = [], photo } = Astro.props;
 const ui = t(lang);
+const origin = Astro.site?.origin ?? '';
+const breadcrumb =
+  crumbs.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [{ label: ui.nav.home, href: localize('/', lang) }, ...crumbs].map((c, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: c.label,
+          item: origin + c.href,
+        })),
+      }
+    : null;
 ---
 
+{breadcrumb && <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />}
 <section class:list={['page-head', { 'with-photo': !!photo }]}>
   {photo && <Photo name={photo} w={900} h={600} class="head-photo" eager sizes="(max-width: 900px) 100vw, 40vw" />}
   <div class="wrap">

@@ -21,9 +21,30 @@ const all = byLang(await getCollection('services'), lang).sort((a, b) => a.data.
 const others = all.filter((s) => s.id !== service.id).slice(0, 4);
 const wa = whatsappLink(ui.servicePage.discussMsg(service.data.title));
 const slug = entrySlug(service.id);
+const origin = Astro.site?.origin ?? '';
+const serviceLd = {
+  '@type': 'Service',
+  name: service.data.title,
+  alternateName: service.data.marathi,
+  description: service.data.summary,
+  url: origin + L(`/services/${slug}/`),
+  inLanguage: lang,
+  serviceType: service.data.title,
+  provider: { '@id': `${origin}/#organization` },
+  areaServed: [
+    { '@type': 'State', name: 'Maharashtra' },
+    { '@type': 'Country', name: 'India' },
+  ],
+  audience: { '@type': 'Audience', audienceType: service.data.forWhom.join(', ') },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: ui.servicePage.get,
+    itemListElement: service.data.deliverables.map((d) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: d } })),
+  },
+};
 ---
 
-<Base lang={lang} title={service.data.title} description={service.data.summary}>
+<Base lang={lang} title={service.data.title} description={service.data.summary} jsonLd={[serviceLd]}>
   <PageHead
     lang={lang}
     title={service.data.title}

@@ -19,6 +19,8 @@ interface Props {
   altPath?: string;
   /** False when the other language has no version of this page (hreflang is then omitted). */
   hasAlt?: boolean;
+  /** Extra JSON-LD objects for this page (Service, SoftwareApplication, FAQPage, ...). */
+  jsonLd?: Record<string, unknown>[];
 }
 
 const {
@@ -30,6 +32,7 @@ const {
   image = '/og.png',
   noindex = false,
   hasAlt = true,
+  jsonLd = [],
 } = Astro.props;
 const ui = t(lang);
 const path = Astro.url.pathname;
@@ -46,11 +49,14 @@ const mrUrl = new URL(localize(base, 'mr'), Astro.site);
 
 const org = {
   '@context': 'https://schema.org',
-  '@type': 'ProfessionalService',
+  '@type': ['Organization', 'ProfessionalService'],
+  '@id': `${site.url}/#organization`,
   name: site.name,
   alternateName: site.marathiName,
+  description: ui.common.siteDesc,
   url: site.url,
-  logo: new URL('/logo.svg', Astro.site).toString(),
+  logo: { '@type': 'ImageObject', url: new URL('/favicon-512.png', Astro.site).toString(), width: 512, height: 512 },
+  image: new URL('/og.png', Astro.site).toString(),
   email: site.email,
   telephone: site.phoneIntl,
   foundingDate: String(site.since),
@@ -63,12 +69,46 @@ const org = {
     postalCode: '431536',
     addressCountry: 'IN',
   },
-  areaServed: 'Maharashtra, India',
+  areaServed: [
+    { '@type': 'State', name: 'Maharashtra' },
+    { '@type': 'Country', name: 'India' },
+  ],
+  knowsLanguage: ['mr', 'en'],
+  openingHours: 'Mo-Sa 10:00-19:00',
+  priceRange: '₹₹',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: site.phoneIntl,
+    email: site.email,
+    contactType: 'sales',
+    availableLanguage: ['Marathi', 'English'],
+  },
   sameAs: [site.whatsapp],
   identifier: [
     { '@type': 'PropertyValue', propertyID: 'Udyam', value: site.udyam },
     { '@type': 'PropertyValue', propertyID: 'GSTIN', value: site.gstin },
   ],
+};
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${site.url}/#website`,
+  url: site.url,
+  name: site.name,
+  alternateName: site.marathiName,
+  inLanguage: ['en', 'mr'],
+  publisher: { '@id': `${site.url}/#organization` },
+};
+const webpage = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: canonical.toString(),
+  name: title,
+  description,
+  inLanguage: lang,
+  isPartOf: { '@id': `${site.url}/#website` },
+  about: { '@id': `${site.url}/#organization` },
+  ...(publishedTime ? { datePublished: publishedTime } : {}),
 };
 ---
 
@@ -89,11 +129,21 @@ const org = {
         </>
       )
     }
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-96.png" type="image/png" sizes="96x96" />
+    <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preconnect" href="https://images.pexels.com" crossorigin />
+    <link rel="dns-prefetch" href="https://images.pexels.com" />
     <meta name="theme-color" content="#0a1830" />
-    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="author" content={site.name} />
+    <meta name="geo.region" content="IN-MH" />
+    <meta name="geo.placename" content="Parbhani, Maharashtra" />
+    <meta name="robots" content={noindex ? 'noindex' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={fullTitle} />
@@ -108,6 +158,9 @@ const org = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
     <script type="application/ld+json" set:html={JSON.stringify(org)} />
+    <script type="application/ld+json" set:html={JSON.stringify(website)} />
+    <script type="application/ld+json" set:html={JSON.stringify(webpage)} />
+    {jsonLd.map((obj) => <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...obj })} />)}
     <slot name="head" />
   </head>
   <body>
