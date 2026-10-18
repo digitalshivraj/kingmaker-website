@@ -2,6 +2,7 @@
 title: Mobile apps and PWAs
 marathi: मोबाइल ॲप्स
 summary: Field apps for workers, citizen apps for the public and queue or booking apps for clinics, built to work on cheap phones and weak networks.
+photo: citizen
 order: 2
 icon: mobile
 deliverables:

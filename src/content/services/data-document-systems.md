@@ -2,6 +2,7 @@
 title: Data and document systems
 marathi: डेटा व दस्तऐवज प्रणाली
 summary: ID cards, certificates, bulk PDFs, print packs, ledgers and exports generated from your data without manual errors.
+photo: papers
 order: 11
 icon: file
 deliverables:

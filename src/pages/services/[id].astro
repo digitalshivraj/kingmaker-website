@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import Icon from '../../components/Icon.astro';
+import Photo from '../../components/Photo.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { getCollection, render } from 'astro:content';
 import { whatsappLink } from '../../data/site';
@@ -31,8 +32,11 @@ const wa = whatsappLink(`Hello Kingmaker Enterprises, I want to discuss: ${servi
 
   <section class="section">
     <div class="wrap layout">
-      <div class="prose">
-        <Content />
+      <div>
+        <Photo name={service.data.photo} w={1000} h={480} class="cover" eager sizes="(max-width: 860px) 100vw, 60vw" />
+        <div class="prose">
+          <Content />
+        </div>
       </div>
       <aside>
         <div class="box">
@@ -70,6 +74,14 @@ const wa = whatsappLink(`Hello Kingmaker Enterprises, I want to discuss: ${servi
     grid-template-columns: 1fr 340px;
     gap: clamp(32px, 6vw, 80px);
     align-items: start;
+  }
+  .cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1000 / 480;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 32px;
   }
   aside {
     display: grid;

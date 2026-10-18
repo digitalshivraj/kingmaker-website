@@ -2,6 +2,7 @@
 title: AI automation and agents
 marathi: एआय ऑटोमेशन
 summary: AI that checks documents, drafts messages, classifies requests and routes work, always with a person approving before anything goes out.
+photo: coding
 order: 4
 icon: spark
 deliverables:

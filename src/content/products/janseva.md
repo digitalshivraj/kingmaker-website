@@ -3,6 +3,7 @@ title: JanSeva
 marathi: जनसेवा
 tagline: Citizen app and office dashboard for MLA, MP and Nagar Parishad offices
 sector: Political and elections
+photo: villageMeeting
 order: 2
 mock: citizen
 status: Demo ready, built for MLA offices and a Nagar Parishad variant

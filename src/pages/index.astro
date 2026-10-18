@@ -2,7 +2,8 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
-import ProductMock from '../components/ProductMock.astro';
+import PhotoMock from '../components/PhotoMock.astro';
+import Photo from '../components/Photo.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getCollection } from 'astro:content';
 import { site } from '../data/site';
@@ -81,7 +82,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 
                 </a>
               </div>
               <div class="visual">
-                <ProductMock variant={p.data.mock} title={p.data.title} />
+                <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} />
               </div>
             </article>
           ))
@@ -143,7 +144,8 @@ const fmt = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 
   </section>
 
   <section class="section ink why">
-    <div class="wrap">
+    <Photo name="road" w={1600} h={700} class="why-bg" sizes="100vw" />
+    <div class="wrap why-wrap">
       <div class="head">
         <h2>Why offices in Marathwada work with us</h2>
       </div>
@@ -191,6 +193,9 @@ const fmt = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 
         {
           posts.map((p) => (
             <article>
+              <a href={`/blog/${p.id}/`} class="cover" aria-hidden="true" tabindex="-1">
+                <Photo name={p.data.cover} w={600} h={360} sizes="(max-width: 1000px) 50vw, 33vw" />
+              </a>
               <time datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>
               <h3>
                 <a href={`/blog/${p.id}/`}>{p.data.title}</a>
@@ -357,6 +362,29 @@ const fmt = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 
     color: var(--muted);
   }
 
+  .why {
+    position: relative;
+    overflow: hidden;
+  }
+  .why-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.35;
+    filter: saturate(0.7);
+  }
+  .why::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--ink) 0%, rgba(10, 24, 48, 0.72) 55%, rgba(10, 24, 48, 0.35) 100%);
+  }
+  .why-wrap {
+    position: relative;
+    z-index: 1;
+  }
   .why-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -393,8 +421,24 @@ const fmt = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 
     gap: 32px;
   }
   .post-grid article {
-    padding-top: 16px;
-    border-top: 2px solid var(--line);
+    display: grid;
+    align-content: start;
+  }
+  .post-grid .cover {
+    display: block;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .post-grid .cover img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 600 / 360;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .post-grid article:hover .cover img {
+    transform: scale(1.03);
   }
   .post-grid time {
     font-size: 0.88rem;

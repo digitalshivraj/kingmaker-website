@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import CtaBand from '../../components/CtaBand.astro';
+import Photo from '../../components/Photo.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -25,6 +26,9 @@ const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
         {
           posts.map((p) => (
             <article>
+              <a href={`/blog/${p.id}/`} class="cover" aria-hidden="true" tabindex="-1">
+                <Photo name={p.data.cover} w={720} h={420} sizes="(max-width: 760px) 100vw, 50vw" />
+              </a>
               <div class="meta">
                 <time datetime={p.data.date.toISOString()}>{fmt(p.data.date)}</time>
                 <span>{p.data.readingMinutes} min read</span>
@@ -67,9 +71,21 @@ const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
     grid-template-columns: repeat(2, 1fr);
     gap: 40px 56px;
   }
-  article {
-    padding-top: 18px;
-    border-top: 2px solid var(--line);
+  .cover {
+    display: block;
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .cover img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 720 / 420;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  article:hover .cover img {
+    transform: scale(1.03);
   }
   .meta {
     display: flex;

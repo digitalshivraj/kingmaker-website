@@ -2,6 +2,7 @@
 title: Websites, SEO and AI search visibility
 marathi: वेबसाइट, एसईओ व एआय सर्च
 summary: Fast bilingual websites that rank on Google and get cited by AI assistants, with schema, local SEO and content built in.
+photo: search
 order: 7
 icon: globe
 deliverables:

@@ -3,6 +3,7 @@ title: Hospital management system
 marathi: हॉस्पिटल मॅनेजमेंट सिस्टीम
 tagline: OPD to IPD on one low-cost subscription, built for small hospitals
 sector: Healthcare
+photo: doctor
 order: 6
 mock: opd
 status: Demo ready, onboarding small hospitals and clinics

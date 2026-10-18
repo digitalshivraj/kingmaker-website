@@ -1,0 +1,28 @@
+---
+import { photos, px, type PhotoKey } from '../data/images';
+
+interface Props {
+  name: PhotoKey;
+  w: number;
+  h: number;
+  class?: string;
+  eager?: boolean;
+  sizes?: string;
+}
+const { name, w, h, class: cls = '', eager = false, sizes = '(max-width: 760px) 100vw, 50vw', ...rest } = Astro.props;
+const p = photos[name];
+---
+
+<img
+  {...rest}
+  class={cls}
+  src={px(p.id, w, h)}
+  srcset={`${px(p.id, w, h)} ${w}w, ${px(p.id, w * 2, h * 2)} ${w * 2}w`}
+  sizes={sizes}
+  width={w}
+  height={h}
+  alt={p.alt}
+  loading={eager ? 'eager' : 'lazy'}
+  decoding="async"
+  fetchpriority={eager ? 'high' : undefined}
+/>

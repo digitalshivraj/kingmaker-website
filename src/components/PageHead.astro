@@ -1,14 +1,18 @@
 ---
+import Photo from './Photo.astro';
+import type { PhotoKey } from '../data/images';
 interface Props {
   title: string;
   marathi?: string;
   intro?: string;
   crumbs?: { label: string; href: string }[];
+  photo?: PhotoKey;
 }
-const { title, marathi, intro, crumbs = [] } = Astro.props;
+const { title, marathi, intro, crumbs = [], photo } = Astro.props;
 ---
 
-<section class="page-head">
+<section class:list={['page-head', { 'with-photo': !!photo }]}>
+  {photo && <Photo name={photo} w={900} h={600} class="head-photo" eager sizes="(max-width: 900px) 100vw, 40vw" />}
   <div class="wrap">
     {
       crumbs.length > 0 && (
@@ -40,6 +44,41 @@ const { title, marathi, intro, crumbs = [] } = Astro.props;
       var(--ink);
     color: var(--on-dark);
     padding-block: clamp(40px, 6vw, 72px);
+    position: relative;
+    overflow: hidden;
+  }
+  .with-photo .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: none;
+    width: min(var(--w), 100% - 2 * var(--gutter));
+  }
+  .with-photo .wrap > * {
+    max-width: 58%;
+  }
+  .head-photo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 42%;
+    height: 100%;
+    object-fit: cover;
+    mask-image: linear-gradient(90deg, transparent 0%, #000 35%);
+    opacity: 0.9;
+  }
+  @media (max-width: 900px) {
+    .head-photo {
+      position: static;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 7;
+      mask-image: none;
+      margin-bottom: 24px;
+    }
+    .with-photo .wrap > * {
+      max-width: none;
+    }
   }
   .crumbs ol {
     list-style: none;

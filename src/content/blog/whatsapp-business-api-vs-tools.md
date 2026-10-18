@@ -1,6 +1,7 @@
 ---
 title: WhatsApp for your office or clinic, done the official way
 description: The difference between the official WhatsApp Business API and grey-market tools, why numbers get banned, and what a Marathi chatbot can and cannot do.
+cover: whatsapp
 date: 2026-09-18
 tags: [WhatsApp, Automation, Small business]
 readingMinutes: 6

@@ -1,6 +1,7 @@
 ---
 title: Why every lodge register in Maharashtra should be digital by 2027
 description: Paper guest registers fail exactly when police need them. Here is what a digital register does differently, what it costs, and how a district can pilot one in a month.
+cover: hotel
 date: 2026-10-12
 tags: [Police, Government, Maha-Stay 360]
 readingMinutes: 6

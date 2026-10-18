@@ -1,6 +1,7 @@
 ---
 title: Is your business visible when people ask Google AI or ChatGPT?
 description: Search has changed. People ask an assistant and get one answer. Here is how a hospital, dealer or local business gets into that answer, and what it has in common with old-fashioned SEO.
+cover: search
 date: 2026-08-26
 tags: [SEO, AI search, Websites]
 readingMinutes: 5

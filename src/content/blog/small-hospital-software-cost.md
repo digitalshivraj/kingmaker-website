@@ -1,6 +1,7 @@
 ---
 title: What hospital software should cost a 30-bed hospital in a taluka town
 description: Hospital management software is priced for corporate hospitals. Here is what a small hospital actually needs, what it should pay, and how to go live in a day.
+cover: pharmacy
 date: 2026-09-28
 tags: [Healthcare, Hospitals, Pricing]
 readingMinutes: 5

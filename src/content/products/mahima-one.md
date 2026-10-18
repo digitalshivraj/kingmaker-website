@@ -3,6 +3,7 @@ title: Mahima One
 marathi: महिमा वन
 tagline: Franchise logistics platform for packers, movers and courier networks
 sector: Business and logistics
+photo: truck
 order: 8
 mock: logistics
 status: Live on the client's own server, used by a packers and movers company

@@ -1,6 +1,7 @@
 ---
 title: The DPDP Act, 2023 in plain language for offices buying software
 description: What the Digital Personal Data Protection Act means for a police station, an MLA office or a hospital when it buys or builds software, and the five things to put in the contract.
+cover: security
 date: 2026-09-08
 tags: [Data protection, Government, Compliance]
 readingMinutes: 7

@@ -1,6 +1,7 @@
 ---
 title: How an MLA office can stop losing complaints in WhatsApp groups
 description: An MLA office handles hundreds of citizen requests a week. Most are tracked nowhere. A simple grievance system fixes that without changing how citizens reach you.
+cover: papers
 date: 2026-10-05
 tags: [Political offices, Citizen services, JanSeva]
 readingMinutes: 5

@@ -2,6 +2,7 @@
 title: Brand identity, decks and documents
 marathi: ब्रँड ओळख, सादरीकरण व दस्तऐवज
 summary: Logos, letterheads, Marathi pitch decks and proposal documents that make a small firm look like the serious organisation it is.
+photo: binders
 order: 9
 icon: file
 deliverables:

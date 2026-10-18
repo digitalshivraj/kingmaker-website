@@ -1,0 +1,48 @@
+---
+import Photo from './Photo.astro';
+import ProductMock from './ProductMock.astro';
+import type { PhotoKey } from '../data/images';
+
+interface Props {
+  photo: PhotoKey;
+  variant: 'lodge' | 'citizen' | 'booth' | 'subsidy' | 'idcard' | 'opd' | 'queue' | 'logistics';
+  title: string;
+  eager?: boolean;
+}
+const { photo, variant, title, eager = false } = Astro.props;
+---
+
+<div class="pm">
+  <Photo name={photo} w={720} h={520} class="ph" eager={eager} />
+  <div class="mk">
+    <ProductMock variant={variant} title={title} compact />
+  </div>
+</div>
+
+<style>
+  .pm {
+    position: relative;
+    padding-bottom: 14%;
+    padding-right: 6%;
+  }
+  .ph {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 720 / 520;
+    object-fit: cover;
+    border-radius: 16px;
+    display: block;
+  }
+  .mk {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 68%;
+    filter: drop-shadow(0 24px 40px rgba(10, 24, 48, 0.35));
+  }
+  @media (max-width: 480px) {
+    .mk {
+      width: 82%;
+    }
+  }
+</style>

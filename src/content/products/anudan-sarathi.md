@@ -3,6 +3,7 @@ title: Anudan Sarathi
 marathi: अनुदान सारथी
 tagline: Subsidy application tracking for dealers and the farmers they serve
 sector: Agriculture and rural
+photo: farmer
 order: 4
 mock: subsidy
 status: Live pilot with a sprinkler dealer under the PoCRA scheme

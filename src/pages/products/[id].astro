@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
-import ProductMock from '../../components/ProductMock.astro';
+import PhotoMock from '../../components/PhotoMock.astro';
 import Icon from '../../components/Icon.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { getCollection, render } from 'astro:content';
@@ -46,7 +46,7 @@ const wa = whatsappLink(`Hello Kingmaker Enterprises, I want a demo of ${product
         </div>
       </div>
       <div class="visual">
-        <ProductMock variant={product.data.mock} title={product.data.title} />
+        <PhotoMock photo={product.data.photo} variant={product.data.mock} title={product.data.title} eager />
       </div>
     </div>
   </section>

@@ -2,6 +2,7 @@
 title: Election and political campaign technology
 marathi: निवडणूक व राजकीय प्रचार तंत्रज्ञान
 summary: War rooms, karyakarta apps, booth management and voter outreach tools built to Election Commission and data protection rules.
+photo: meeting
 order: 6
 icon: megaphone
 deliverables:

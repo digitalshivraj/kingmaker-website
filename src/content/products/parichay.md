@@ -3,6 +3,7 @@ title: Parichay
 marathi: परिचय
 tagline: Student ID card data collection and printing at state scale
 sector: Government and police
+photo: school
 order: 5
 mock: idcard
 status: Live, used for PM SHRI schools across 20 districts of Bihar

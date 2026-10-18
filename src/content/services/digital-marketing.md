@@ -2,6 +2,7 @@
 title: Digital marketing and lead generation
 marathi: डिजिटल मार्केटिंग व लीड जनरेशन
 summary: Google, Meta and TikTok campaigns run with lead-quality tracking, so you pay for enquiries that actually convert.
+photo: typing
 order: 8
 icon: chart
 deliverables:

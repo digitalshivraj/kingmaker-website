@@ -2,6 +2,7 @@
 title: Security and compliance
 marathi: सुरक्षा व अनुपालन
 summary: Data protection, access control and security reviews for systems that hold citizen, patient or voter data.
+photo: security
 order: 12
 icon: lock
 deliverables:

@@ -3,6 +3,7 @@ title: Sanghatan
 marathi: संघटन
 tagline: Party organisation and election campaign platform, from war room to booth
 sector: Political and elections
+photo: meeting
 order: 3
 mock: booth
 status: Demo ready, pilot quoted for one Vidhan Sabha constituency

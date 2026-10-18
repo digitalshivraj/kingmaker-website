@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import Photo from './Photo.astro';
 import { site, whatsappLink } from '../data/site';
 const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a software project.');
 ---
@@ -27,6 +28,8 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
       </ul>
     </div>
 
+    <div class="visual">
+    <Photo name="hero" w={760} h={560} class="hero-photo" eager sizes="(max-width: 900px) 100vw, 46vw" />
     <div class="panel" aria-label="Illustration of a Kingmaker control room screen for a district police office">
       <div class="panel-top">
         <span class="live"><i></i>Live</span>
@@ -64,8 +67,8 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
         <li style="--d: 0.9s"><span>हॉटेल साई, नांदेड</span><span>Guest added</span><span>21:10</span></li>
         <li style="--d: 1.05s"><span>लॉज गोदावरी, देगलूर</span><span>Guest added</span><span>21:04</span></li>
         <li class="flag" style="--d: 1.2s"><span>हॉटेल प्रिया, भोकर</span><span>ID missing</span><span>20:52</span></li>
-        <li style="--d: 1.35s"><span>लॉज श्रीराम, मुखेड</span><span>Night report sent</span><span>20:41</span></li>
       </ul>
+    </div>
     </div>
   </div>
 </section>
@@ -141,14 +144,31 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
     background: var(--gold);
   }
 
+  .visual {
+    position: relative;
+    padding-bottom: 190px;
+  }
+  .hero-photo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 760 / 560;
+    object-fit: cover;
+    border-radius: 18px;
+    display: block;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
   .panel {
+    position: absolute;
+    left: 22%;
+    right: -4%;
+    bottom: 0;
     background: linear-gradient(160deg, var(--navy-2), var(--navy));
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 18px;
-    padding: 18px;
+    padding: 16px;
     box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7);
     display: grid;
-    gap: 14px;
+    gap: 12px;
     animation: panel-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
   .panel-top {
@@ -217,7 +237,7 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
   }
   .chart svg {
     width: 100%;
-    height: 70px;
+    height: 54px;
     margin-top: 4px;
   }
   .line {
@@ -312,16 +332,28 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
     .grid {
       grid-template-columns: 1fr;
     }
+    .visual {
+      max-width: 620px;
+    }
     .panel {
-      max-width: 560px;
+      left: 10%;
+      right: 0;
     }
   }
-  @media (max-width: 480px) {
-    .kpis {
-      grid-template-columns: 1fr 1fr;
+  @media (max-width: 560px) {
+    .visual {
+      padding-bottom: 0;
     }
-    .kpi:last-child {
-      grid-column: 1 / -1;
+    .hero-photo {
+      aspect-ratio: 16 / 10;
+      border-radius: 18px 18px 0 0;
+    }
+    .panel {
+      position: static;
+      border-radius: 0 0 18px 18px;
+    }
+    .chart {
+      display: none;
     }
     .feed li {
       grid-template-columns: 1fr auto;

@@ -3,6 +3,7 @@ title: Maha-Stay 360
 marathi: महा-स्टे 360
 tagline: Digital guest register for lodges and hotels, visible to police in real time
 sector: Government and police
+photo: police
 order: 1
 mock: lodge
 status: Demo ready, pilot proposals submitted to district police

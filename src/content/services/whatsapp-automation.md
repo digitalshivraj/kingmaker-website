@@ -2,6 +2,7 @@
 title: WhatsApp automation and chatbots
 marathi: व्हॉट्सॲप ऑटोमेशन व चॅटबॉट
 summary: Marathi and English WhatsApp bots for bookings, scheme help, grievances and status updates, on the official Meta Cloud API.
+photo: whatsapp
 order: 3
 icon: whatsapp
 deliverables:

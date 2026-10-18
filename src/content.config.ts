@@ -9,6 +9,7 @@ const services = defineCollection({
     summary: z.string(),
     order: z.number(),
     icon: z.string(),
+    photo: z.string(),
     deliverables: z.array(z.string()),
     forWhom: z.array(z.string()),
   }),
@@ -24,6 +25,7 @@ const products = defineCollection({
     order: z.number(),
     mock: z.enum(['lodge', 'citizen', 'booth', 'subsidy', 'opd', 'idcard', 'queue', 'logistics']),
     status: z.string(),
+    photo: z.string(),
     highlights: z.array(z.string()),
     users: z.array(z.string()),
   }),
@@ -38,6 +40,7 @@ const blog = defineCollection({
     author: z.string().default('Kingmaker Enterprises'),
     tags: z.array(z.string()).default([]),
     readingMinutes: z.number().default(5),
+    cover: z.string().default('typing'),
   }),
 });
 

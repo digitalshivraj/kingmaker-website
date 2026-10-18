@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
-import ProductMock from '../../components/ProductMock.astro';
+import PhotoMock from '../../components/PhotoMock.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { getCollection } from 'astro:content';
 import { projects, sectors } from '../../data/portfolio';
@@ -34,7 +34,7 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
           products.map((p) => (
             <article class="flag">
               <a href={`/products/${p.id}/`} class="vis" aria-label={p.data.title}>
-                <ProductMock variant={p.data.mock} title={p.data.title} compact />
+                <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} />
               </a>
               <p class="marathi sub">{p.data.marathi}</p>
               <h3>

@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import CtaBand from '../../components/CtaBand.astro';
+import Photo from '../../components/Photo.astro';
 import { site } from '../../data/site';
 import { projects } from '../../data/portfolio';
 const live = projects.filter((p) => p.status === 'Live').length;
@@ -13,7 +14,17 @@ const live = projects.filter((p) => p.status === 'Live').length;
     marathi="आमच्याबद्दल"
     intro="We started in 2019 and today build and run software for police departments, MLA offices, hospitals, dealers, logistics companies and political organisations, in Marathi and English."
     crumbs={[{ label: 'About', href: '/about/' }]}
+    photo="team"
   />
+
+  <section class="section tight">
+    <div class="wrap strip">
+      <Photo name="policeTeam" w={600} h={420} sizes="(max-width: 760px) 50vw, 25vw" />
+      <Photo name="villageMeeting" w={600} h={420} sizes="(max-width: 760px) 50vw, 25vw" />
+      <Photo name="doctorHall" w={600} h={420} sizes="(max-width: 760px) 50vw, 25vw" />
+      <Photo name="farmerRoad" w={600} h={420} sizes="(max-width: 760px) 50vw, 25vw" />
+    </div>
+  </section>
 
   <section class="section">
     <div class="wrap two">
@@ -79,6 +90,23 @@ const live = projects.filter((p) => p.status === 'Live').length;
 </Base>
 
 <style>
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .strip img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 600 / 420;
+    object-fit: cover;
+    border-radius: 14px;
+  }
+  @media (max-width: 760px) {
+    .strip {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
   .two {
     display: grid;
     grid-template-columns: 1fr 320px;

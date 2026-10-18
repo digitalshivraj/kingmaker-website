@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import Icon from '../../components/Icon.astro';
+import Photo from '../../components/Photo.astro';
 import { site } from '../../data/site';
 ---
 
@@ -65,6 +66,7 @@ import { site } from '../../data/site';
       </form>
 
       <aside>
+        <Photo name="road" w={700} h={400} class="aside-photo" sizes="(max-width: 860px) 100vw, 40vw" />
         <div class="card">
           <h3>Direct</h3>
           <ul>
@@ -171,6 +173,13 @@ import { site } from '../../data/site';
   aside {
     display: grid;
     gap: 20px;
+  }
+  .aside-photo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 700 / 400;
+    object-fit: cover;
+    border-radius: var(--r-lg);
   }
   .card {
     background: var(--paper);

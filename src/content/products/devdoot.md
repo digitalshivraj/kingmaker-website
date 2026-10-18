@@ -3,6 +3,7 @@ title: Devdoot
 marathi: देवदूत
 tagline: Book a doctor, get a token, wait at home
 sector: Healthcare
+photo: phoneWoman
 order: 7
 mock: queue
 status: In testing, onboarding first doctors

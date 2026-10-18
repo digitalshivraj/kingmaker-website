@@ -2,6 +2,7 @@
 title: Hosting, servers and maintenance
 marathi: होस्टिंग, सर्व्हर व देखभाल
 summary: Virtual servers, deployments, backups and monthly maintenance for the systems we build and the ones you already have.
+photo: hero
 order: 10
 icon: grid
 deliverables:

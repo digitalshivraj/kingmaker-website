@@ -2,6 +2,7 @@
 title: Government, police and GeM projects
 marathi: शासकीय व पोलीस प्रकल्प
 summary: Proposals, pilots and delivery for district administrations, police departments and public bodies, including procurement through the Government e-Marketplace.
+photo: government
 order: 5
 icon: landmark
 deliverables:

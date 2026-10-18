@@ -2,6 +2,7 @@
 title: Custom software and web portals
 marathi: कस्टम सॉफ्टवेअर व वेब पोर्टल
 summary: Dashboards, CRMs, registers and role-based portals built around how your office or business actually works, in Marathi and English.
+photo: developer
 order: 1
 icon: code
 deliverables:
