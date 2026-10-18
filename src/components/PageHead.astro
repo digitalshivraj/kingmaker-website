@@ -1,14 +1,18 @@
 ---
 import Photo from './Photo.astro';
 import type { PhotoKey } from '../data/images';
+import { t } from '../i18n/ui';
+import { localize, type Lang } from '../i18n/utils';
 interface Props {
+  lang?: Lang;
   title: string;
   marathi?: string;
   intro?: string;
   crumbs?: { label: string; href: string }[];
   photo?: PhotoKey;
 }
-const { title, marathi, intro, crumbs = [], photo } = Astro.props;
+const { lang = 'en', title, marathi, intro, crumbs = [], photo } = Astro.props;
+const ui = t(lang);
 ---
 
 <section class:list={['page-head', { 'with-photo': !!photo }]}>
@@ -19,7 +23,7 @@ const { title, marathi, intro, crumbs = [], photo } = Astro.props;
         <nav class="crumbs" aria-label="Breadcrumb">
           <ol>
             <li>
-              <a href="/">Home</a>
+              <a href={localize('/', lang)}>{ui.nav.home}</a>
             </li>
             {crumbs.map((c) => (
               <li>
@@ -41,11 +45,26 @@ const { title, marathi, intro, crumbs = [], photo } = Astro.props;
   .page-head {
     background:
       radial-gradient(700px 300px at 90% 0%, rgba(127, 178, 232, 0.16), transparent 60%),
+      radial-gradient(500px 260px at 0% 100%, rgba(201, 149, 46, 0.12), transparent 60%),
       var(--ink);
     color: var(--on-dark);
     padding-block: clamp(40px, 6vw, 72px);
     position: relative;
     overflow: hidden;
+  }
+  .page-head::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at 30% 50%, #000 10%, transparent 70%);
+    pointer-events: none;
+  }
+  .page-head .wrap {
+    position: relative;
   }
   .with-photo .wrap {
     position: relative;

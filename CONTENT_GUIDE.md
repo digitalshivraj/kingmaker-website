@@ -4,7 +4,7 @@ The site is a static Astro build. Every push to `main` rebuilds and publishes it
 
 ## Add a blog post
 
-Create one markdown file in `src/content/blog/`. The file name becomes the URL: `src/content/blog/my-post.md` is published at `/blog/my-post/`.
+Create one markdown file in `src/content/blog/en/` (English) or `src/content/blog/mr/` (Marathi). The file name becomes the URL: `src/content/blog/en/my-post.md` is published at `/blog/my-post/`, and `src/content/blog/mr/my-post.md` at `/mr/blog/my-post/`. Use the same file name in both folders when a post exists in both languages; the language switch in the header then links the two versions. A post that exists only in English is listed on the Marathi blog page under "इंग्रजीत".
 
 Use lowercase letters, digits and hyphens only in the file name.
 
@@ -37,7 +37,7 @@ Rules the site already follows, so new posts match:
 
 ## Add a service or product page
 
-Services live in `src/content/services/`, products in `src/content/products/`. Copy an existing file, change the frontmatter and body. The `order` field controls position in lists. For products, `mock` must be one of: lodge, citizen, booth, subsidy, idcard, opd, queue, logistics (it picks the illustrated screen).
+Services live in `src/content/services/en/` and `src/content/services/mr/`, products in `src/content/products/en/` and `src/content/products/mr/`. Every service and product must exist in both folders with the same file name (the Marathi file has the Marathi `title` and the English name in `marathi`; the English file is the reverse). Copy an existing file, change the frontmatter and body. The `order` field controls position in lists. For products, `mock` must be one of: lodge, citizen, booth, subsidy, idcard, opd, queue, logistics (it picks the illustrated screen).
 
 ## Add a project to the portfolio list
 
@@ -99,3 +99,8 @@ npm run dev
 ```
 
 Opens the site at `http://localhost:4321`. `npm run build` writes the finished site to `dist/`.
+
+
+## Interface text (buttons, headings, FAQ, footer)
+
+All fixed text on the site is in `src/i18n/ui.ts`, once in English (`en`) and once in Marathi (`mr`). Edit both when changing a label. Project list and sector names are in `src/data/portfolio.ts` (`summary` and `summaryMr`).

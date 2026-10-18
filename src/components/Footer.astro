@@ -1,6 +1,15 @@
 ---
 import Icon from './Icon.astro';
-import { site, nav } from '../data/site';
+import { site } from '../data/site';
+import { t, navLinks } from '../i18n/ui';
+import { localize, type Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const ui = t(lang);
+const links = navLinks(lang);
 const year = new Date().getFullYear();
 ---
 
@@ -8,26 +17,23 @@ const year = new Date().getFullYear();
   <div class="wrap grid">
     <div class="col about">
       <img src="/logo-white.svg" alt="Kingmaker Enterprises" width="204" height="65" />
-      <p class="marathi">{site.marathiName}</p>
-      <p>
-        Software, web portals, mobile apps and AI automation for government offices, hospitals, political
-        organisations and growing businesses. Based in Parbhani, working across Maharashtra and India.
-      </p>
+      <p class="marathi">{lang === 'mr' ? site.name : site.marathiName}</p>
+      <p>{ui.footer.about}</p>
     </div>
     <div class="col">
-      <h4>Pages</h4>
+      <h4>{ui.footer.pages}</h4>
       <ul>
-        {nav.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
-        <li><a href="/privacy/">Privacy policy</a></li>
-        <li><a href="/terms/">Terms of service</a></li>
+        {links.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+        <li><a href={localize('/privacy/', lang)}>{ui.footer.privacy}</a></li>
+        <li><a href={localize('/terms/', lang)}>{ui.footer.terms}</a></li>
       </ul>
     </div>
     <div class="col">
-      <h4>Contact</h4>
+      <h4>{ui.footer.contact}</h4>
       <ul class="contact">
         <li>
           <Icon name="whatsapp" size={18} />
-          <a href={site.whatsapp} target="_blank" rel="noopener">{site.phoneDisplay} (WhatsApp)</a>
+          <a href={site.whatsapp} target="_blank" rel="noopener">{site.phoneDisplay} {ui.footer.waLabel}</a>
         </li>
         <li>
           <Icon name="phone" size={18} />
@@ -39,28 +45,28 @@ const year = new Date().getFullYear();
         </li>
         <li>
           <Icon name="pin" size={18} />
-          <span>{site.address}</span>
+          <span>{ui.common.address}</span>
         </li>
         <li>
           <Icon name="clock" size={18} />
-          <span>{site.hours}</span>
+          <span>{ui.common.hours}</span>
         </li>
       </ul>
     </div>
     <div class="col">
-      <h4>Registered business</h4>
+      <h4>{ui.footer.registered}</h4>
       <ul class="reg">
-        <li><span>Legal name</span>{site.legalName}</li>
-        <li><span>Udyam (MSME)</span>{site.udyam}</li>
-        <li><span>GSTIN</span>{site.gstin}</li>
-        <li><span>Shop Act (Maharashtra)</span>{site.shopAct}</li>
-        <li><span>In business since</span>{site.since}</li>
+        <li><span>{ui.footer.legalName}</span>{ui.common.legalName}</li>
+        <li><span>{ui.footer.udyam}</span>{site.udyam}</li>
+        <li><span>{ui.footer.gstin}</span>{site.gstin}</li>
+        <li><span>{ui.footer.shopAct}</span>{site.shopAct}</li>
+        <li><span>{ui.footer.since}</span>{site.since}</li>
       </ul>
     </div>
   </div>
   <div class="wrap legal">
-    <span>Copyright {year} {site.name}. All rights reserved.</span>
-    <span>Parbhani, Maharashtra, India</span>
+    <span>{ui.footer.copyright(year)}</span>
+    <span>{ui.footer.place}</span>
   </div>
 </footer>
 
@@ -70,6 +76,7 @@ const year = new Date().getFullYear();
     color: var(--on-dark-muted);
     padding-top: clamp(48px, 7vw, 80px);
     font-size: 0.95rem;
+    border-top: 3px solid var(--gold);
   }
   .grid {
     display: grid;
@@ -144,6 +151,9 @@ const year = new Date().getFullYear();
     .grid {
       grid-template-columns: 1fr;
       gap: 30px;
+    }
+    .legal {
+      padding-bottom: 90px;
     }
   }
 </style>

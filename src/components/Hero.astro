@@ -1,74 +1,84 @@
 ---
 import Icon from './Icon.astro';
 import Photo from './Photo.astro';
-import { site, whatsappLink } from '../data/site';
-const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a software project.');
+import { whatsappLink } from '../data/site';
+import { t } from '../i18n/ui';
+import { localize, type Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const ui = t(lang);
+const wa = whatsappLink(ui.hero.waMessage);
+const times = ['21:10', '21:04', '20:52'];
 ---
 
 <section class="hero">
   <div class="wrap grid">
     <div class="copy">
-      <p class="marathi intro">किंगमेकर एंटरप्रायझेस, परभणी</p>
-      <h1>Software for the offices that run Maharashtra, and the businesses that grow here.</h1>
-      <p class="lede">
-        Police lodge registers, citizen service dashboards, hospital systems, subsidy trackers, campaign platforms
-        and AI automation. Built in Marathi and English, demonstrated free before you pay, hosted in India.
-      </p>
+      <p class="marathi intro">{ui.hero.intro}</p>
+      <h1>{ui.hero.h1}</h1>
+      <p class="lede">{ui.hero.lede}</p>
       <div class="actions">
         <a class="btn gold" href={wa} target="_blank" rel="noopener">
           <Icon name="whatsapp" />
-          <span>Talk on WhatsApp</span>
+          <span>{ui.hero.cta1}</span>
         </a>
-        <a class="btn ghost-light" href="/products/">See our products</a>
+        <a class="btn ghost-light" href={localize('/products/', lang)}>{ui.hero.cta2}</a>
       </div>
       <ul class="facts">
-        <li>Udyam registered MSME</li>
-        <li>GST registered</li>
-        <li>Working since {site.since}</li>
+        {ui.hero.facts.map((f) => <li>{f}</li>)}
       </ul>
     </div>
 
     <div class="visual">
-    <Photo name="hero" w={760} h={560} class="hero-photo" eager sizes="(max-width: 900px) 100vw, 46vw" />
-    <div class="panel" aria-label="Illustration of a Kingmaker control room screen for a district police office">
-      <div class="panel-top">
-        <span class="live"><i></i>Live</span>
-        <span>Maha-Stay 360, Nanded district</span>
-        <span class="time">21:14</span>
-      </div>
-      <div class="kpis">
-        <div class="kpi" style="--d: 0.3s">
-          <b data-count="212">0</b>
-          <span>Lodges online</span>
+      <Photo name="hero" w={760} h={560} class="hero-photo" eager sizes="(max-width: 900px) 100vw, 46vw" />
+      <div class="panel" aria-label={ui.hero.panelTitle}>
+        <div class="panel-top">
+          <span class="live"><i></i>{ui.hero.live}</span>
+          <span>{ui.hero.panelTitle}</span>
+          <span class="time">21:14</span>
         </div>
-        <div class="kpi" style="--d: 0.45s">
-          <b data-count="1480">0</b>
-          <span>Guests registered today</span>
+        <div class="kpis">
+          <div class="kpi" style="--d: 0.3s">
+            <b data-count="212">0</b>
+            <span>{ui.hero.kpi[0]}</span>
+          </div>
+          <div class="kpi" style="--d: 0.45s">
+            <b data-count="1480">0</b>
+            <span>{ui.hero.kpi[1]}</span>
+          </div>
+          <div class="kpi alert" style="--d: 0.6s">
+            <b data-count="3">0</b>
+            <span>{ui.hero.kpi[2]}</span>
+          </div>
         </div>
-        <div class="kpi alert" style="--d: 0.6s">
-          <b data-count="3">0</b>
-          <span>Alerts to review</span>
+        <div class="chart" style="--d: 0.75s" aria-hidden="true">
+          <span class="lbl">{ui.hero.chart}</span>
+          <svg viewBox="0 0 320 70" preserveAspectRatio="none">
+            <path
+              class="line"
+              d="M0 60 L27 56 L53 58 L80 48 L107 44 L133 50 L160 38 L187 30 L213 34 L240 22 L267 18 L293 24 L320 12"
+            ></path>
+            <path
+              class="fill"
+              d="M0 60 L27 56 L53 58 L80 48 L107 44 L133 50 L160 38 L187 30 L213 34 L240 22 L267 18 L293 24 L320 12 V70 H0 Z"
+            ></path>
+          </svg>
         </div>
+        <ul class="feed" aria-hidden="true">
+          {
+            ui.hero.feed.map((row, i) => (
+              <li class:list={{ flag: i === 2 }} style={`--d: ${0.9 + i * 0.15}s`}>
+                <span>{row[0]}</span>
+                <span>{row[1]}</span>
+                <span>{times[i]}</span>
+              </li>
+            ))
+          }
+        </ul>
       </div>
-      <div class="chart" style="--d: 0.75s" aria-hidden="true">
-        <span class="lbl">Entries per hour</span>
-        <svg viewBox="0 0 320 70" preserveAspectRatio="none">
-          <path
-            class="line"
-            d="M0 60 L27 56 L53 58 L80 48 L107 44 L133 50 L160 38 L187 30 L213 34 L240 22 L267 18 L293 24 L320 12"
-          ></path>
-          <path
-            class="fill"
-            d="M0 60 L27 56 L53 58 L80 48 L107 44 L133 50 L160 38 L187 30 L213 34 L240 22 L267 18 L293 24 L320 12 V70 H0 Z"
-          ></path>
-        </svg>
-      </div>
-      <ul class="feed" aria-hidden="true">
-        <li style="--d: 0.9s"><span>हॉटेल साई, नांदेड</span><span>Guest added</span><span>21:10</span></li>
-        <li style="--d: 1.05s"><span>लॉज गोदावरी, देगलूर</span><span>Guest added</span><span>21:04</span></li>
-        <li class="flag" style="--d: 1.2s"><span>हॉटेल प्रिया, भोकर</span><span>ID missing</span><span>20:52</span></li>
-      </ul>
-    </div>
     </div>
   </div>
 </section>
@@ -103,9 +113,24 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
     align-items: center;
   }
   .intro {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     color: var(--gold-2);
-    font-size: 1.05rem;
-    margin-bottom: 14px;
+    font-size: 0.98rem;
+    margin-bottom: 18px;
+    padding: 6px 14px 6px 10px;
+    border: 1px solid rgba(227, 194, 122, 0.35);
+    border-radius: 999px;
+    background: rgba(227, 194, 122, 0.08);
+  }
+  .intro::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 4px rgba(201, 149, 46, 0.25);
   }
   h1 {
     color: var(--white);

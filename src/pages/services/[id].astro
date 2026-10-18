@@ -1,120 +1,14 @@
 ---
-import Base from '../../layouts/Base.astro';
-import PageHead from '../../components/PageHead.astro';
-import Icon from '../../components/Icon.astro';
-import Photo from '../../components/Photo.astro';
-import CtaBand from '../../components/CtaBand.astro';
-import { getCollection, render } from 'astro:content';
-import { whatsappLink } from '../../data/site';
+import ServiceView from '../../views/ServiceView.astro';
+import { getCollection } from 'astro:content';
+import { byLang, entrySlug } from '../../i18n/utils';
 
 export async function getStaticPaths() {
-  const services = await getCollection('services');
-  return services.map((s) => ({ params: { id: s.id }, props: { service: s } }));
+  const entries = byLang(await getCollection('services'), 'en');
+  return entries.map((e) => ({ params: { id: entrySlug(e.id) }, props: { service: e } }));
 }
 
 const { service } = Astro.props;
-const { Content } = await render(service);
-const all = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
-const others = all.filter((s) => s.id !== service.id).slice(0, 4);
-const wa = whatsappLink(`Hello Kingmaker Enterprises, I want to discuss: ${service.data.title}.`);
 ---
 
-<Base title={service.data.title} description={service.data.summary}>
-  <PageHead
-    title={service.data.title}
-    marathi={service.data.marathi}
-    intro={service.data.summary}
-    crumbs={[
-      { label: 'Services', href: '/services/' },
-      { label: service.data.title, href: `/services/${service.id}/` },
-    ]}
-  />
-
-  <section class="section">
-    <div class="wrap layout">
-      <div>
-        <Photo name={service.data.photo} w={1000} h={480} class="cover" eager sizes="(max-width: 860px) 100vw, 60vw" />
-        <div class="prose">
-          <Content />
-        </div>
-      </div>
-      <aside>
-        <div class="box">
-          <h3>What you get</h3>
-          <ul class="check-list">
-            {service.data.deliverables.map((d) => <li>{d}</li>)}
-          </ul>
-        </div>
-        <div class="box">
-          <h3>Built for</h3>
-          <ul class="plain">
-            {service.data.forWhom.map((f) => <li>{f}</li>)}
-          </ul>
-        </div>
-        <a class="btn gold wide" href={wa} target="_blank" rel="noopener">
-          <Icon name="whatsapp" />
-          <span>Discuss this on WhatsApp</span>
-        </a>
-        <div class="box others">
-          <h3>Other services</h3>
-          <ul class="plain">
-            {others.map((o) => <li><a href={`/services/${o.id}/`}>{o.data.title}</a></li>)}
-          </ul>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <CtaBand />
-</Base>
-
-<style>
-  .layout {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: clamp(32px, 6vw, 80px);
-    align-items: start;
-  }
-  .cover {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1000 / 480;
-    object-fit: cover;
-    border-radius: 16px;
-    margin-bottom: 32px;
-  }
-  aside {
-    display: grid;
-    gap: 20px;
-    position: sticky;
-    top: 96px;
-  }
-  .box {
-    background: var(--paper);
-    border-radius: var(--r);
-    padding: 22px;
-  }
-  .box h3 {
-    font-size: 1.05rem;
-    margin-bottom: 12px;
-  }
-  .plain {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 8px;
-    color: var(--muted);
-  }
-  .wide {
-    justify-content: center;
-  }
-  @media (max-width: 860px) {
-    .layout {
-      grid-template-columns: 1fr;
-    }
-    aside {
-      position: static;
-    }
-  }
-</style>
+<ServiceView lang="en" service={service} />

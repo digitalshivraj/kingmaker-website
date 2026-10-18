@@ -2,7 +2,7 @@
 
 Website of Kingmaker Enterprises, Parbhani. Static site built with Astro, published free on GitHub Pages.
 
-- Pages: home, services (12), products (8) plus the full project list, government and GeM, about, blog, contact, privacy, terms.
+- Pages: home, services (12), products (8) plus the full project list, government and GeM, about, blog, contact, privacy, terms. Every page exists in English (default, at `/`) and Marathi (at `/mr/`), with a language switch in the header and hreflang links for search engines.
 - Content lives in `src/content/` (markdown) and `src/data/` (TypeScript). See `CONTENT_GUIDE.md` to add blog posts, services, products or projects.
 - Every push to `main` runs `.github/workflows/deploy.yml`, builds the site and publishes it to GitHub Pages at the custom domain in `public/CNAME`.
 

@@ -1,28 +1,29 @@
 ---
 import Icon from './Icon.astro';
 import { site, whatsappLink } from '../data/site';
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/utils';
 interface Props {
+  lang?: Lang;
   title?: string;
   text?: string;
   message?: string;
 }
-const {
-  title = 'Tell us what your office or business needs',
-  text = 'Send a message on WhatsApp or email. We reply within one working day, in Marathi or English, and set up a free demo link before you pay anything.',
-  message = 'Hello Kingmaker Enterprises, I want to discuss a project.',
-} = Astro.props;
+const { lang = 'en' } = Astro.props;
+const ui = t(lang);
+const { title = ui.cta.title, text = ui.cta.text, message = ui.cta.message } = Astro.props;
 ---
 
 <section class="band">
   <div class="wrap inner">
-    <div>
+    <div data-reveal>
       <h2>{title}</h2>
       <p>{text}</p>
     </div>
-    <div class="actions">
+    <div class="actions" data-reveal style="--rd: 0.1s">
       <a class="btn gold" href={whatsappLink(message)} target="_blank" rel="noopener">
         <Icon name="whatsapp" />
-        <span>WhatsApp {site.phoneDisplay}</span>
+        <span>{ui.cta.wa} {site.phoneDisplay}</span>
       </a>
       <a class="btn ghost-light" href={`mailto:${site.email}`}>
         <Icon name="mail" />
@@ -34,11 +35,26 @@ const {
 
 <style>
   .band {
+    position: relative;
     background: linear-gradient(120deg, var(--navy) 0%, var(--navy-3) 100%);
     color: var(--on-dark);
     padding-block: clamp(48px, 7vw, 80px);
+    overflow: hidden;
+  }
+  .band::after {
+    content: '';
+    position: absolute;
+    right: -120px;
+    top: -120px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201, 149, 46, 0.28), transparent 65%);
+    pointer-events: none;
   }
   .inner {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: 1.2fr 1fr;
     gap: 32px;

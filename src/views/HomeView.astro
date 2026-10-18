@@ -1,0 +1,816 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import Icon from '../components/Icon.astro';
+import PhotoMock from '../components/PhotoMock.astro';
+import Photo from '../components/Photo.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getCollection } from 'astro:content';
+import { site } from '../data/site';
+import { projects } from '../data/portfolio';
+import { t } from '../i18n/ui';
+import { localize, byLang, entrySlug, fmtDateShort, type Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const ui = t(lang);
+const L = (p: string) => localize(p, lang);
+
+const products = byLang(await getCollection('products'), lang).sort((a, b) => a.data.order - b.data.order);
+const featured = products.slice(0, 4);
+const services = byLang(await getCollection('services'), lang).sort((a, b) => a.data.order - b.data.order);
+const topServices = services.slice(0, 6);
+const moreServices = services.slice(6);
+
+const allPosts = await getCollection('blog');
+const byDate = (a: { data: { date: Date } }, b: { data: { date: Date } }) => b.data.date.valueOf() - a.data.date.valueOf();
+const ownPosts = byLang(allPosts, lang).sort(byDate);
+const enPosts = lang === 'mr' ? byLang(allPosts, 'en').sort(byDate).filter((p) => !ownPosts.some((o) => entrySlug(o.id) === entrySlug(p.id))) : [];
+const posts = [...ownPosts.map((p) => ({ p, en: false })), ...enPosts.map((p) => ({ p, en: true }))].slice(0, 3);
+
+const sectorIcons = ['shield', 'landmark', 'users', 'hospital', 'tractor', 'truck'];
+const stats = [
+  [String(projects.length), ui.stats[0][1]],
+  ['9', ui.stats[1][1]],
+  [String(site.since), ui.stats[2][1]],
+  ['2', ui.stats[3][1]],
+];
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: ui.faq.items.map(([q, a]) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+---
+
+<Base lang={lang} title={lang === 'mr' ? site.marathiName : site.name} description={ui.common.siteDesc}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  <Hero lang={lang} />
+
+  <section class="stats" aria-label="Key facts">
+    <div class="wrap">
+      <ul>
+        {
+          stats.map(([n, label], i) => (
+            <li data-reveal style={`--rd: ${i * 0.08}s`}>
+              <b>{n}</b>
+              <span>{label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section tight sectors">
+    <div class="wrap">
+      <p class="eyebrow">{ui.sectorsTitle}</p>
+      <ul>
+        {
+          ui.sectors.map(([name, note], i) => (
+            <li data-reveal style={`--rd: ${i * 0.06}s`}>
+              <span class="ic">
+                <Icon name={sectorIcons[i]} size={24} />
+              </span>
+              <b>{name}</b>
+              <span>{note}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section products">
+    <div class="wrap">
+      <div class="head" data-reveal>
+        <p class="eyebrow">{ui.products.eyebrow}</p>
+        <h2>{ui.products.h2}</h2>
+        <p>{ui.products.p}</p>
+      </div>
+      <div class="feature-list">
+        {
+          featured.map((p, i) => {
+            const href = L(`/products/${entrySlug(p.id)}/`);
+            return (
+              <article class:list={['feature', { flip: i % 2 === 1 }]} data-reveal>
+                <div class="text">
+                  <p class="marathi sector">{p.data.marathi}</p>
+                  <h3>
+                    <a href={href}>{p.data.title}</a>
+                  </h3>
+                  <p class="tag">{p.data.tagline}</p>
+                  <ul class="check-list">
+                    {p.data.highlights.slice(0, 3).map((h) => (
+                      <li>{h}</li>
+                    ))}
+                  </ul>
+                  <a class="more" href={href}>
+                    {ui.products.readAbout} {p.data.title}
+                    <Icon name="arrow" size={18} />
+                  </a>
+                </div>
+                <div class="visual">
+                  <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} />
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+      <div class="all">
+        <a class="btn navy" href={L('/products/')}>{ui.products.all(projects.length)}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section paper services">
+    <div class="wrap">
+      <div class="head" data-reveal>
+        <p class="eyebrow">{ui.services.eyebrow}</p>
+        <h2>{ui.services.h2}</h2>
+        <p>{ui.services.p}</p>
+      </div>
+      <ul class="service-grid">
+        {
+          topServices.map((s, i) => {
+            const href = L(`/services/${entrySlug(s.id)}/`);
+            return (
+              <li data-reveal style={`--rd: ${(i % 3) * 0.08}s`}>
+                <a class="card" href={href}>
+                  <span class="ph">
+                    <Photo name={s.data.photo} w={520} h={300} sizes="(max-width: 700px) 100vw, 33vw" />
+                    <span class="badge">
+                      <Icon name={s.data.icon} size={20} />
+                    </span>
+                  </span>
+                  <span class="body">
+                    <h3>{s.data.title}</h3>
+                    <p>{s.data.summary}</p>
+                    <span class="go">
+                      <Icon name="arrow" size={18} />
+                    </span>
+                  </span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+      <div class="more-services" data-reveal>
+        {moreServices.map((s) => <a href={L(`/services/${entrySlug(s.id)}/`)}>{s.data.title}</a>)}
+        <a class="btn ghost" href={L('/services/')}>{ui.services.all}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section process">
+    <div class="wrap grid2">
+      <div class="head" data-reveal>
+        <p class="eyebrow">{ui.process.eyebrow}</p>
+        <h2>{ui.process.h2}</h2>
+        <p>{ui.process.p}</p>
+      </div>
+      <ol class="steps">
+        {
+          ui.process.steps.map(([title, text], i) => (
+            <li data-reveal style={`--rd: ${i * 0.07}s`}>
+              <span class="n">{i + 1}</span>
+              <div>
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section ink why">
+    <Photo name="road" w={1600} h={700} class="why-bg" sizes="100vw" />
+    <div class="wrap why-wrap">
+      <div class="head" data-reveal>
+        <p class="eyebrow">{ui.why.eyebrow}</p>
+        <h2>{ui.why.h2}</h2>
+      </div>
+      <div class="why-grid">
+        {
+          ui.why.items.map(([title, text], i) => (
+            <div data-reveal style={`--rd: ${i * 0.08}s`}>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section faq">
+    <div class="wrap grid2">
+      <div class="head" data-reveal>
+        <p class="eyebrow">{ui.faq.eyebrow}</p>
+        <h2>{ui.faq.h2}</h2>
+      </div>
+      <div class="acc" data-reveal>
+        {
+          ui.faq.items.map(([q, a], i) => (
+            <details open={i === 0}>
+              <summary>
+                <span>{q}</span>
+                <i aria-hidden="true" />
+              </summary>
+              <p>{a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section tight gem">
+    <div class="wrap gem-inner" data-reveal>
+      <div>
+        <h2>{ui.gem.h2}</h2>
+        <p>{ui.gem.p}</p>
+      </div>
+      <a class="btn ghost" href={L('/government/')}>{ui.gem.btn}</a>
+    </div>
+  </section>
+
+  <section class="section blog">
+    <div class="wrap">
+      <div class="head" data-reveal>
+        <p class="eyebrow">{ui.blog.eyebrow}</p>
+        <h2>{ui.blog.h2}</h2>
+        <p>{ui.blog.p}</p>
+      </div>
+      <div class="post-grid">
+        {
+          posts.map(({ p, en }, i) => {
+            const href = localize(`/blog/${entrySlug(p.id)}/`, en ? 'en' : lang);
+            return (
+              <article data-reveal style={`--rd: ${i * 0.08}s`}>
+                <a href={href} class="cover" aria-hidden="true" tabindex="-1">
+                  <Photo name={p.data.cover} w={600} h={360} sizes="(max-width: 1000px) 50vw, 33vw" />
+                </a>
+                <div class="meta">
+                  <time datetime={p.data.date.toISOString()}>{fmtDateShort(p.data.date, lang)}</time>
+                  {en && <span class="en-badge">{ui.blog.inEnglish}</span>}
+                </div>
+                <h3>
+                  <a href={href} lang={en ? 'en' : undefined}>
+                    {p.data.title}
+                  </a>
+                </h3>
+                <p lang={en ? 'en' : undefined}>{p.data.description}</p>
+              </article>
+            );
+          })
+        }
+      </div>
+      <div class="all">
+        <a class="btn ghost" href={L('/blog/')}>{ui.blog.all}</a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} />
+</Base>
+
+<style>
+  .stats {
+    background: linear-gradient(90deg, var(--navy) 0%, var(--navy-2) 100%);
+    color: var(--on-dark);
+    border-top: 1px solid var(--line-dark);
+  }
+  .stats ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .stats li {
+    display: grid;
+    gap: 2px;
+    padding: 26px 24px;
+    border-left: 1px solid var(--line-dark);
+  }
+  .stats li:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .stats b {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    line-height: 1;
+    color: var(--gold-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .stats span {
+    font-size: 0.92rem;
+    color: var(--on-dark-muted);
+  }
+
+  .sectors {
+    border-bottom: 1px solid var(--line);
+  }
+  .sectors ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+  .sectors li {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    font-size: 0.9rem;
+    color: var(--muted);
+    padding: 18px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  }
+  .sectors li:hover {
+    border-color: rgba(201, 149, 46, 0.5);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+  .sectors .ic {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--paper);
+    color: var(--gold-3);
+    display: grid;
+    place-items: center;
+    margin-bottom: 6px;
+  }
+  .sectors b {
+    color: var(--navy);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+  html[lang='mr'] .sectors b {
+    font-family: var(--font-body);
+    font-weight: 700;
+  }
+
+  .feature-list {
+    display: grid;
+    gap: clamp(48px, 7vw, 88px);
+  }
+  .feature {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+  }
+  .feature.flip .text {
+    order: 2;
+  }
+  .sector {
+    color: var(--gold-3);
+    margin-bottom: 6px;
+  }
+  .feature h3 {
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+  }
+  .feature h3 a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .feature h3 a:hover {
+    color: var(--gold-3);
+  }
+  .tag {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+  html[lang='mr'] .more {
+    font-family: var(--font-body);
+    font-weight: 700;
+  }
+  .more svg {
+    transition: transform 0.2s;
+  }
+  .more:hover svg {
+    transform: translateX(4px);
+  }
+  .all {
+    margin-top: clamp(40px, 6vw, 64px);
+    text-align: center;
+  }
+
+  .service-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .card {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+  }
+  .card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-4px);
+    border-color: rgba(201, 149, 46, 0.5);
+    color: inherit;
+  }
+  .card .ph {
+    position: relative;
+    display: block;
+  }
+  .card .ph img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 520 / 300;
+    object-fit: cover;
+    display: block;
+  }
+  .badge {
+    position: absolute;
+    left: 18px;
+    bottom: -20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--navy);
+    color: var(--gold-2);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 8px 20px -8px rgba(10, 24, 48, 0.6);
+  }
+  .card .body {
+    display: grid;
+    gap: 8px;
+    padding: 32px 20px 20px;
+    position: relative;
+  }
+  .card h3 {
+    font-size: 1.12rem;
+    margin: 0;
+  }
+  .card p {
+    color: var(--muted);
+    font-size: 0.96rem;
+    margin: 0;
+  }
+  .card .go {
+    margin-top: 6px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1.5px solid var(--navy);
+    color: var(--navy);
+    display: grid;
+    place-items: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .card:hover .go {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .more-services {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+  .more-services a:not(.btn) {
+    font-size: 0.92rem;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .more-services a:not(.btn):hover {
+    border-color: var(--gold);
+    color: var(--gold-3);
+  }
+  .more-services .btn {
+    margin-left: auto;
+  }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 22px;
+  }
+  .steps li {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 18px;
+  }
+  .n {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold-2);
+    font-family: var(--font-display);
+    font-weight: 600;
+    display: grid;
+    place-items: center;
+  }
+  .steps h3 {
+    font-size: 1.15rem;
+    margin-bottom: 4px;
+    padding-top: 8px;
+  }
+  .steps p {
+    color: var(--muted);
+  }
+
+  .why {
+    position: relative;
+    overflow: hidden;
+  }
+  .why-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.35;
+    filter: saturate(0.7);
+  }
+  .why::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--ink) 0%, rgba(10, 24, 48, 0.72) 55%, rgba(10, 24, 48, 0.35) 100%);
+  }
+  .why-wrap {
+    position: relative;
+    z-index: 1;
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .why-grid > div {
+    padding: 22px;
+    border-radius: var(--r);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .why-grid h3 {
+    font-size: 1.12rem;
+    padding-top: 14px;
+    border-top: 2px solid var(--gold);
+  }
+
+  .acc {
+    display: grid;
+    gap: 10px;
+  }
+  .acc details {
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--white);
+    overflow: hidden;
+  }
+  .acc details[open] {
+    border-color: rgba(201, 149, 46, 0.5);
+    box-shadow: var(--shadow);
+  }
+  .acc summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 1.02rem;
+  }
+  html[lang='mr'] .acc summary {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1.08rem;
+  }
+  .acc summary::-webkit-details-marker {
+    display: none;
+  }
+  .acc summary i {
+    margin-left: auto;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--navy);
+    position: relative;
+    transition: transform 0.25s, background 0.2s;
+  }
+  .acc summary i::before,
+  .acc summary i::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 2px;
+    background: var(--navy);
+    transform: translate(-50%, -50%);
+  }
+  .acc summary i::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+  .acc details[open] summary i {
+    transform: rotate(45deg);
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .acc details[open] summary i::before,
+  .acc details[open] summary i::after {
+    background: var(--ink);
+  }
+  .acc details p {
+    padding: 0 20px 18px;
+    color: var(--muted);
+    max-width: 68ch;
+  }
+
+  .gem {
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .gem-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 32px;
+    align-items: center;
+  }
+  .gem h2 {
+    font-size: 1.5rem;
+  }
+  .gem p {
+    color: var(--muted);
+    max-width: 70ch;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .post-grid article {
+    display: grid;
+    align-content: start;
+  }
+  .post-grid .cover {
+    display: block;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .post-grid .cover img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 600 / 360;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .post-grid article:hover .cover img {
+    transform: scale(1.03);
+  }
+  .post-grid .meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .en-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--paper-2);
+    color: var(--navy);
+  }
+  .post-grid h3 {
+    font-size: 1.2rem;
+    margin: 8px 0;
+  }
+  .post-grid h3 a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .post-grid h3 a:hover {
+    color: var(--gold-3);
+  }
+  .post-grid p {
+    color: var(--muted);
+    font-size: 0.98rem;
+  }
+
+  @media (max-width: 1000px) {
+    .sectors ul {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .service-grid,
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .why-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 760px) {
+    .stats ul {
+      grid-template-columns: 1fr 1fr;
+    }
+    .stats li {
+      padding: 18px 16px;
+    }
+    .stats li:nth-child(odd) {
+      border-left: 0;
+      padding-left: 0;
+    }
+    .feature,
+    .feature.flip {
+      grid-template-columns: 1fr;
+    }
+    .feature.flip .text {
+      order: 0;
+    }
+    .grid2,
+    .gem-inner {
+      grid-template-columns: 1fr;
+    }
+    .more-services .btn {
+      margin-left: 0;
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  @media (max-width: 560px) {
+    .sectors ul {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .sectors li {
+      padding: 14px 12px;
+    }
+    .service-grid,
+    .post-grid,
+    .why-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

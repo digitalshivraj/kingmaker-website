@@ -21,12 +21,3 @@ export const site = {
 export function whatsappLink(message: string) {
   return `${site.whatsapp}?text=${encodeURIComponent(message)}`;
 }
-
-export const nav = [
-  { label: 'Services', href: '/services/' },
-  { label: 'Products', href: '/products/' },
-  { label: 'Government', href: '/government/' },
-  { label: 'About', href: '/about/' },
-  { label: 'Blog', href: '/blog/' },
-  { label: 'Contact', href: '/contact/' },
-];

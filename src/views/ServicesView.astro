@@ -1,0 +1,231 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getCollection } from 'astro:content';
+import { canBuild } from '../data/portfolio';
+import { t } from '../i18n/ui';
+import { localize, byLang, entrySlug, type Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const ui = t(lang);
+const L = (p: string) => localize(p, lang);
+const services = byLang(await getCollection('services'), lang).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base lang={lang} title={ui.servicesPage.title} description={ui.servicesPage.desc}>
+  <PageHead
+    lang={lang}
+    title={ui.servicesPage.title}
+    marathi={ui.servicesPage.sub}
+    intro={ui.servicesPage.intro}
+    crumbs={[{ label: ui.nav.services, href: L('/services/') }]}
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <div class="list">
+        {
+          services.map((s, i) => {
+            const href = L(`/services/${entrySlug(s.id)}/`);
+            return (
+              <article class="svc" data-reveal style={`--rd: ${(i % 2) * 0.06}s`}>
+                <a class="ic" href={href} aria-hidden="true" tabindex="-1">
+                  <Photo name={s.data.photo} w={360} h={270} sizes="200px" />
+                  <span class="badge">
+                    <Icon name={s.data.icon} size={18} />
+                  </span>
+                </a>
+                <div class="body">
+                  <p class="marathi sub">{s.data.marathi}</p>
+                  <h2>
+                    <a href={href}>{s.data.title}</a>
+                  </h2>
+                  <p>{s.data.summary}</p>
+                  <ul class="for">
+                    {s.data.forWhom.map((f) => (
+                      <li>{f}</li>
+                    ))}
+                  </ul>
+                </div>
+                <a class="go" href={href} aria-label={ui.servicesPage.readMore(s.data.title)}>
+                  <Icon name="arrow" size={22} />
+                </a>
+              </article>
+            );
+          })
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section paper">
+    <div class="wrap">
+      <div class="head" data-reveal>
+        <h2>{ui.servicesPage.moreH2}</h2>
+        <p>{ui.servicesPage.moreP}</p>
+      </div>
+      <ul class="can">
+        {
+          canBuild[lang].map((c, i) => (
+            <li data-reveal style={`--rd: ${(i % 3) * 0.06}s`}>
+              <b>{c.name}</b>
+              <span>{c.note}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} title={ui.servicesPage.ctaTitle} text={ui.servicesPage.ctaText} />
+</Base>
+
+<style>
+  .list {
+    display: grid;
+    gap: 0;
+  }
+  .svc {
+    display: grid;
+    grid-template-columns: 200px 1fr 48px;
+    gap: 24px;
+    align-items: start;
+    padding: 32px 0;
+    border-top: 1px solid var(--line);
+  }
+  .svc:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .ic {
+    position: relative;
+    display: block;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--paper);
+  }
+  .ic img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+  }
+  .svc:hover .ic img {
+    transform: scale(1.04);
+  }
+  .badge {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--navy);
+    color: var(--gold-2);
+    display: grid;
+    place-items: center;
+  }
+  .sub {
+    color: var(--gold-3);
+    margin-bottom: 2px;
+    font-size: 0.95rem;
+  }
+  .svc h2 {
+    font-size: 1.45rem;
+    margin-bottom: 6px;
+  }
+  .svc h2 a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .svc h2 a:hover {
+    color: var(--gold-3);
+  }
+  .svc p {
+    color: var(--muted);
+    max-width: 70ch;
+  }
+  .for {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .for li {
+    font-size: 0.85rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--paper-2);
+    color: var(--navy);
+  }
+  .go {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--navy);
+    display: grid;
+    place-items: center;
+    color: var(--navy);
+    margin-top: 8px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .go:hover {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .can {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .can li {
+    display: grid;
+    gap: 4px;
+    padding: 18px 20px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+  }
+  .can b {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--navy);
+  }
+  html[lang='mr'] .can b {
+    font-family: var(--font-body);
+    font-weight: 700;
+  }
+  .can span {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  @media (max-width: 800px) {
+    .svc {
+      grid-template-columns: 120px 1fr;
+      gap: 16px;
+    }
+    .go {
+      display: none;
+    }
+    .can {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 520px) {
+    .can {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

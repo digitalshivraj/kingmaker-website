@@ -2,21 +2,47 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { site } from '../data/site';
+import Icon from '../components/Icon.astro';
+import { site, whatsappLink } from '../data/site';
+import { t } from '../i18n/ui';
+import { localize, stripLang, otherLang, ogLocale, type Lang } from '../i18n/utils';
 
 interface Props {
+  lang?: Lang;
   title: string;
   description: string;
   type?: 'website' | 'article';
   publishedTime?: string;
   image?: string;
   noindex?: boolean;
+  /** Path of the same page in the other language. Defaults to the mirrored path. */
+  altPath?: string;
+  /** False when the other language has no version of this page (hreflang is then omitted). */
+  hasAlt?: boolean;
 }
 
-const { title, description, type = 'website', publishedTime, image = '/og.png', noindex = false } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
-const fullTitle = title === site.name ? `${site.name}: software for government, healthcare and business in Maharashtra` : `${title} | ${site.name}`;
+const {
+  lang = 'en',
+  title,
+  description,
+  type = 'website',
+  publishedTime,
+  image = '/og.png',
+  noindex = false,
+  hasAlt = true,
+} = Astro.props;
+const ui = t(lang);
+const path = Astro.url.pathname;
+const base = stripLang(path);
+const other = otherLang(lang);
+const altPath = Astro.props.altPath ?? localize(base, other);
+
+const canonical = new URL(path, Astro.site);
+const siteName = lang === 'mr' ? site.marathiName : site.name;
+const fullTitle = title === site.name || title === site.marathiName ? `${siteName}: ${ui.common.tagline}` : `${title} | ${siteName}`;
 const ogImage = new URL(image, Astro.site);
+const enUrl = new URL(localize(base, 'en'), Astro.site);
+const mrUrl = new URL(localize(base, 'mr'), Astro.site);
 
 const org = {
   '@context': 'https://schema.org',
@@ -47,25 +73,35 @@ const org = {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang} class="js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {
+      hasAlt && (
+        <>
+          <link rel="alternate" hreflang="en" href={enUrl} />
+          <link rel="alternate" hreflang="mr" href={mrUrl} />
+          <link rel="alternate" hreflang="x-default" href={enUrl} />
+        </>
+      )
+    }
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta name="theme-color" content="#0f2747" />
+    <meta name="theme-color" content="#0a1830" />
     {noindex && <meta name="robots" content="noindex" />}
     <meta property="og:type" content={type} />
-    <meta property="og:site_name" content={site.name} />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:locale" content="en_IN" />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    {hasAlt && <meta property="og:locale:alternate" content={ogLocale[other]} />}
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
@@ -75,12 +111,15 @@ const org = {
     <slot name="head" />
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
-    <Header />
+    <a class="skip" href="#main">{ui.nav.skip}</a>
+    <Header lang={lang} altPath={altPath} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
+    <a class="float-wa" href={whatsappLink(ui.hero.waMessage)} target="_blank" rel="noopener" aria-label={ui.nav.floatWa} title={ui.nav.floatWa}>
+      <Icon name="whatsapp" size={28} />
+    </a>
     <style>
       .skip {
         position: absolute;
@@ -97,5 +136,43 @@ const org = {
         top: 12px;
       }
     </style>
+    <script>
+      const els = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !('IntersectionObserver' in window)) {
+        els.forEach((el) => el.classList.add('is-in'));
+      } else {
+        const pending = new Set(els);
+        const show = (el: HTMLElement) => {
+          el.classList.add('is-in');
+          pending.delete(el);
+          io.unobserve(el);
+        };
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((e) => e.isIntersecting && show(e.target as HTMLElement)),
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        els.forEach((el) => io.observe(el));
+        // Safety net for fast or programmatic scrolling: anything already scrolled past is shown.
+        let ticking = false;
+        const sweep = () => {
+          ticking = false;
+          const limit = window.innerHeight * 0.95;
+          pending.forEach((el) => {
+            if (el.getBoundingClientRect().top < limit) show(el);
+          });
+        };
+        window.addEventListener(
+          'scroll',
+          () => {
+            if (!ticking && pending.size) {
+              ticking = true;
+              requestAnimationFrame(sweep);
+            }
+          },
+          { passive: true },
+        );
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,155 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Photo from '../components/Photo.astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { site } from '../data/site';
+import { t } from '../i18n/ui';
+import { localize, byLang, entrySlug, fmtDate, otherLang, type Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  post: CollectionEntry<'blog'>;
+}
+const { lang, post } = Astro.props;
+const ui = t(lang);
+const L = (p: string) => localize(p, lang);
+const { Content } = await render(post);
+const all = await getCollection('blog');
+const slug = entrySlug(post.id);
+const other = otherLang(lang);
+const hasAlt = all.some((p) => p.id === `${other}/${slug}`);
+const altPath = hasAlt ? localize(`/blog/${slug}/`, other) : localize('/blog/', other);
+const more = byLang(all, lang)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .filter((p) => p.id !== post.id)
+  .slice(0, 3);
+
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  inLanguage: lang,
+  author: { '@type': 'Organization', name: post.data.author },
+  publisher: { '@type': 'Organization', name: site.name, url: site.url },
+  mainEntityOfPage: new URL(L(`/blog/${slug}/`), site.url).toString(),
+};
+---
+
+<Base lang={lang} title={post.data.title} description={post.data.description} type="article" publishedTime={post.data.date.toISOString()} hasAlt={hasAlt} altPath={altPath}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(article)} />
+  <PageHead
+    lang={lang}
+    title={post.data.title}
+    intro={post.data.description}
+    crumbs={[
+      { label: ui.nav.blog, href: L('/blog/') },
+      { label: post.data.title, href: L(`/blog/${slug}/`) },
+    ]}
+  >
+    <p class="meta">
+      <time datetime={post.data.date.toISOString()}>{fmtDate(post.data.date, lang)}</time>
+      <span>{post.data.readingMinutes} {ui.blog.minRead}</span>
+      <span>{post.data.author}</span>
+    </p>
+  </PageHead>
+
+  <section class="section">
+    <div class="wrap">
+      <Photo name={post.data.cover} w={1200} h={560} class="cover" eager sizes="(max-width: 1180px) 100vw, 1180px" />
+      <div class="prose">
+        <Content />
+      </div>
+      <div class="tags">
+        {post.data.tags.map((tg) => <span>{tg}</span>)}
+      </div>
+    </div>
+  </section>
+
+  {
+    more.length > 0 && (
+      <section class="section paper">
+        <div class="wrap">
+          <h2>{ui.blog.more}</h2>
+          <ul class="more">
+            {more.map((p) => (
+              <li>
+                <time datetime={p.data.date.toISOString()}>{fmtDate(p.data.date, lang)}</time>
+                <a href={L(`/blog/${entrySlug(p.id)}/`)}>{p.data.title}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand lang={lang} />
+</Base>
+
+<style>
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+    color: var(--on-dark-muted);
+    font-size: 0.92rem;
+  }
+  .cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1200 / 560;
+    object-fit: cover;
+    border-radius: 18px;
+    margin-bottom: 40px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 40px;
+    max-width: 72ch;
+  }
+  .tags span {
+    font-size: 0.85rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--paper-2);
+    color: var(--navy);
+  }
+  .more {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .more li {
+    display: grid;
+    gap: 2px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .more time {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .more a {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--navy);
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+  html[lang='mr'] .more a {
+    font-family: var(--font-body);
+    font-weight: 700;
+  }
+  .more a:hover {
+    color: var(--gold-3);
+  }
+</style>

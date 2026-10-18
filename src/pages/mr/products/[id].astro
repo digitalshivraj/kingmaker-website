@@ -1,0 +1,14 @@
+---
+import ProductView from '../../../views/ProductView.astro';
+import { getCollection } from 'astro:content';
+import { byLang, entrySlug } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const entries = byLang(await getCollection('products'), 'mr');
+  return entries.map((e) => ({ params: { id: entrySlug(e.id) }, props: { product: e } }));
+}
+
+const { product } = Astro.props;
+---
+
+<ProductView lang="mr" product={product} />

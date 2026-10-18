@@ -1,21 +1,33 @@
 ---
 import Icon from './Icon.astro';
-import { site, nav, whatsappLink } from '../data/site';
-const path = Astro.url.pathname;
-const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a software project.');
+import { site, whatsappLink } from '../data/site';
+import { t, navLinks } from '../i18n/ui';
+import { localize, stripLang, type Lang } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  altPath: string;
+}
+const { lang, altPath } = Astro.props;
+const ui = t(lang);
+const base = stripLang(Astro.url.pathname);
+const links = navLinks(lang);
+const wa = whatsappLink(ui.hero.waMessage);
+const enHref = lang === 'en' ? Astro.url.pathname : altPath;
+const mrHref = lang === 'mr' ? Astro.url.pathname : altPath;
 ---
 
 <header class="site-header">
   <div class="wrap bar">
-    <a class="brand" href="/" aria-label="Kingmaker Enterprises home">
+    <a class="brand" href={localize('/', lang)} aria-label={`${site.name} ${ui.nav.home}`}>
       <img src="/logo-white.svg" alt="Kingmaker Enterprises" width="204" height="65" />
     </a>
     <nav class="primary" aria-label="Main">
       <ul>
         {
-          nav.map((item) => (
+          links.map((item) => (
             <li>
-              <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
+              <a href={item.href} aria-current={base.startsWith(item.key) ? 'page' : undefined}>
                 {item.label}
               </a>
             </li>
@@ -23,49 +35,73 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
         }
       </ul>
     </nav>
+    <div class="lang" role="group" aria-label={ui.nav.langGroup}>
+      <a href={enHref} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined}>{ui.nav.langEn}</a>
+      <a href={mrHref} hreflang="mr" lang="mr" aria-current={lang === 'mr' ? 'true' : undefined}>{ui.nav.langMr}</a>
+    </div>
     <a class="btn gold cta" href={wa} target="_blank" rel="noopener">
       <Icon name="whatsapp" size={20} />
-      <span>WhatsApp</span>
+      <span>{ui.nav.whatsapp}</span>
     </a>
-    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label={ui.nav.openMenu} data-open={ui.nav.openMenu} data-close={ui.nav.closeMenu}>
       <Icon name="menu" size={26} />
     </button>
   </div>
-  <nav id="mobile-nav" class="mobile" aria-label="Main (mobile)" hidden>
-    <ul>
-      {
-        nav.map((item) => (
-          <li>
-            <a href={item.href}>{item.label}</a>
-          </li>
-        ))
-      }
-      <li class="contact-line">
-        <a href={wa} target="_blank" rel="noopener">WhatsApp {site.phoneDisplay}</a>
-      </li>
-      <li class="contact-line">
-        <a href={`mailto:${site.email}`}>{site.email}</a>
-      </li>
-    </ul>
-  </nav>
 </header>
+
+<div class="drawer-bg" hidden></div>
+<nav id="mobile-nav" class="drawer" aria-label="Main (mobile)" hidden>
+  <div class="drawer-top">
+    <img src="/mark.svg" alt="" width="36" height="36" />
+    <span>{lang === 'mr' ? site.marathiName : site.name}</span>
+    <button class="close-btn" type="button" aria-label={ui.nav.closeMenu}>
+      <Icon name="close" size={24} />
+    </button>
+  </div>
+  <ul>
+    <li><a href={localize('/', lang)}>{ui.nav.home}</a></li>
+    {
+      links.map((item) => (
+        <li>
+          <a href={item.href} aria-current={base.startsWith(item.key) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="drawer-lang" role="group" aria-label={ui.nav.langGroup}>
+    <a href={enHref} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined}>{ui.nav.langEn}</a>
+    <a href={mrHref} hreflang="mr" lang="mr" aria-current={lang === 'mr' ? 'true' : undefined}>{ui.nav.langMr}</a>
+  </div>
+  <div class="drawer-contact">
+    <a class="btn gold" href={wa} target="_blank" rel="noopener">
+      <Icon name="whatsapp" />
+      <span>{ui.nav.whatsapp} {site.phoneDisplay}</span>
+    </a>
+    <a href={`mailto:${site.email}`}>{site.email}</a>
+  </div>
+</nav>
+
 
 <style>
   .site-header {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: var(--ink);
+    background: rgba(10, 24, 48, 0.86);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    backdrop-filter: saturate(160%) blur(14px);
     border-bottom: 1px solid var(--line-dark);
   }
   .bar {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 18px;
     height: 76px;
   }
   .brand img {
-    height: 50px;
+    height: 48px;
     width: auto;
   }
   .primary {
@@ -73,20 +109,27 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
   }
   .primary ul {
     display: flex;
-    gap: 4px;
+    gap: 2px;
     list-style: none;
     margin: 0;
     padding: 0;
   }
   .primary a {
+    position: relative;
     display: block;
-    padding: 10px 14px;
+    padding: 10px 13px;
     color: var(--on-dark);
     text-decoration: none;
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 0.93rem;
     border-radius: 8px;
+    transition: color 0.15s, background 0.15s;
+  }
+  html[lang='mr'] .primary a {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1rem;
   }
   .primary a:hover {
     background: rgba(255, 255, 255, 0.08);
@@ -95,31 +138,120 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
   .primary a[aria-current='page'] {
     color: var(--gold-2);
   }
+  .primary a[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: 13px;
+    right: 13px;
+    bottom: 5px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gold);
+  }
+
+  .lang,
+  .drawer-lang {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .lang a,
+  .drawer-lang a {
+    padding: 5px 12px;
+    border-radius: 999px;
+    color: var(--on-dark-muted);
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.4;
+    transition: background 0.15s, color 0.15s;
+  }
+  .lang a[lang='mr'],
+  .drawer-lang a[lang='mr'] {
+    font-family: var(--font-body);
+  }
+  .lang a:hover,
+  .drawer-lang a:hover {
+    color: var(--white);
+  }
+  .lang a[aria-current='true'],
+  .drawer-lang a[aria-current='true'] {
+    background: var(--gold);
+    color: var(--ink);
+  }
+
   .cta {
     min-height: 42px;
     padding: 6px 18px;
   }
-  .menu-btn {
+  .menu-btn,
+  .close-btn {
     display: none;
     background: none;
     border: 0;
     color: var(--white);
     padding: 8px;
-    margin-left: auto;
     cursor: pointer;
+    border-radius: 8px;
   }
-  .mobile {
+  .menu-btn {
+    margin-left: auto;
+  }
+
+  .drawer-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 12, 26, 0.55);
+    z-index: 55;
+    animation: fade 0.2s both;
+  }
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(360px, 88vw);
     background: var(--navy);
-    border-top: 1px solid var(--line-dark);
+    z-index: 56;
+    display: flex;
+    flex-direction: column;
+    padding: 14px 22px 28px;
+    overflow-y: auto;
+    box-shadow: -20px 0 60px -20px rgba(0, 0, 0, 0.6);
+    animation: slide 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
-  .mobile ul {
+  .drawer[hidden],
+  .drawer-bg[hidden] {
+    display: none;
+  }
+  .drawer-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--white);
+    font-family: var(--font-display);
+    font-weight: 600;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line-dark);
+  }
+  html[lang='mr'] .drawer-top {
+    font-family: var(--font-body);
+    font-weight: 700;
+  }
+  .drawer-top .close-btn {
+    display: inline-flex;
+    margin-left: auto;
+  }
+  .drawer ul {
     list-style: none;
     margin: 0;
-    padding: 8px var(--gutter) 16px;
+    padding: 6px 0 14px;
   }
-  .mobile a {
+  .drawer ul a {
     display: block;
-    padding: 14px 4px;
+    padding: 13px 4px;
     color: var(--white);
     text-decoration: none;
     font-family: var(--font-display);
@@ -127,26 +259,88 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
     font-size: 1.1rem;
     border-bottom: 1px solid var(--line-dark);
   }
-  .contact-line a {
+  html[lang='mr'] .drawer ul a {
     font-family: var(--font-body);
-    font-size: 1rem;
+    font-weight: 600;
+  }
+  .drawer ul a[aria-current='page'] {
     color: var(--gold-2);
-    border-bottom: 0;
-    padding: 10px 4px;
+  }
+  .drawer-lang {
+    align-self: flex-start;
+    margin: 4px 0 20px;
+  }
+  .drawer-lang a {
+    font-size: 0.95rem;
+    padding: 7px 16px;
+  }
+  .drawer-contact {
+    margin-top: auto;
+    display: grid;
+    gap: 14px;
+  }
+  .drawer-contact .btn {
+    justify-content: center;
+  }
+  .drawer-contact > a:not(.btn) {
+    color: var(--gold-2);
+    text-decoration: none;
+    text-align: center;
+  }
+
+  @keyframes slide {
+    from {
+      transform: translateX(40px);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 1060px) {
+    .primary a {
+      padding: 10px 10px;
+      font-size: 0.9rem;
+    }
+    .cta span {
+      display: none;
+    }
+    .cta {
+      padding: 6px 12px;
+    }
   }
   @media (max-width: 900px) {
     .primary,
     .cta {
       display: none;
     }
+    .lang {
+      margin-left: auto;
+    }
+    .lang a {
+      padding: 4px 10px;
+      font-size: 0.8rem;
+    }
     .menu-btn {
       display: inline-flex;
+      margin-left: 0;
     }
     .bar {
       height: 66px;
+      gap: 10px;
     }
     .brand img {
-      height: 42px;
+      height: 40px;
     }
   }
 </style>
@@ -154,10 +348,24 @@ const wa = whatsappLink('Hello Kingmaker Enterprises, I want to discuss a softwa
 <script>
   const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
   const panel = document.getElementById('mobile-nav');
-  btn?.addEventListener('click', () => {
-    const open = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', String(!open));
-    btn.setAttribute('aria-label', open ? 'Open menu' : 'Close menu');
-    if (panel) panel.hidden = open;
+  const bg = document.querySelector<HTMLElement>('.drawer-bg');
+  const closeBtn = document.querySelector<HTMLButtonElement>('.close-btn');
+
+  function setOpen(open: boolean) {
+    if (!btn || !panel || !bg) return;
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? btn.dataset.close || 'Close menu' : btn.dataset.open || 'Open menu');
+    panel.hidden = !open;
+    bg.hidden = !open;
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+    if (open) closeBtn?.focus();
+    else btn.focus();
+  }
+
+  btn?.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+  closeBtn?.addEventListener('click', () => setOpen(false));
+  bg?.addEventListener('click', () => setOpen(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel && !panel.hidden) setOpen(false);
   });
 </script>
