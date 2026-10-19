@@ -11,6 +11,9 @@ export const site = {
   whatsapp: 'https://wa.me/919975158770',
   address: 'Parbhani (registered office) and Pune, Maharashtra',
   addressMarathi: 'परभणी (नोंदणीकृत कार्यालय) आणि पुणे, महाराष्ट्र',
+  // exactly as on the GST certificate (Meta business verification matches the website against it)
+  registeredOffice: 'Ground Floor, House No. 16, Near Zilla Parishad School, Chatori, Adgaon, Taluka Palam, District Parbhani, Maharashtra 431536',
+  registeredOfficeMarathi: 'तळमजला, घर क्र. 16, जिल्हा परिषद शाळेजवळ, चाटोरी, आडगाव, ता. पालम, जि. परभणी, महाराष्ट्र 431536',
   udyam: 'UDYAM-MH-25-0009665',
   gstin: '27CIBPB3085M3Z4',
   shopAct: '2642000321593482',
