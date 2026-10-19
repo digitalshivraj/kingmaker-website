@@ -66,6 +66,7 @@ const year = new Date().getFullYear();
   <div class="wrap legal">
     <span>{ui.footer.copyright(year)}</span>
     <span>{ui.footer.place}</span>
+    <span class="dev">{ui.footer.devdoot}</span>
   </div>
 </footer>
 
@@ -140,6 +141,11 @@ const year = new Date().getFullYear();
     flex-wrap: wrap;
     padding-block: 20px 28px;
     font-size: 0.88rem;
+  }
+  .legal .dev {
+    flex-basis: 100%;
+    color: var(--on-dark-muted);
+    font-size: 0.84rem;
   }
   @media (max-width: 960px) {
     .grid {

@@ -1,6 +1,6 @@
 ---
-title: Devdoot
-marathi: देवदूत
+title: Devdoot Care
+marathi: देवदूत केअर
 tagline: Book a doctor, get a token, wait at home
 sector: Healthcare
 photo: phoneWoman
@@ -19,9 +19,11 @@ users:
   - Polyclinics with several consulting rooms
 ---
 
+Devdoot Care is a healthcare platform owned and operated by Kingmaker Enterprises. It is marketed under its own name, with its own website at devdootcare.in, and all patient and clinic communication on WhatsApp is sent from the Devdoot Care business account.
+
 ## A bus-ticket experience for the doctor's clinic
 
-Booking a bus seat takes a minute on a phone. Seeing a doctor still means arriving early, taking a paper token and waiting for hours. Devdoot brings the first experience to the second.
+Booking a bus seat takes a minute on a phone. Seeing a doctor still means arriving early, taking a paper token and waiting for hours. Devdoot Care brings the first experience to the second.
 
 ## For patients
 
@@ -36,4 +38,4 @@ Open the link, choose a doctor, pick a slot, get a token. The screen shows the n
 
 ## Where it is today
 
-Devdoot is in testing with a small group of doctors. The platform is free during this phase, with payments to be added later.
+Devdoot Care is in testing with a small group of doctors. The platform is free during this phase, with payments to be added later.

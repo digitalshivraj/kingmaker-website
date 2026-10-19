@@ -113,8 +113,8 @@ export const projects: Project[] = [
     product: 'hospital-management-system',
   },
   {
-    name: 'Devdoot',
-    marathi: 'देवदूत',
+    name: 'Devdoot Care',
+    marathi: 'देवदूत केअर',
     sector: 'Healthcare',
     summary: 'Doctor booking and patient waiting-queue platform: patients book OPD tokens from their phone, clinics manage the queue, WhatsApp updates built in.',
     summaryMr: 'डॉक्टर बुकिंग आणि रुग्ण रांग प्लॅटफॉर्म: रुग्ण फोनवरून OPD टोकन घेतात, क्लिनिक रांग सांभाळते, व्हॉट्सॲप अपडेट आतच.',

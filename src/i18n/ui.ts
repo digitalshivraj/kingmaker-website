@@ -138,6 +138,7 @@ const en = {
     copyright: (y: number) => `Copyright ${y} Kingmaker Enterprises. All rights reserved.`,
     place: 'Parbhani and Pune, Maharashtra, India',
     waLabel: '(WhatsApp)',
+    devdoot: 'Devdoot Care, our patient booking and queue platform, is owned and operated by Kingmaker Enterprises.',
   },
   common: {
     hours: 'Monday to Saturday, 10 am to 7 pm',
@@ -468,6 +469,7 @@ const mr: Dict = {
     copyright: (y: number) => `कॉपीराइट ${y} किंगमेकर एंटरप्रायझेस. सर्व हक्क राखीव.`,
     place: 'परभणी आणि पुणे, महाराष्ट्र, भारत',
     waLabel: '(व्हॉट्सॲप)',
+    devdoot: 'देवदूत केअर (Devdoot Care) हा रुग्ण बुकिंग आणि रांग प्लॅटफॉर्म किंगमेकर एंटरप्रायझेसच्या मालकीचा आहे आणि किंगमेकर एंटरप्रायझेसच तो चालवते.',
   },
   common: {
     hours: 'सोमवार ते शनिवार, सकाळी 10 ते सायंकाळी 7',
