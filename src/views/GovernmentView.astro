@@ -158,8 +158,12 @@ const catIcons = ['code', 'mobile', 'file', 'spark', 'whatsapp', 'globe', 'users
   .subnav {
     position: sticky;
     top: calc(var(--head-h) + 18px);
+    transition: top 0.45s var(--ease);
     z-index: 20;
     margin-top: 24px;
+  }
+  :global(html.head-away) .subnav {
+    top: 12px;
   }
   .subnav .wrap {
     display: flex;

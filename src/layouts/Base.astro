@@ -234,6 +234,9 @@ const webpage = {
       }
     </script>
     <script>
+      import '../scripts/motion';
+    </script>
+    <script>
       // Carousels: arrows, dots and active slide for every [data-carousel]
       document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
         const track = root.querySelector<HTMLElement>('.track');
