@@ -2,7 +2,7 @@
 title: "Lead firewall: stop paying for leads that never answer the phone"
 description: "Junk leads from Meta and Google form ads waste sales time. See the checks that filter them and how to measure cost per real conversation."
 cover: search
-date: 2026-11-19
+date: 2026-11-18
 tags: [Lead generation, Automation]
 readingMinutes: 5
 ---

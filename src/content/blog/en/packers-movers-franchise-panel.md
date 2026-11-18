@@ -2,7 +2,7 @@
 title: "What the head office needs from a packers and movers franchise panel"
 description: "Each branch keeps its own book and the head office sees nothing. What a packers and movers franchise panel should show, from booking to claims."
 cover: movers
-date: 2026-11-19
+date: 2026-11-18
 tags: [Small business, Logistics, Mahima One]
 readingMinutes: 5
 ---

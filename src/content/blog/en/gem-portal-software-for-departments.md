@@ -2,7 +2,7 @@
 title: "Buying software on GeM without a tender: a guide for small IT vendors"
 description: "How a government department buys software on GeM, which buying mode applies, what a small IT vendor must keep ready, and why listings fail."
 cover: government
-date: 2026-11-19
+date: 2026-11-18
 tags: [Government, Compliance]
 readingMinutes: 5
 ---

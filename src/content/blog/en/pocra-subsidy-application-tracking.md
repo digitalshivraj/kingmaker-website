@@ -2,7 +2,7 @@
 title: "Tracking PoCRA subsidy applications from camp to credit"
 description: "How a PoCRA subsidy file moves from application to payment, where it gets stuck, and how one tracker gives every farmer's file a next action."
 cover: farmer
-date: 2026-11-19
+date: 2026-11-18
 tags: [Agriculture, Government, Anudan Sarathi]
 readingMinutes: 5
 ---

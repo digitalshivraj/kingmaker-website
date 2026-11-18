@@ -2,7 +2,7 @@
 title: "The booth committee dashboard a Vidhan Sabha head should see daily"
 description: "What a Vidhan Sabha in-charge should see each morning on one screen, from booth committee gaps and inactive booth heads to tasks and field issues."
 cover: meeting
-date: 2026-11-19
+date: 2026-11-18
 tags: [Political offices, Elections, Sanghatan]
 readingMinutes: 5
 ---

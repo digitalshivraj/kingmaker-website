@@ -2,7 +2,7 @@
 title: "OPD tokens on WhatsApp: how a clinic cuts waiting-room crowding"
 description: "How a clinic gives OPD tokens by WhatsApp, sends live queue updates and keeps walk-ins in one line, so patients wait at home and not in a full hall."
 cover: doctorHall
-date: 2026-11-19
+date: 2026-11-18
 tags: [Healthcare, WhatsApp, Devdoot Care]
 readingMinutes: 5
 ---
