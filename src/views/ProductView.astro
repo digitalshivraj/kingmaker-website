@@ -7,7 +7,7 @@ import CtaBand from '../components/CtaBand.astro';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { whatsappLink } from '../data/site';
 import { t } from '../i18n/ui';
-import { localize, byLang, entrySlug, type Lang } from '../i18n/utils';
+import { localize, byLang, isPublished, entrySlug, type Lang } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -21,6 +21,10 @@ const all = byLang(await getCollection('products'), lang).sort((a, b) => a.data.
 const others = all.filter((p) => p.id !== product.id).slice(0, 3);
 const wa = whatsappLink(ui.productPage.demoMsg(product.data.title));
 const slug = entrySlug(product.id);
+const posts = byLang(await getCollection('blog', isPublished), lang)
+  .filter((p) => (p.body ?? '').includes(`/products/${slug}/`))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5);
 const origin = Astro.site?.origin ?? '';
 const productLd = {
   '@type': 'SoftwareApplication',
@@ -88,6 +92,14 @@ const productLd = {
           <h3>{ui.productPage.sector}</h3>
           <p>{product.data.sector}</p>
         </div>
+        {posts.length > 0 && (
+          <div class="box">
+            <h3>{ui.blog.onThis}</h3>
+            <ul class="plain">
+              {posts.map((p) => <li><a href={L(`/blog/${entrySlug(p.id)}/`)}>{p.data.title}</a></li>)}
+            </ul>
+          </div>
+        )}
         <div class="box">
           <h3>{ui.productPage.others}</h3>
           <ul class="plain">

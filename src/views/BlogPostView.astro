@@ -22,10 +22,17 @@ const slug = entrySlug(post.id);
 const other = otherLang(lang);
 const hasAlt = all.some((p) => p.id === `${other}/${slug}`);
 const altPath = hasAlt ? localize(`/blog/${slug}/`, other) : localize('/blog/', other);
+// Related: shared tags, plus posts that point readers to the same product or service page.
+const tags = new Set(post.data.tags);
+const pageLinks = (post.body ?? '').match(/\/(products|services)\/[a-z0-9-]+\//g) ?? [];
+const score = (p: CollectionEntry<'blog'>) =>
+  p.data.tags.filter((tag) => tags.has(tag)).length + pageLinks.filter((l) => (p.body ?? '').includes(l)).length;
 const more = byLang(all, lang)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .filter((p) => p.id !== post.id)
-  .slice(0, 3);
+  .map((p) => ({ p, s: score(p) }))
+  .sort((a, b) => b.s - a.s || b.p.data.date.valueOf() - a.p.data.date.valueOf())
+  .slice(0, 4)
+  .map((x) => x.p);
 
 const article = {
   '@context': 'https://schema.org',
@@ -76,7 +83,7 @@ const article = {
     more.length > 0 && (
       <section class="section paper">
         <div class="wrap">
-          <h2>{ui.blog.more}</h2>
+          <h2>{ui.blog.related}</h2>
           <ul class="more">
             {more.map((p) => (
               <li>
