@@ -3,6 +3,12 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
+// Fonts seen above the fold, preloaded so the headline does not flash in a fallback face
+import khandLatin from '@fontsource/khand/files/khand-latin-700-normal.woff2?url';
+import khandDeva from '@fontsource/khand/files/khand-devanagari-700-normal.woff2?url';
+import muktaLatin from '@fontsource/mukta/files/mukta-latin-400-normal.woff2?url';
+import muktaDeva from '@fontsource/mukta/files/mukta-devanagari-400-normal.woff2?url';
+import soraLatin from '@fontsource/sora/files/sora-latin-600-normal.woff2?url';
 import { site, whatsappLink } from '../data/site';
 import { t } from '../i18n/ui';
 import { localize, stripLang, otherLang, ogLocale, type Lang } from '../i18n/utils';
@@ -115,6 +121,7 @@ const webpage = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {(lang === 'mr' ? [khandDeva, khandLatin, muktaDeva, soraLatin] : [khandLatin, muktaLatin, soraLatin]).map((f) => <link rel="preload" href={f} as="font" type="font/woff2" crossorigin />)}
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
