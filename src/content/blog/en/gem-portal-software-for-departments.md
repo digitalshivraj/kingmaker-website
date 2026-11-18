@@ -44,7 +44,7 @@ Before you upload anything, check that the business name, address and signatory 
 
 ## Where a demo fits in GeM buying
 
-Software is hard to buy from a specification sheet. An officer in Kolhapur who has never seen a grievance dashboard cannot easily write down what one should do.
+Software is hard to buy from a specification sheet. An officer in Kolhapur who has never seen a [grievance dashboard](/blog/mla-office-grievance-system/) cannot easily write down what one should do.
 
 A demo solves this, and it sits before the purchase, not inside it:
 

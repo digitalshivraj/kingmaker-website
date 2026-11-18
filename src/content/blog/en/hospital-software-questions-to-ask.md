@@ -29,7 +29,7 @@ The ten questions below are grouped by what they protect: your daily work, your 
 
 4. Who owns the data, and can I export it? The answer should be that the hospital owns it, **stated in writing**. Ask to see the export itself: patients, bills and stock in a file that opens in a spreadsheet. If you change vendors one day, that file is what you carry out.
 
-5. Where is the data hosted? Patient records are sensitive, and data protection law in India places duties on whoever holds them. Ask whether the servers are in India and who can access them. Confirm what the law requires of your hospital with a legal advisor.
+5. Where is the data hosted? Patient records are sensitive, and [data protection law in India](/blog/dpdp-act-government-software/) places duties on whoever holds them. Ask whether the servers are in India and who can access them. Confirm what the law requires of your hospital with a legal advisor.
 
 6. How are backups taken, and has a restore been tested? Ask how often backups run, where the copies are kept, and whether the vendor has actually restored data from one. A backup that has never been restored is a hope, not a backup.
 
@@ -37,7 +37,7 @@ The ten questions below are grouped by what they protect: your daily work, your 
 
 7. What is the full price, and is there a large setup fee? Ask for one figure that covers the subscription, setup, per-user charges, message charges and yearly maintenance. Software for a small hospital should not need a setup fee that dwarfs the subscription. We have written separately about [what hospital software should cost a 30-bed hospital](/blog/small-hospital-software-cost/).
 
-8. What does setup need from my side? Ask for the steps in order: who creates the logins, who enters the doctors, the rate list, the medicine stock and the lab tests, and which department starts first. If the plan needs new computers or a visiting engineer, count that cost too.
+8. What does setup need from my side? Ask for the steps in order: who creates the logins, who enters the doctors, the rate list, [the medicine stock](/blog/pharmacy-stock-expiry-hospital-software/) and the lab tests, and which department starts first. If the plan needs new computers or a visiting engineer, count that cost too.
 
 9. Who trains the staff, and in which language? Staff changes are normal in a small hospital. Ask whether training is repeated for new joiners, whether it is in Marathi, and whether there are short guides the night shift can open on a phone.
 

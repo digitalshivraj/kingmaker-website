@@ -61,7 +61,7 @@ The rule we follow is simple. Internal work, such as sorting and filing, can run
 
 The draft sits in a queue with the original message beside it. A staff member reads it, edits if needed and approves. This catches mistakes from any model, strong or small, and it is what makes the cheaper lanes safe to use.
 
-If customer data goes to an outside AI provider, ask your legal advisor which data protection rules apply to you.
+If customer data goes to an outside AI provider, ask your legal advisor which [data protection rules](/blog/dpdp-act-government-software/) apply to you.
 
 ## Common questions
 

@@ -28,7 +28,7 @@ The money moves from the member's bank to the party's bank account. No one carri
 
 A typical collection goes in this order.
 
-1. The karyakarta opens the member form on a phone and enters the name, mobile number and booth.
+1. The [karyakarta opens the member form](/blog/karyakarta-app-ground-workers/) on a phone and enters the name, mobile number and booth.
 2. The member scans the party's QR code and pays the membership fee. The QR code belongs to the party's own bank account, never to an office bearer's personal account.
 3. The bank's payment reference is matched to that member's entry.
 4. A numbered receipt goes to the member on WhatsApp, with the name, amount, date and receipt number.
@@ -46,7 +46,7 @@ Each member is tied to a booth, a ward, a taluka and a district. That gives the 
 
 After the drive, renewal reminders go to the number that received the receipt. Before an election, the list shows who the party can call on at each booth, which is where [election technology](/services/election-technology/) begins.
 
-Party membership is sensitive personal information. Collect only what you need and give each office bearer access to their own area only.
+Party membership is sensitive personal information. Collect only what you need and give each office bearer [access to their own area](/blog/voter-data-access-rules-party-system/) only.
 
 ## Reports the treasurer and auditor need
 

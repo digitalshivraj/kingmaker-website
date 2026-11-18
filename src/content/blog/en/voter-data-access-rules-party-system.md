@@ -19,7 +19,7 @@ Most party systems hold three layers.
 - Contact details the party collected itself: phone numbers from membership drives, missed-call campaigns, event registrations and door visits. The roll does not give you phone numbers.
 - Notes added by workers: who was met, what issue the family raised, who has shifted to Pune or Mumbai for work.
 
-The second and third layers are where the risk sits. **Record the source of every phone number** at the time of entry. If a vendor cannot say where a ready phone list came from, do not load it. A number a citizen gave an MLA office for a water complaint was not given for campaign calls, so keep those two systems apart.
+The second and third layers are where the risk sits. **Record the source of every phone number** at the time of entry. If a vendor cannot say where a ready phone list came from, do not load it. A number a citizen gave an [MLA office for a water complaint](/blog/mla-office-grievance-system/) was not given for campaign calls, so keep those two systems apart.
 
 ## Who sees phone numbers and who can export
 

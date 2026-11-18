@@ -7,7 +7,7 @@ tags: [Agriculture, Citizen services]
 readingMinutes: 5
 ---
 
-A dealer in Hingoli, Buldhana or Solapur district arranges a camp at the Gram Panchayat office for drip and sprinkler subsidy applications. Farmers arrive from early morning. Some carry every paper. Many carry half. By afternoon the dealer's assistant has a phone gallery full of Aadhaar cards and land extracts mixed with family photos, and a notebook with names in three different handwritings.
+A dealer in Hingoli, Buldhana or Solapur district arranges a camp at the Gram Panchayat office for [drip and sprinkler subsidy applications](/blog/drip-sprinkler-subsidy-documents-maharashtra/). Farmers arrive from early morning. Some carry every paper. Many carry half. By afternoon the dealer's assistant has a phone gallery full of Aadhaar cards and land extracts mixed with family photos, and a notebook with names in three different handwritings.
 
 A few days later nobody can say which farmer still owes a bank passbook copy, whose photograph came out blurred, or which applications are ready to file. The camp happened, but the applications did not move. What fixes this is one phone, one checklist and one sheet at the end of the day.
 

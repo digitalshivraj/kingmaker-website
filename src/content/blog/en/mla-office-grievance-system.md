@@ -33,8 +33,8 @@ It should not require citizens to download an app. A link that opens in the brow
 
 ## JanSeva
 
-We built JanSeva for exactly this: a citizen side in Marathi that opens from a link, an office dashboard with assignment and follow-up, WhatsApp updates at every stage, and a Nagar Parishad version for municipal councils. We set it up with your wards and departments for a free demo so your staff can try it before you decide.
+We built JanSeva for exactly this: a citizen side in Marathi that opens from a link, an office dashboard with assignment and follow-up, [WhatsApp updates at every stage](/blog/whatsapp-business-api-vs-tools/), and a Nagar Parishad version for municipal councils. We set it up with your wards and departments for a free demo so your staff can try it before you decide.
 
 ## A note on data
 
-Citizen complaints contain personal data. Keep the system on a server you control, limit who can export data, and write down how long records are kept. The Digital Personal Data Protection Act, 2023 applies to political offices too, and a well-run grievance system is easier to defend than a WhatsApp group with three years of photos in it.
+Citizen complaints contain personal data. Keep the system on a server you control, limit who can export data, and write down how long records are kept. The [Digital Personal Data Protection Act, 2023](/blog/dpdp-act-government-software/) applies to political offices too, and a well-run grievance system is easier to defend than a WhatsApp group with three years of photos in it.

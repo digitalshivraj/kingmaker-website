@@ -27,7 +27,7 @@ None of this is carelessness. **A personal phone became the lab's delivery syste
 
 The fix has three parts: an official business number, the patient's own registered number, and a secure link instead of a loose file.
 
-1. The lab gets one WhatsApp business number in its own name, running on the official WhatsApp Business API. Messages come from the lab, not from a person.
+1. The lab gets one WhatsApp business number in its own name, running on the official [WhatsApp Business API](/blog/whatsapp-business-api-cost-india/). Messages come from the lab, not from a person.
 2. At registration, the counter staff enter the patient's mobile number and read it back. That number is saved against the patient, and the report goes **only to the registered patient number**.
 3. When the pathologist approves the report, the system sends the message by itself. Nobody copies a file or picks a contact.
 4. The message carries a secure link, not the result. The patient opens it, passes a simple check such as a one-time code, and sees the report. The link stops working after a set period.
@@ -36,7 +36,7 @@ Staff phones are out of the picture. If you are wondering whether the free Whats
 
 ## Consent and patient data protection
 
-A lab report is health information. India's data protection law expects you to hold personal data with the person's permission, for a stated purpose, with reasonable safeguards. The exact duties for a lab depend on the rules in force, so confirm them with your legal advisor.
+A lab report is health information. [India's data protection law](/blog/dpdp-act-government-software/) expects you to hold personal data with the person's permission, for a stated purpose, with reasonable safeguards. The exact duties for a lab depend on the rules in force, so confirm them with your legal advisor.
 
 In daily practice, everything starts with **the patient's recorded consent**:
 

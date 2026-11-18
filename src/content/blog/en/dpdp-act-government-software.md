@@ -36,7 +36,7 @@ This matters because the fiduciary is accountable even when the processor makes 
 
 ## What it means in practice for a lodge register or a grievance system
 
-A digital register done to the Act is safer than the notebook it replaces: access is logged, data is encrypted, retention is enforced and a lost phone does not mean a lost register. A WhatsApp group with three years of complaint photos, by contrast, is a breach waiting to be reported.
+A [digital register done to the Act](/blog/digital-lodge-register-maharashtra-police/) is safer than the notebook it replaces: access is logged, data is encrypted, retention is enforced and a lost phone does not mean a lost register. A [WhatsApp group with three years of complaint photos](/blog/mla-office-grievance-system/), by contrast, is a breach waiting to be reported.
 
 ## Our commitments
 

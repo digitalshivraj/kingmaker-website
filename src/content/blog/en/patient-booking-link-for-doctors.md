@@ -26,7 +26,7 @@ None of this is the receptionist's fault. **One person cannot run a desk and a c
 A booking link is a web address for your clinic's appointment page. The patient taps it and sees your name, your clinic and the times you are available. It only works if patients find it without asking, so put it in the three places they already look.
 
 - WhatsApp: add it to the clinic's WhatsApp profile and send it as the reply to every "appointment?" message. Patients forward it to relatives on their own.
-- Google profile: add it to the clinic's listing, so someone searching for an ENT doctor in Kolhapur late at night can book instead of calling a number nobody will answer till morning.
+- Google profile: add it to the clinic's listing, so someone [searching for an ENT doctor](/blog/google-business-profile-for-doctors/) in Kolhapur late at night can book instead of calling a number nobody will answer till morning.
 - Visiting card and prescription pad: print it as a QR code. A patient due for a follow-up scans the card at home.
 
 The phone number stays on all three. The link becomes the first option and the call becomes the fallback.
@@ -42,7 +42,7 @@ On a well-built booking page, the steps are short.
 
 The reminder matters more than it looks. A typical no-show is not a careless patient. It is a forgotten date, and a WhatsApp message does the remembering. If you want these messages to go from an official business number instead of a staff member's personal phone, that is the job of [WhatsApp automation](/services/whatsapp-automation/) on the official Meta Cloud API.
 
-Some systems go a step further and give the patient a token with queue updates, so they leave home when their turn is near instead of filling the waiting room.
+Some systems go a step further and give the patient a [token with queue updates](/blog/opd-tokens-on-whatsapp/), so they leave home when their turn is near instead of filling the waiting room.
 
 ## The doctor decides the slots, leave days and limits
 
@@ -60,7 +60,7 @@ The second objection is: my patients are elderly, they will not use a link. Ofte
 
 In a typical family, the 70-year-old patient in Amravati is not the one who books. A daughter in Pune or a son in Nashik does it. Today that means calling the clinic from the office during OPD hours and hoping the line is free. With a link, they book at night after work, type the parent's name and forward the confirmation to the family group.
 
-So check three things on any booking page:
+So [check three things](/blog/doctor-appointment-booking-app/) on any booking page:
 
 - One mobile number can book for more than one person, with the patient's name asked for separately.
 - The page reads well in Marathi as well as English.

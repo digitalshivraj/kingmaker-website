@@ -48,7 +48,7 @@ Typical tasks are simple: hold a booth meeting, verify every committee member's 
 
 ## Issues from the field, sorted by area
 
-Booth heads hear things first: a water supply complaint, a damaged road, a dispute between two karyakartas, a committee member who has gone quiet. Today this reaches the in-charge as a late-night phone call, or not at all.
+Booth heads hear things first: a [water supply complaint](/blog/mla-office-grievance-system/), a damaged road, a dispute between two karyakartas, a committee member who has gone quiet. Today this reaches the in-charge as a late-night phone call, or not at all.
 
 The dashboard gives it a path. The booth head reports the issue with a category, one line of text and a photo if needed. It goes to the mandal president first. What cannot be settled there moves up to the Vidhan Sabha level with its history attached.
 
@@ -65,7 +65,7 @@ A list of karyakartas with phone numbers is among the most sensitive things a pa
 
 Nobody sees sideways into another area. When a person changes post, their access changes with it. With **role-based access**, exports are limited to the roles that need them and there is a record of who viewed or downloaded what.
 
-Personal data of karyakartas, and anything connected to voters, comes under data protection law and Election Commission rules. Confirm with your party's legal advisor what you may collect and how you may use it during a campaign. The [election technology](/services/election-technology/) we build is designed around those rules, but what to store is your decision.
+Personal data of karyakartas, and anything connected to voters, comes under [data protection law](/blog/dpdp-act-government-software/) and Election Commission rules. Confirm with your party's legal advisor what you may collect and how you may use it during a campaign. The [election technology](/services/election-technology/) we build is designed around those rules, but what to store is your decision.
 
 ## Common questions
 

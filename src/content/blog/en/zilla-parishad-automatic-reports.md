@@ -24,7 +24,7 @@ The clerk who used to compile gets that time back for the pending files.
 Most departments can start with these.
 
 1. Scheme beneficiary progress: for each scheme, how many applications are received, sanctioned, started, completed and paid, block by block. The useful part is the exception list, showing beneficiaries stuck longest at one stage and the block they belong to.
-2. Pending files by desk: every inward entry, the desk it sits on now, and how many days it has been there. The department head sees the oldest files first, not just a total.
+2. Pending files by desk: every [inward entry, the desk it sits on](/blog/inward-outward-register-software/) now, and how many days it has been there. The department head sees the oldest files first, not just a total.
 3. Field visit records: which officer visited which school, anganwadi, health centre or work site, with date, photo, phone location and remarks. The report also lists places nobody has visited this month.
 4. School or health centre attendance: staff present, on leave and absent, institution by institution, plus the institutions that have not reported today. For education it can include student attendance. For health, it covers the staff at each primary health centre and sub-centre.
 5. Fund utilisation: for each scheme head, funds received, sanctioned, spent and balance, by block, with utilisation statements still pending. Confirm the exact heads and formats with your accounts and finance department before the report is fixed.
@@ -43,7 +43,7 @@ A report that waits inside a login is a report nobody opens. So send it where of
 
 Each officer gets their own level. The BDO gets the block. The department head gets the department. The CEO gets a **one-page district summary** across departments.
 
-Two cautions. Send through the official WhatsApp Business API, not a personal number or a group, which is how our [WhatsApp automation](/services/whatsapp-automation/) is built. And keep beneficiary names and personal details inside the login. The message should carry counts and exceptions only.
+Two cautions. Send through the [official WhatsApp Business API](/blog/whatsapp-business-api-vs-tools/), not a personal number or a group, which is how our [WhatsApp automation](/services/whatsapp-automation/) is built. And keep beneficiary names and personal details inside the login. The message should carry counts and exceptions only.
 
 ## Where a department can start
 

@@ -40,7 +40,7 @@ Keep one more ready for a file that is stuck on the farmer's side: "One document
 
 Each message says **where the file is, what is pending and what comes next**. Do not promise a date for the money. That decision belongs to the department, and a missed date brings back the calls with more anger.
 
-The messages are only as reliable as the register behind them. If the stage lives in a notebook, someone has to remember to send each update. Our own [Anudan Sarathi](/products/anudan-sarathi/), now in a live pilot with a sprinkler dealer under the PoCRA scheme, tracks each subsidy application for the dealer and the farmers they serve.
+The messages are only as reliable as the register behind them. If the stage lives in a notebook, someone has to remember to send each update. Our own [Anudan Sarathi](/products/anudan-sarathi/), now in a live pilot with a sprinkler dealer under the PoCRA scheme, [tracks each subsidy application](/blog/pocra-subsidy-application-tracking/) for the dealer and the farmers they serve.
 
 ## Voice notes for farmers who prefer listening
 
@@ -80,7 +80,7 @@ Opt-in is the other half. Take **recorded consent** at the counter when the file
 2. Note the farmer's agreement on the file form, or have him reply "yes" in Marathi to the first message.
 3. Tell him what he will get: updates on this file, nothing else.
 
-Data protection rules in India expect consent for this kind of contact. Confirm the details for your organisation with a legal advisor.
+[Data protection rules in India](/blog/dpdp-act-government-software/) expect consent for this kind of contact. Confirm the details for your organisation with a legal advisor.
 
 ## Common questions
 

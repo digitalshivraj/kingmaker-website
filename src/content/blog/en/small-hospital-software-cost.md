@@ -15,9 +15,9 @@ They have usually been quoted for hospital software before. The quote was for a 
 
 Strip the corporate feature list down to what happens every day in a small hospital and you are left with a short list.
 
-- **OPD**: a token when the patient arrives, a queue the receptionist can see, the doctor's note and prescription.
+- **OPD**: [a token when the patient arrives](/blog/opd-tokens-on-whatsapp/), a queue the receptionist can see, the doctor's note and prescription.
 - **Pharmacy**: sell against the prescription, track stock and expiry.
-- **Lab**: take the order, enter the result, send the report to the patient on WhatsApp.
+- **Lab**: take the order, enter the result, send the report [to the patient on WhatsApp](/blog/whatsapp-business-api-vs-tools/).
 - **Billing**: OPD, IPD and pharmacy bills with GST, and a daily collection report for the owner.
 - **IPD**: admissions, a bed board, nursing notes, a discharge summary.
 - **Staff roles**: the owner decides who sees what.

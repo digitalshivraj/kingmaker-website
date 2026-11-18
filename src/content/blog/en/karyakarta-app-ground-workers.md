@@ -52,7 +52,7 @@ Karyakartas are not paid staff. They work out of belief, belonging and the hope 
 
 A leader board ranks booths or mandals on completed work. Keep it fair by comparing like with like: booth against booth inside a mandal, not a city ward in Pune against a rural booth in Amravati. Count verified work, not taps.
 
-**Acknowledgement from leaders** matters more than rank. When the district adhyaksha or the candidate can see the best booths of the week and send a named message of thanks from the dashboard, the worker shows it at home and at the chowk. That message is what brings them back to the app.
+**Acknowledgement from leaders** matters more than rank. When the district adhyaksha or the candidate can see the best booths of the week and send a named message of thanks from [the dashboard](/blog/booth-committee-dashboard/), the worker shows it at home and at the chowk. That message is what brings them back to the app.
 
 ## Keep the karyakarta's own data private
 
@@ -64,7 +64,7 @@ Answer it in the design.
 - Record location only at the moment a report is filed, if at all, and say so on the screen in Marathi.
 - Show a worker's phone number only to office bearers in their own line, by role, and keep one mandal's list closed to another.
 
-A party also holds data about voters and citizens, which carries duties under election and data protection rules. Our approach is on the [election technology](/services/election-technology/) page. Confirm what applies to you with your legal advisor.
+A party also holds data about voters and citizens, which carries duties under election and [data protection rules](/blog/dpdp-act-government-software/). Our approach is on the [election technology](/services/election-technology/) page. Confirm what applies to you with your legal advisor.
 
 ## Common questions
 

@@ -25,9 +25,9 @@ Verification takes a week or two. Plan for it before you plan the bot.
 
 ## What a Marathi chatbot can do
 
-A menu-driven bot in Marathi works well for things with a clear answer: book an OPD token, check a subsidy file status, register as a member, get the document list for a scheme, report a complaint with a photo. The bot takes the structured part and hands the conversation to a person when the question goes outside the menu.
+A menu-driven bot in Marathi works well for things with a clear answer: [book an OPD token](/blog/opd-tokens-on-whatsapp/), check a subsidy file status, register as a member, get the document list for a scheme, report a complaint with a photo. The bot takes the structured part and hands the conversation to a person when the question goes outside the menu.
 
-We built one for an NGO that answers scheme questions, registers members and volunteers, and sends back a generated Marathi ID card. We built farmer updates for a subsidy dealer and token messages for clinics.
+We built one for an NGO that answers scheme questions, registers members and volunteers, and sends back a generated Marathi ID card. We built [farmer updates for a subsidy dealer](/blog/pocra-subsidy-application-tracking/) and token messages for clinics.
 
 ## What it should not do
 

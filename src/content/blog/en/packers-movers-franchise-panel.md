@@ -53,7 +53,7 @@ A typical call to a packers and movers office is one question: where are my good
 
 The customer should get the consignment number at booking and a link to check the status herself. For a household move, simple steps are enough: packed, loaded, dispatched, reached the destination city, delivered. Staff mark each step from a phone at the handover.
 
-The same steps can go out as WhatsApp messages through the official API. Our page on [WhatsApp automation](/services/whatsapp-automation/) explains how this works in Marathi and English.
+The same steps can go out as [WhatsApp messages through the official API](/blog/whatsapp-business-api-vs-tools/). Our page on [WhatsApp automation](/services/whatsapp-automation/) explains how this works in Marathi and English.
 
 There is a second benefit. When the customer can see the status, the branch has a reason to keep it current, and the head office gets accurate **consignment status** without asking.
 

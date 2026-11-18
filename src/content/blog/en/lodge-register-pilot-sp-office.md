@@ -55,7 +55,7 @@ Start with the desk. If the entry is **quicker than writing a full line in the p
 
 Then the station. When the station can see entries from its own desk, a lodge that enters every guest properly has less reason to be visited. Say this plainly at the first meeting with owners, held in Marathi.
 
-The usual objections are weak network, staff who change often and worry about guests' data. An officer should answer them, not the software vendor alone.
+The usual objections are weak network, staff who change often and [worry about guests' data](/blog/dpdp-act-government-software/). An officer should answer them, not the software vendor alone.
 
 ## How to judge the pilot before scaling to the district
 
@@ -68,7 +68,7 @@ Fix the review date and the measures before the first entry is made. These quest
 5. Alerts: was each alert verified and recorded as decided, and were there too many false matches?
 6. Beat time: are visits now targeted at problem lodges?
 
-If the answers hold up, extend station by station rather than to the whole district at once. For the wider stage, procurement can go through GeM or a departmental work order. Our [government projects](/services/government-projects/) page explains how we handle proposals, pilots and delivery.
+If the answers hold up, extend station by station rather than to the whole district at once. For the wider stage, [procurement can go through GeM](/blog/gem-portal-software-for-departments/) or a departmental work order. Our [government projects](/services/government-projects/) page explains how we handle proposals, pilots and delivery.
 
 ## Common questions
 

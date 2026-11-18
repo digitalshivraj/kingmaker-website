@@ -9,7 +9,7 @@ readingMinutes: 5
 
 A lodge near the bus stand in Nanded photocopies every guest's ID card and staples the copy into a register. Now and then a constable comes to check the entries. Nobody has written down who may see those copies, or when they should be destroyed.
 
-Now the district plans to move that register to software, visible to the police station as guests check in. The SP office gets faster information. It also becomes answerable for a large store of ID data, and the rules for that store should be on paper before the first lodge logs in.
+Now the district plans to [move that register to software](/blog/lodge-register-pilot-sp-office/), visible to the police station as guests check in. The SP office gets faster information. It also becomes answerable for a large store of ID data, and the rules for that store should be on paper before the first lodge logs in.
 
 ## Guest ID data is personal data
 
@@ -62,7 +62,7 @@ A log that nobody reads protects no one. The order should name **a reviewing off
 A standing order, circular or SOP should cover these points.
 
 1. Purpose and legal basis: the law or licence condition the register is kept under, and the policing purposes the data may be used for.
-2. Data fields: the exact list of what is collected from a guest.
+2. Data fields: the exact list of [what is collected from a guest](/blog/hotel-guest-records-police-requirements/).
 3. Roles and access: the three levels, personal logins, and who approves and closes a login.
 4. Retention and deletion: the period, its source and the hold procedure.
 5. Search logs: a reason for every search, and the officer who reviews the log.

@@ -49,4 +49,4 @@ We have built exactly this system, called Maha-Stay 360, and submitted pilot pro
 
 ## The data protection question
 
-Guest data is sensitive and the Digital Personal Data Protection Act, 2023 applies. A digital register done properly is safer than paper: data stays on Indian servers, every access is logged, retention is a written rule, and the police department owns the data. A notebook on a counter has none of those protections.
+Guest data is sensitive and the [Digital Personal Data Protection Act, 2023](/blog/dpdp-act-government-software/) applies. A digital register done properly is safer than paper: data stays on Indian servers, every access is logged, retention is a written rule, and the police department owns the data. A notebook on a counter has none of those protections.

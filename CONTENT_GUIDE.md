@@ -55,7 +55,11 @@ A post dated in the future is hidden on the live site until that date. The deplo
 
 Vercel preview builds of other branches show scheduled posts too, so a batch can be read on its preview link before it is merged into `main`.
 
-The 24 planned titles from this list were written in November 2026 and scheduled Monday, Wednesday and Friday.
+The 24 planned titles were written in November 2026 and scheduled Monday, Wednesday and Friday. A second set of 42 posts fills the other days, so one post goes live every day until 18 January 2027.
+
+## Internal links
+
+Every post links to its product or service page and, inside the text, to two or three other posts. A post may link only to posts dated on or before its own date (or to posts already live when it is edited), so no link ever points at a post that is not yet live. Related articles under each post, and the article lists on product and service pages, are chosen automatically and grow as scheduled posts go live.
 
 ## Local preview
 

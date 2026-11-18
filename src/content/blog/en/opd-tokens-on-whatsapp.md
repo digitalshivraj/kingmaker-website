@@ -35,7 +35,7 @@ The patient already has WhatsApp, and that is enough.
 
 The place in the line is now held by the token, not by sitting on a bench.
 
-These messages should go out through the official WhatsApp route, not from a personal number on the reception phone that one staff member controls. That is how we build [WhatsApp automation](/services/whatsapp-automation/): on the official Meta Cloud API, in Marathi and English.
+These messages should go out through [the official WhatsApp route](/blog/whatsapp-business-api-vs-tools/), not from a personal number on the reception phone that one staff member controls. That is how we build [WhatsApp automation](/services/whatsapp-automation/): on the official Meta Cloud API, in Marathi and English.
 
 ## Live queue updates bring patients in when their turn is close
 

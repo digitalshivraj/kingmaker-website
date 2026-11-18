@@ -13,7 +13,7 @@ When the council finally decides to build a citizen app, the first proposal on t
 
 ## Start with what citizens already come to the office for
 
-Stand at the inward counter of a Nagar Parishad in Jalgaon, Latur or Amravati district for a morning and you will typically hear the same three requests. A citizen app should handle these three before anything else.
+Stand at the [inward counter of a Nagar Parishad](/blog/inward-outward-register-software/) in Jalgaon, Latur or Amravati district for a morning and you will typically hear the same three requests. A citizen app should handle these three before anything else.
 
 - Complaints with a photo and location: the citizen picks a category such as drainage, water supply, street light, garbage or road, takes a photo, and the phone attaches the location. No long form, no typing an address.
 - Property tax and water bill status: the citizen enters a property number or connection number and sees what is due and what has been paid. Showing the status alone removes a typical reason for visiting the counter.
@@ -43,7 +43,7 @@ Most citizens will not install an app to report one broken street light. An app 
 
 So the app should be **one door, not the only door**. A citizen should be able to file the same complaint from a web link or a WhatsApp message, and every update should arrive on WhatsApp in Marathi: complaint received, which department has it, the follow-up date, work done.
 
-This should run on the official WhatsApp Business API, not on a staff member's personal number, so the record stays with the council when staff are transferred. Our [WhatsApp automation](/services/whatsapp-automation/) page explains how that works.
+This should run on the [official WhatsApp Business API](/blog/whatsapp-business-api-vs-tools/), not on a staff member's personal number, so the record stays with the council when staff are transferred. Our [WhatsApp automation](/services/whatsapp-automation/) page explains how that works.
 
 ## Give the chief officer a pending list by department and ward
 
