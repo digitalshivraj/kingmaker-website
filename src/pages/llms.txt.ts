@@ -2,14 +2,14 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { site } from '../data/site';
 import { projects, sectors, sectorNames } from '../data/portfolio';
-import { byLang, entrySlug } from '../i18n/utils';
+import { byLang, isPublished, entrySlug } from '../i18n/utils';
 
 export const GET: APIRoute = async () => {
   const base = site.url;
   const services = byLang(await getCollection('services'), 'en').sort((a, b) => a.data.order - b.data.order);
   const products = byLang(await getCollection('products'), 'en').sort((a, b) => a.data.order - b.data.order);
-  const posts = byLang(await getCollection('blog'), 'en').sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-  const mrPosts = byLang(await getCollection('blog'), 'mr');
+  const posts = byLang(await getCollection('blog', isPublished), 'en').sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const mrPosts = byLang(await getCollection('blog', isPublished), 'mr');
 
   const lines: string[] = [
     `# ${site.name} (${site.marathiName})`,

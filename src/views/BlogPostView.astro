@@ -7,7 +7,7 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { site } from '../data/site';
 import { photos, px, type PhotoKey } from '../data/images';
 import { t } from '../i18n/ui';
-import { localize, byLang, entrySlug, fmtDate, otherLang, type Lang } from '../i18n/utils';
+import { localize, byLang, isPublished, entrySlug, fmtDate, otherLang, type Lang } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -17,7 +17,7 @@ const { lang, post } = Astro.props;
 const ui = t(lang);
 const L = (p: string) => localize(p, lang);
 const { Content } = await render(post);
-const all = await getCollection('blog');
+const all = await getCollection('blog', isPublished);
 const slug = entrySlug(post.id);
 const other = otherLang(lang);
 const hasAlt = all.some((p) => p.id === `${other}/${slug}`);

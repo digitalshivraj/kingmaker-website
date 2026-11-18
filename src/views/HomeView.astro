@@ -9,7 +9,7 @@ import { getCollection } from 'astro:content';
 import { site } from '../data/site';
 import { projects } from '../data/portfolio';
 import { t } from '../i18n/ui';
-import { localize, byLang, entrySlug, fmtDateShort, type Lang } from '../i18n/utils';
+import { localize, byLang, isPublished, entrySlug, fmtDateShort, type Lang } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -24,7 +24,7 @@ const services = byLang(await getCollection('services'), lang).sort((a, b) => a.
 const topServices = services.slice(0, 6);
 const moreServices = services.slice(6);
 
-const allPosts = await getCollection('blog');
+const allPosts = await getCollection('blog', isPublished);
 const byDate = (a: { data: { date: Date } }, b: { data: { date: Date } }) => b.data.date.valueOf() - a.data.date.valueOf();
 const ownPosts = byLang(allPosts, lang).sort(byDate);
 const enPosts = lang === 'mr' ? byLang(allPosts, 'en').sort(byDate).filter((p) => !ownPosts.some((o) => entrySlug(o.id) === entrySlug(p.id))) : [];

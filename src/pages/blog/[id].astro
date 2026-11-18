@@ -1,10 +1,10 @@
 ---
 import BlogPostView from '../../views/BlogPostView.astro';
 import { getCollection } from 'astro:content';
-import { byLang, entrySlug } from '../../i18n/utils';
+import { byLang, isPublished, entrySlug } from '../../i18n/utils';
 
 export async function getStaticPaths() {
-  const entries = byLang(await getCollection('blog'), 'en');
+  const entries = byLang(await getCollection('blog', isPublished), 'en');
   return entries.map((e) => ({ params: { id: entrySlug(e.id) }, props: { post: e } }));
 }
 

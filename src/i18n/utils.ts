@@ -22,6 +22,13 @@ export function byLang<T extends { id: string }>(entries: T[], lang: Lang) {
   return entries.filter((e) => e.id.startsWith(`${lang}/`));
 }
 
+// Posts dated in the future stay hidden until a build on or after their date (daily scheduled deploy).
+// Vercel preview builds of review branches show them, so a batch can be read before it is merged.
+const showScheduled = typeof process !== 'undefined' && process.env.VERCEL_ENV === 'preview';
+export function isPublished(e: { data: { date: Date } }) {
+  return showScheduled || e.data.date.valueOf() <= Date.now();
+}
+
 const locale = (lang: Lang) => (lang === 'mr' ? 'mr-IN-u-nu-latn' : 'en-IN');
 
 export function fmtDate(d: Date, lang: Lang) {

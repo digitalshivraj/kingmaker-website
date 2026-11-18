@@ -1,6 +1,6 @@
 ---
 title: What hospital software should cost a 30-bed hospital in a taluka town
-description: Hospital management software is priced for corporate hospitals. Here is what a small hospital actually needs, what it should pay, and how to go live in a day.
+description: Hospital management software is priced for corporate hospitals. Here is what a small hospital actually needs, what it should pay, and how going live works.
 cover: pharmacy
 date: 2026-09-28
 tags: [Healthcare, Hospitals, Pricing]
@@ -26,15 +26,15 @@ Everything else is nice to have. If the software does these six things on a phon
 
 ## What it should cost
 
-Our view: a small monthly subscription in the low thousands of rupees, no large implementation fee, and setup in a day. The hospital should be able to stop at any time and take its data with it.
+Our view: a small monthly subscription in the low thousands of rupees, no large implementation fee, and a setup the owner can follow. The hospital should be able to stop at any time and take its data with it.
 
 That is possible because the software runs on phones and the computers the hospital already has, on a shared cloud server, with onboarding done by the hospital's own staff rather than a visiting engineer.
 
-## Going live in a day
+## Going live, step by step
 
 1. We create the hospital's login and the owner's account.
 2. The owner adds doctors and staff with their roles from a phone.
-3. OPD starts that afternoon with tokens and prescriptions. Pharmacy and lab follow in the same week once stock and test lists are entered.
+3. OPD starts first, with tokens and prescriptions. Pharmacy and lab follow once stock and test lists are entered.
 4. Billing is switched on when the staff are comfortable, so the old billing computer can be retired.
 
 ## Patient booking without a WhatsApp Business account
