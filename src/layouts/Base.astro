@@ -226,5 +226,89 @@ const webpage = {
         );
       }
     </script>
+    <script>
+      // Carousels: arrows, dots and active slide for every [data-carousel]
+      document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+        const track = root.querySelector<HTMLElement>('.track');
+        if (!track) return;
+        const prev = root.querySelector<HTMLButtonElement>('[data-prev]');
+        const next = root.querySelector<HTMLButtonElement>('[data-next]');
+        const dotsBox = root.querySelector<HTMLElement>('[data-dots]');
+        const label = root.dataset.slideLabel || 'Go to slide';
+        const items = () => Array.from(track.children).filter((el) => !(el as HTMLElement).hidden) as HTMLElement[];
+        const step = () => {
+          const first = items()[0];
+          const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+          return first ? first.getBoundingClientRect().width + gap : track.clientWidth;
+        };
+        const current = () => Math.round(track.scrollLeft / step());
+        function buildDots() {
+          if (!dotsBox) return;
+          dotsBox.innerHTML = '';
+          items().forEach((_, i) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.setAttribute('aria-label', `${label} ${i + 1}`);
+            b.addEventListener('click', () => track.scrollTo({ left: i * step() }));
+            dotsBox.appendChild(b);
+          });
+          update();
+        }
+        function update() {
+          const max = track.scrollWidth - track.clientWidth - 4;
+          if (prev) prev.disabled = track.scrollLeft <= 4;
+          if (next) next.disabled = track.scrollLeft >= max;
+          const i = current();
+          dotsBox?.querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-current', String(j === i)));
+          items().forEach((el, j) => el.classList.toggle('is-active', j === i));
+        }
+        prev?.addEventListener('click', () => track.scrollBy({ left: -step() }));
+        next?.addEventListener('click', () => track.scrollBy({ left: step() }));
+        let raf = 0;
+        track.addEventListener('scroll', () => {
+          cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(update);
+        }, { passive: true });
+        track.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight') { e.preventDefault(); track.scrollBy({ left: step() }); }
+          if (e.key === 'ArrowLeft') { e.preventDefault(); track.scrollBy({ left: -step() }); }
+        });
+        window.addEventListener('resize', update);
+        root.addEventListener('carousel:refresh', () => { track.scrollTo({ left: 0, behavior: 'auto' }); buildDots(); });
+        buildDots();
+      });
+
+      // Tab filters: [data-tabs] buttons with data-filter hide items whose data-cat does not match
+      document.querySelectorAll<HTMLElement>('[data-tabs]').forEach((tabs) => {
+        const target = document.getElementById(tabs.dataset.tabs!);
+        if (!target) return;
+        const buttons = Array.from(tabs.querySelectorAll<HTMLButtonElement>('button[data-filter]'));
+        buttons.forEach((btn) =>
+          btn.addEventListener('click', () => {
+            const f = btn.dataset.filter!;
+            buttons.forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
+            target.querySelectorAll<HTMLElement>('[data-cat]').forEach((el) => {
+              el.hidden = f !== 'all' && !el.dataset.cat!.split(' ').includes(f);
+            });
+            target.dispatchEvent(new CustomEvent('carousel:refresh'));
+            target.closest('[data-carousel]')?.dispatchEvent(new CustomEvent('carousel:refresh'));
+            target.dispatchEvent(new CustomEvent('filter:change'));
+          }),
+        );
+      });
+
+      // Copy-link share buttons
+      document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) =>
+        b.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(b.dataset.copy!);
+            const old = b.getAttribute('aria-label');
+            b.setAttribute('aria-label', b.dataset.done || 'Copied');
+            b.classList.add('done');
+            setTimeout(() => { b.classList.remove('done'); if (old) b.setAttribute('aria-label', old); }, 1800);
+          } catch {}
+        }),
+      );
+    </script>
   </body>
 </html>

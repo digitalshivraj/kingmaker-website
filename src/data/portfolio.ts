@@ -124,6 +124,7 @@ export const projects: Project[] = [
   },
   {
     name: 'CareSync',
+    marathi: 'केअरसिंक',
     sector: 'Healthcare',
     summary: 'Medication companion app for seniors: prescription scanning, reminders and a care circle so family members can follow along.',
     summaryMr: 'ज्येष्ठांसाठी औषध सोबती ॲप: प्रिस्क्रिप्शन स्कॅन, आठवणी आणि कुटुंबीयांना सोबत राहता येईल असे केअर सर्कल.',
@@ -132,6 +133,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Shatayu Ayurved Hospital website',
+    marathi: 'शतायु आयुर्वेद हॉस्पिटल वेबसाइट',
     sector: 'Healthcare',
     summary: 'Bilingual Marathi and English hospital website with enquiry capture, WhatsApp fallback, schema data and ad-tracking ready for campaigns.',
     summaryMr: 'चौकशी नोंद, व्हॉट्सॲप पर्याय, स्कीमा डेटा आणि जाहिरात ट्रॅकिंगसह मराठी-इंग्रजी हॉस्पिटल वेबसाइट.',
@@ -140,6 +142,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Tricos',
+    marathi: 'ट्रायकोस',
     sector: 'Healthcare',
     summary: 'Two-sided marketplace where hair transplant clinics bid for patient cases through a reverse auction.',
     summaryMr: 'हेअर ट्रान्सप्लांट क्लिनिक रुग्णांच्या केसेससाठी रिव्हर्स ऑक्शनने बोली लावतात असे दुतर्फी मार्केटप्लेस.',
@@ -148,6 +151,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Looks Studio CRM',
+    marathi: 'लुक्स स्टुडिओ CRM',
     sector: 'Healthcare',
     summary: 'Lead and patient CRM prototype for a hair transplant clinic chain handling more than 1.3 lakh leads across branches.',
     summaryMr: 'शाखांमध्ये 1.3 लाखांहून अधिक लीड हाताळणाऱ्या हेअर ट्रान्सप्लांट क्लिनिक साखळीसाठी लीड आणि रुग्ण CRM प्रोटोटाइप.',
@@ -166,6 +170,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Lendy Manyad Foundation chatbot and site',
+    marathi: 'लेंडी मन्याड फाउंडेशन चॅटबॉट आणि वेबसाइट',
     sector: 'Agriculture and rural',
     summary: 'Marathi WhatsApp chatbot for an NGO (scheme help, member registration, volunteers), a Marathi ID card generator and the foundation website.',
     summaryMr: 'स्वयंसेवी संस्थेसाठी मराठी व्हॉट्सॲप चॅटबॉट (योजनांची मदत, सदस्य नोंदणी, स्वयंसेवक), मराठी ओळखपत्र जनरेटर आणि संस्थेची वेबसाइट.',
@@ -174,6 +179,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Mahima One',
+    marathi: 'महिमा वन',
     sector: 'Business and logistics',
     summary: 'Franchise logistics platform for a packers and movers company: bookings, tracking, franchise panels and a head-office super admin, hosted on the client VPS.',
     summaryMr: 'पॅकर्स अँड मूव्हर्स कंपनीसाठी फ्रँचायझी लॉजिस्टिक्स प्लॅटफॉर्म: बुकिंग, ट्रॅकिंग, फ्रँचायझी पॅनेल आणि मुख्य कार्यालयाचे सुपर ॲडमिन, ग्राहकाच्या VPS वर होस्ट केलेले.',
@@ -183,6 +189,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Muzaffarpur property platform',
+    marathi: 'मुझफ्फरपूर प्रॉपर्टी प्लॅटफॉर्म',
     sector: 'Business and logistics',
     summary: 'Real estate marketplace and sales CRM: buyer portal, field-team listing intake and a lead engine with campaign attribution.',
     summaryMr: 'रिअल इस्टेट मार्केटप्लेस आणि विक्री CRM: खरेदीदार पोर्टल, फील्ड टीमकडून मालमत्ता नोंद आणि मोहिमेनुसार लीड इंजिन.',
@@ -191,6 +198,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Payment and party ledger',
+    marathi: 'पेमेंट आणि पार्टी लेजर',
     sector: 'Business and logistics',
     summary: 'Payment tracker and party ledger for small businesses with bank reconciliation and Tally export for the accountant.',
     summaryMr: 'छोट्या व्यवसायांसाठी पेमेंट ट्रॅकर आणि पार्टी खातेवही, बँक जुळणी आणि सीएसाठी टॅली एक्सपोर्टसह.',
@@ -199,6 +207,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Employee document portal',
+    marathi: 'कर्मचारी कागदपत्र पोर्टल',
     sector: 'Business and logistics',
     summary: 'One WhatsApp link that collects staff KYC documents (Aadhaar, PAN, cheque, photo, marksheet, EPF Form 11) into an organised folder.',
     summaryMr: 'एका व्हॉट्सॲप लिंकवरून कर्मचाऱ्यांची KYC कागदपत्रे (आधार, PAN, चेक, फोटो, गुणपत्रिका, EPF फॉर्म 11) व्यवस्थित फोल्डरमध्ये गोळा करणारे पोर्टल.',
@@ -207,6 +216,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Gem Items store',
+    marathi: 'जेम आयटम्स स्टोअर',
     sector: 'Business and logistics',
     summary: 'Shopify store setup with supplier integration for a dropshipping business, including catalogue, checkout and ads tracking.',
     summaryMr: 'ड्रॉपशिपिंग व्यवसायासाठी पुरवठादार जोडणीसह Shopify स्टोअर सेटअप, कॅटलॉग, चेकआउट आणि जाहिरात ट्रॅकिंगसह.',
@@ -215,6 +225,7 @@ export const projects: Project[] = [
   },
   {
     name: 'NIRYAT customs copilot',
+    marathi: 'निर्यात कस्टम्स कोपायलट',
     sector: 'Business and logistics',
     summary: 'AI-assisted customs filing copilot built on the ICEGATE Open API, with a framework for customs service provider accreditation.',
     summaryMr: 'ICEGATE Open API वर बनवलेला एआय-सहाय्यित कस्टम्स फाइलिंग कोपायलट, कस्टम्स सेवा पुरवठादार मान्यतेच्या आराखड्यासह.',
@@ -223,6 +234,7 @@ export const projects: Project[] = [
   },
   {
     name: 'PropDesk',
+    marathi: 'प्रॉपडेस्क',
     sector: 'Finance and trading',
     summary: 'Prop-firm management CRM: trader challenges, funded accounts, payouts, support tickets and admin controls.',
     summaryMr: 'प्रॉप फर्म व्यवस्थापन CRM: ट्रेडर चॅलेंज, फंडेड खाती, पेआउट, सपोर्ट तिकिटे आणि ॲडमिन नियंत्रणे.',
@@ -231,6 +243,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Broker back-office CRM',
+    marathi: 'ब्रोकर बॅक-ऑफिस CRM',
     sector: 'Finance and trading',
     summary: 'Forex broker CRM covering client and MT5 account management, IB structures, bonuses, transactions, tickets and reports.',
     summaryMr: 'फॉरेक्स ब्रोकर CRM: ग्राहक आणि MT5 खाते व्यवस्थापन, IB रचना, बोनस, व्यवहार, तिकिटे आणि अहवाल.',
@@ -239,6 +252,7 @@ export const projects: Project[] = [
   },
   {
     name: 'TradeHub',
+    marathi: 'ट्रेडहब',
     sector: 'Finance and trading',
     summary: 'All-in-one trader super app built with a broker partner: accounts, signals, journal and education in one place.',
     summaryMr: 'ब्रोकर भागीदारासोबत बनवलेले ट्रेडर सुपर ॲप: खाती, सिग्नल, जर्नल आणि शिक्षण एकाच ठिकाणी.',
@@ -247,6 +261,7 @@ export const projects: Project[] = [
   },
   {
     name: 'MT5 Relay',
+    marathi: 'MT5 रिले',
     sector: 'Finance and trading',
     summary: 'TradingView-to-MetaTrader 5 signal bridge so alerts place trades automatically, with risk controls and logs.',
     summaryMr: 'TradingView ते MetaTrader 5 सिग्नल ब्रिज, अलर्टवरून आपोआप ट्रेड लागतात, जोखीम नियंत्रणे आणि नोंदींसह.',
@@ -255,6 +270,7 @@ export const projects: Project[] = [
   },
   {
     name: 'MetaTrader broker plugins',
+    marathi: 'मेटाट्रेडर ब्रोकर प्लगइन',
     sector: 'Finance and trading',
     summary: 'Server-side MT4 and MT5 plugins for brokers: risk rules, account automation and reporting.',
     summaryMr: 'ब्रोकरसाठी सर्व्हर बाजूचे MT4 आणि MT5 प्लगइन: जोखीम नियम, खाते ऑटोमेशन आणि अहवाल.',
@@ -263,6 +279,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Citeloop',
+    marathi: 'साइटलूप',
     sector: 'Marketing and AI',
     summary: 'Multi-client SEO, AEO and GEO delivery platform: asset register, audit engine, work log, reporting and AI-search visibility tracking.',
     summaryMr: 'अनेक ग्राहकांसाठी SEO, AEO आणि GEO सेवा प्लॅटफॉर्म: मालमत्ता नोंद, ऑडिट इंजिन, कामाची नोंद, अहवाल आणि एआय सर्चमधील दृश्यता ट्रॅकिंग.',
@@ -271,6 +288,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Headliner',
+    marathi: 'हेडलायनर',
     sector: 'Marketing and AI',
     summary: 'Compliance-gated AI cold-outreach pipeline for a healthcare client: lead ingestion, AI copywriting, compliance checks and sending.',
     summaryMr: 'आरोग्य क्षेत्रातील ग्राहकासाठी नियमपालन तपासणीसह एआय आउटरीच पाइपलाइन: लीड आयात, एआय मजकूर, नियम तपासणी आणि पाठवणी.',
@@ -279,6 +297,7 @@ export const projects: Project[] = [
   },
   {
     name: 'OutreachOS',
+    marathi: 'आउटरीच OS',
     sector: 'Marketing and AI',
     summary: 'Multi-agent outreach system (scout, copywriter, compliance agent with veto) built for a global hackathon, with a public demo.',
     summaryMr: 'जागतिक हॅकेथॉनसाठी बनवलेली मल्टी-एजंट आउटरीच सिस्टीम (स्काउट, कॉपीरायटर, नकाराधिकार असलेला नियमपालन एजंट), सार्वजनिक डेमोसह.',
@@ -296,6 +315,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Multi-LLM router',
+    marathi: 'मल्टी-LLM राउटर',
     sector: 'Marketing and AI',
     summary: 'Low-cost routing layer that sends each AI task to a local model, Claude, Gemini or free tiers based on need, cutting token spend.',
     summaryMr: 'प्रत्येक एआय काम गरजेनुसार लोकल मॉडेल, Claude, Gemini किंवा मोफत पर्यायांकडे पाठवणारा कमी खर्चाचा राउटर, टोकन खर्च कमी करणारा.',
@@ -304,6 +324,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Ads management for clinics, packers and a UK cleaning firm',
+    marathi: 'क्लिनिक, पॅकर्स आणि UK मधील क्लिनिंग कंपनीसाठी जाहिरात व्यवस्थापन',
     sector: 'Marketing and AI',
     summary: 'Google, Meta and TikTok campaigns with lead-quality tracking for an aesthetic clinic chain, packers and movers, and a Birmingham canopy-cleaning company.',
     summaryMr: 'एस्थेटिक क्लिनिक साखळी, पॅकर्स अँड मूव्हर्स आणि बर्मिंगहॅममधील कॅनोपी क्लीनिंग कंपनीसाठी लीड गुणवत्ता ट्रॅकिंगसह गुगल, मेटा आणि टिकटॉक मोहिमा.',
@@ -312,6 +333,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Astra Global',
+    marathi: 'अस्त्रा ग्लोबल',
     sector: 'Websites and brands',
     summary: 'Parent-led child development coaching dashboard with structured programmes and progress tracking.',
     summaryMr: 'पालकांनी चालवायचे बाल विकास कोचिंग डॅशबोर्ड, रचलेले कार्यक्रम आणि प्रगती ट्रॅकिंगसह.',
@@ -328,6 +350,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Maa Santoshi Packers and Movers identity',
+    marathi: 'माँ संतोषी पॅकर्स अँड मूव्हर्स ब्रँड ओळख',
     sector: 'Websites and brands',
     summary: 'Logo, stationery and brand identity for a Patna packers and movers business.',
     summaryMr: 'पाटण्यातील पॅकर्स अँड मूव्हर्स व्यवसायासाठी लोगो, स्टेशनरी आणि ब्रँड ओळख.',
@@ -336,6 +359,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Mahima Packers website audit and ads',
+    marathi: 'महिमा पॅकर्स वेबसाइट ऑडिट आणि जाहिराती',
     sector: 'Websites and brands',
     summary: 'Full launch audit (technical SEO, GEO, UX, legal, accessibility) with a phased action plan, followed by site changes and ad setup.',
     summaryMr: 'टप्प्याटप्प्याच्या कृती योजनेसह संपूर्ण ऑडिट (तांत्रिक SEO, GEO, UX, कायदेशीर, सुलभता), त्यानंतर साइटमधील बदल आणि जाहिरात सेटअप.',
@@ -344,6 +368,7 @@ export const projects: Project[] = [
   },
   {
     name: 'PDF text editor',
+    marathi: 'PDF मजकूर एडिटर',
     sector: 'Tools and utilities',
     summary: 'Edit text inside any PDF while keeping the original font, with bulk find-and-replace across many files.',
     summaryMr: 'मूळ फॉन्ट तसाच ठेवून कोणत्याही PDF मधील मजकूर बदलणारे साधन, अनेक फाइलींमध्ये एकत्र शोधा आणि बदला सुविधेसह.',
@@ -352,6 +377,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Marathi ID card and print pipelines',
+    marathi: 'मराठी ओळखपत्र आणि प्रिंट पाइपलाइन',
     sector: 'Tools and utilities',
     summary: 'Automated generation of Marathi ID cards, certificates and one-school-one-PDF print packs from spreadsheet data.',
     summaryMr: 'स्प्रेडशीट डेटावरून मराठी ओळखपत्रे, प्रमाणपत्रे आणि एक-शाळा-एक-PDF छपाई संचांची आपोआप निर्मिती.',

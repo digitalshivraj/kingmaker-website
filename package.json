@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.4.0",
+    "@fontsource/khand": "^5.3.0",
     "@fontsource/mukta": "^5.2.5",
     "@fontsource/sora": "^5.2.5",
     "astro": "^5.13.0"

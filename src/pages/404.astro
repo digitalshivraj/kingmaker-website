@@ -1,43 +1,124 @@
 ---
 import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
 import { t } from '../i18n/ui';
 const en = t('en');
 const mr = t('mr');
+const links = [
+  { href: '/', label: en.nav.home },
+  { href: '/services/', label: en.nav.services },
+  { href: '/products/', label: en.nav.products },
+  { href: '/government/', label: en.nav.government },
+  { href: '/blog/', label: en.x.nav.insights },
+  { href: '/contact/', label: en.nav.contact },
+];
 ---
 
 <Base lang="en" title="Page not found" description="The page you asked for does not exist on kingmakerenterprises.in." noindex hasAlt={false} altPath="/mr/">
-  <section class="section nf">
-    <div class="wrap">
-      <h1>{en.notFound.h1}</h1>
+  <section class="nf">
+    <div class="big" aria-hidden="true">404</div>
+    <div class="wrap center on">
+      <h1 class="d-lg">{en.notFound.h1}</h1>
       <p class="lede">{en.notFound.p}</p>
-      <div class="links">
-        <a class="btn navy" href="/">{en.nav.home}</a>
-        <a class="btn ghost" href="/services/">{en.nav.services}</a>
-        <a class="btn ghost" href="/products/">{en.nav.products}</a>
-        <a class="btn ghost" href="/contact/">{en.nav.contact}</a>
-        <a class="btn ghost" href="/mr/" lang="mr">{mr.nav.home} (मराठी)</a>
-      </div>
-      <p class="small">{en.notFound.wa(site.phoneDisplay)}</p>
-      <p class="small marathi" lang="mr">{mr.notFound.p} {mr.notFound.wa(site.phoneDisplay)}</p>
+      <ul class="links">
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href}>
+                {l.label}
+                <Icon name="arrow" size={16} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="btn gold" href={site.whatsapp} target="_blank" rel="noopener">
+        <Icon name="whatsapp" />
+        <span>{en.notFound.wa(site.phoneDisplay)}</span>
+      </a>
+    </div>
+  </section>
+  <section class="section tight mr" lang="mr">
+    <div class="wrap center">
+      <p class="mr-h">{mr.notFound.h1}</p>
+      <p>{mr.notFound.p}</p>
+      <a class="btn navy" href="/mr/">{mr.nav.home}</a>
     </div>
   </section>
 </Base>
 
 <style>
   .nf {
-    min-height: 60vh;
+    position: relative;
+    background: var(--navy);
+    color: var(--on-dark);
+    overflow: hidden;
+    padding: calc(var(--head-h) + clamp(64px, 9vw, 120px)) 0 clamp(64px, 9vw, 120px);
   }
-  .marathi {
-    color: var(--gold-3);
+  .big {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(14rem, 42vw, 40rem);
+    line-height: 0.8;
+    color: var(--royal);
+    pointer-events: none;
+    user-select: none;
+  }
+  .on {
+    position: relative;
+    z-index: 1;
+  }
+  .on h1 {
+    color: var(--white);
+    margin: 0 auto 20px;
+    max-width: 16ch;
+  }
+  .lede {
+    color: var(--on-dark);
   }
   .links {
+    list-style: none;
+    margin: 36px auto 32px;
+    padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    margin: 28px 0 20px;
+    justify-content: center;
+    gap: 10px;
+    max-width: 760px;
   }
-  .small {
-    color: var(--muted);
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+  .links a:hover {
+    background: var(--sky);
+    color: var(--navy);
+  }
+  .mr {
+    background: var(--sand);
+  }
+  .mr-h {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .mr .btn {
+    margin-top: 16px;
   }
 </style>

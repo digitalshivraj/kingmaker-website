@@ -10,8 +10,16 @@ interface Props {
   intro?: string;
   crumbs?: { label: string; href: string }[];
   photo?: PhotoKey;
+  /** photo: full-bleed photo with the title on it. pattern: navy field of words. plain: centred title on sand. */
+  variant?: 'photo' | 'pattern' | 'plain';
+  /** Small line above the intro, e.g. a product's sector. */
+  kicker?: string;
+  /** Title size: xl for short titles, lg for long ones. */
+  size?: 'xl' | 'lg';
 }
-const { lang = 'en', title, marathi, intro, crumbs = [], photo } = Astro.props;
+const { lang = 'en', title, intro, crumbs = [], photo, kicker } = Astro.props;
+const size = Astro.props.size ?? (title.length > 34 ? 'lg' : 'xl');
+const variant = Astro.props.variant ?? (photo ? 'photo' : 'plain');
 const ui = t(lang);
 const origin = Astro.site?.origin ?? '';
 const breadcrumb =
@@ -27,12 +35,41 @@ const breadcrumb =
         })),
       }
     : null;
+const words = ui.x.home.marquee.flat();
+const rows = [0, 1, 2, 3, 4].map((i) => [...words.slice(i % words.length), ...words.slice(0, i % words.length)]);
+const hasSlot = Astro.slots.has('default');
 ---
 
 {breadcrumb && <script type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />}
-<section class:list={['page-head', { 'with-photo': !!photo }]}>
-  {photo && <Photo name={photo} w={900} h={600} class="head-photo" eager sizes="(max-width: 900px) 100vw, 40vw" />}
-  <div class="wrap">
+
+{
+  variant === 'photo' && photo && (
+    <section class="ph-head">
+      <Photo name={photo} w={1600} h={900} class="bg" eager sizes="100vw" />
+      <div class="shade" />
+      <div class="wrap wide on">
+        <h1 class={`d-${size}`}>{title}</h1>
+      </div>
+    </section>
+  )
+}
+{
+  variant === 'pattern' && (
+    <section class="pt-head">
+      <div class="pattern" aria-hidden="true">
+        {rows.map((r, i) => (
+          <p style={`--shift: ${-(i * 9) % 30}%`}>{[...r, ...r].join('  ')}</p>
+        ))}
+      </div>
+      <div class="wrap on">
+        <h1 class={`d-${size}`}>{title}</h1>
+      </div>
+    </section>
+  )
+}
+
+{(variant === 'plain' || crumbs.length > 0 || intro || kicker || hasSlot) && <section class:list={['intro-block', { plain: variant === 'plain' }]}>
+  <div class="wrap center">
     {
       crumbs.length > 0 && (
         <nav class="crumbs" aria-label="Breadcrumb">
@@ -49,101 +86,135 @@ const breadcrumb =
         </nav>
       )
     }
-    <h1>{title}</h1>
-    {intro && <p class="lede">{intro}</p>}
-    <slot />
+    {variant === 'plain' && <h1 class="d-lg">{title}</h1>}
+    {kicker && <p class="kicker">{kicker}</p>}
+    {intro && <p class="intro">{intro}</p>}
+    {hasSlot && <div class="extra"><slot /></div>}
   </div>
-</section>
+</section>}
 
 <style>
-  .page-head {
-    background:
-      radial-gradient(700px 300px at 90% 0%, rgba(127, 178, 232, 0.16), transparent 60%),
-      radial-gradient(500px 260px at 0% 100%, rgba(201, 149, 46, 0.12), transparent 60%),
-      var(--ink);
-    color: var(--on-dark);
-    padding-block: clamp(40px, 6vw, 72px);
+  .ph-head,
+  .pt-head {
     position: relative;
+    min-height: clamp(460px, 78vh, 760px);
+    display: flex;
+    align-items: flex-end;
     overflow: hidden;
+    color: var(--white);
   }
-  .page-head::before {
-    content: '';
+  .bg {
     position: absolute;
     inset: 0;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse at 30% 50%, #000 10%, transparent 70%);
-    pointer-events: none;
-  }
-  .page-head .wrap {
-    position: relative;
-  }
-  .with-photo .wrap {
-    position: relative;
-    z-index: 1;
-    max-width: none;
-    width: min(var(--w), 100% - 2 * var(--gutter));
-  }
-  .with-photo .wrap > * {
-    max-width: 58%;
-  }
-  .head-photo {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 42%;
+    width: 100%;
     height: 100%;
     object-fit: cover;
-    mask-image: linear-gradient(90deg, transparent 0%, #000 35%);
+    animation: zoom 14s var(--ease) both;
+  }
+  .shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5, 12, 26, 0.25) 0%, rgba(5, 12, 26, 0) 35%, rgba(5, 12, 26, 0.65) 100%);
+  }
+  .on {
+    position: relative;
+    z-index: 1;
+    padding-bottom: clamp(40px, 6vw, 72px);
+    text-align: center;
+  }
+  .on h1 {
+    color: var(--white);
+    margin: 0 auto;
+    max-width: 18ch;
+    text-shadow: 0 4px 40px rgba(5, 12, 26, 0.35);
+  }
+  html[lang='mr'] .on h1 {
+    max-width: 22ch;
+  }
+  .pt-head {
+    background: var(--navy);
+    align-items: center;
+    min-height: clamp(420px, 66vh, 640px);
+  }
+  .pt-head .on {
+    padding: calc(var(--head-h) + 40px) 0 40px;
+  }
+  .pattern {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    gap: 0;
     opacity: 0.9;
   }
-  @media (max-width: 900px) {
-    .head-photo {
-      position: static;
-      width: 100%;
-      height: auto;
-      aspect-ratio: 16 / 7;
-      mask-image: none;
-      margin-bottom: 24px;
-    }
-    .with-photo .wrap > * {
-      max-width: none;
-    }
+  .pattern p {
+    margin: 0;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(4rem, 9vw, 8rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: var(--royal);
+    transform: translateX(var(--shift));
+  }
+  html[lang='mr'] .pattern p {
+    text-transform: none;
+    line-height: 1.2;
+    font-size: clamp(3.2rem, 7vw, 6.4rem);
+  }
+
+  .intro-block {
+    padding-block: clamp(48px, 7vw, 96px) clamp(16px, 3vw, 32px);
+  }
+  .intro-block.plain {
+    background: var(--sand);
+    padding-top: calc(var(--head-h) + clamp(64px, 9vw, 120px));
+    padding-bottom: clamp(56px, 8vw, 104px);
+  }
+  .intro-block h1 {
+    margin-inline: auto;
+    max-width: 20ch;
+    margin-bottom: 26px;
+  }
+  .intro {
+    font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+    max-width: 58ch;
+  }
+  .kicker {
+    margin-bottom: 14px;
+  }
+  .extra {
+    margin-top: 30px;
   }
   .crumbs ol {
     list-style: none;
-    margin: 0 0 18px;
+    margin: 0 0 22px;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 6px;
     font-size: 0.9rem;
   }
   .crumbs li + li::before {
     content: '/';
-    color: var(--on-dark-muted);
+    color: var(--muted);
     margin-right: 6px;
   }
   .crumbs a {
-    color: var(--on-dark-muted);
+    color: var(--muted);
     text-decoration: none;
   }
   .crumbs a:hover {
-    color: var(--gold-2);
+    color: var(--royal);
   }
-  .sub {
-    color: var(--gold-2);
-    font-size: 1.1rem;
-    margin-bottom: 8px;
-  }
-  h1 {
-    color: var(--white);
-    font-size: clamp(2rem, 4.5vw, 3rem);
-  }
-  .lede {
-    color: var(--on-dark-muted);
+  @keyframes zoom {
+    from {
+      transform: scale(1.08);
+    }
+    to {
+      transform: scale(1);
+    }
   }
 </style>

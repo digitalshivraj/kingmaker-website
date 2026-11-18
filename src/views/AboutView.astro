@@ -3,8 +3,10 @@ import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import CtaBand from '../components/CtaBand.astro';
 import Photo from '../components/Photo.astro';
+import StoryPanels from '../components/StoryPanels.astro';
 import { site } from '../data/site';
 import { projects } from '../data/portfolio';
+import type { PhotoKey } from '../data/images';
 import { t } from '../i18n/ui';
 import { localize, type Lang } from '../i18n/utils';
 
@@ -14,6 +16,7 @@ interface Props {
 const { lang } = Astro.props;
 const ui = t(lang);
 const a = ui.about;
+const ax = ui.x.about;
 const L = (p: string) => localize(p, lang);
 const live = projects.filter((p) => p.status === 'Live').length;
 const facts = [
@@ -22,50 +25,71 @@ const facts = [
   ['9', a.facts[2]],
   ['2', a.facts[3]],
 ];
+const mosaic: PhotoKey[] = ['policeTeam', 'villageMeeting', 'doctorHall', 'farmerRoad', 'movers'];
+const story = [
+  { big: [a.h1], text: [a.p1a, a.p1b], photo: 'villageMeeting' as PhotoKey },
+  { big: [a.h2], text: [a.p2a(ui.common.proprietor, live), a.p2b], photo: 'team' as PhotoKey, btn: ui.nav.products, href: L('/products/') },
+  { big: [a.h3], text: [a.p3], photo: 'road' as PhotoKey, btn: ui.nav.contact, href: L('/contact/') },
+];
 ---
 
 <Base lang={lang} title={ui.nav.about} description={a.desc}>
-  <PageHead lang={lang} title={a.title} marathi={a.sub} intro={a.intro} crumbs={[{ label: ui.nav.about, href: L('/about/') }]} photo="team" />
+  <PageHead lang={lang} title={a.title} intro={a.intro} crumbs={[{ label: ui.nav.about, href: L('/about/') }]} photo="team" />
 
-  <section class="section tight">
-    <div class="wrap strip">
-      <Photo name="policeTeam" w={600} h={420} sizes="(max-width: 760px) 50vw, 25vw" data-reveal />
-      <Photo name="villageMeeting" w={600} h={420} sizes="(max-width: 760px) 50vw, 25vw" data-reveal style="--rd: 0.08s" />
-      <Photo name="doctorHall" w={600} h={420} sizes="(max-width: 760px) 50vw, 25vw" data-reveal style="--rd: 0.16s" />
-      <Photo name="farmerRoad" w={600} h={420} sizes="(max-width: 760px) 50vw, 25vw" data-reveal style="--rd: 0.24s" />
+  <section class="section tight mosaic-sec">
+    <div class="wrap wide mosaic">
+      {mosaic.map((m, i) => <Photo name={m} w={640} h={i === 0 ? 860 : 440} class={`m${i}`} sizes="(max-width: 760px) 50vw, 25vw" data-reveal style={`--rd: ${i * 0.07}s`} />)}
     </div>
   </section>
 
+  <StoryPanels label={a.h1} items={story} />
+
   <section class="section">
-    <div class="wrap two">
-      <div class="prose" data-reveal>
-        <h2>{a.h1}</h2>
-        <p>{a.p1a}</p>
-        <p>{a.p1b}</p>
-        <h2>{a.h2}</h2>
-        <p>{a.p2a(ui.common.proprietor, live)}</p>
-        <p>{a.p2b}</p>
-        <h2>{a.h3}</h2>
-        <p>{a.p3}</p>
-      </div>
-      <aside data-reveal style="--rd: 0.1s">
+    <div class="wrap">
+      <ul class="stats-grid">
         {
-          facts.map(([n, label]) => (
-            <div class="fact">
+          facts.map(([n, label], i) => (
+            <li class="stat" data-reveal style={`--rd: ${i * 0.07}s`}>
               <b>{n}</b>
               <span>{label}</span>
-            </div>
+            </li>
           ))
         }
-        <div class="reg">
-          <h3>{a.reg}</h3>
-          <ul>
-            <li><span>{ui.footer.udyam}</span>{site.udyam}</li>
-            <li><span>GSTIN</span>{site.gstin}</li>
-            <li><span>{ui.footer.shopAct}</span>{site.shopAct}</li>
-          </ul>
-        </div>
-      </aside>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section sand where">
+    <div class="wrap">
+      <div class="head center">
+        <h2 class="d-md" data-reveal>{ax.offices}</h2>
+      </div>
+      <ul class="offices">
+        {
+          ax.officeRows.map(([city, role], i) => (
+            <li data-reveal style={`--rd: ${i * 0.08}s`}>
+              <p class="label">{`0${i + 1}`}</p>
+              <h3 class="city">{city}</h3>
+              <p>{role}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="cities" data-reveal>
+        {ax.cities.map((c) => <li>{c}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section tight">
+    <div class="wrap regs">
+      <h2 class="d-sm">{a.reg}</h2>
+      <dl>
+        <div><dt>{ui.footer.udyam}</dt><dd>{site.udyam}</dd></div>
+        <div><dt>GSTIN</dt><dd>{site.gstin}</dd></div>
+        <div><dt>{ui.footer.shopAct}</dt><dd>{site.shopAct}</dd></div>
+        <div><dt>{ui.footer.since}</dt><dd>{site.since}</dd></div>
+      </dl>
     </div>
   </section>
 
@@ -73,84 +97,133 @@ const facts = [
 </Base>
 
 <style>
-  .strip {
+  .mosaic {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
   }
-  .strip img {
+  .mosaic :global(img) {
     width: 100%;
-    height: auto;
-    aspect-ratio: 600 / 420;
+    height: 100%;
     object-fit: cover;
-    border-radius: 14px;
+    border-radius: var(--r-lg);
+    aspect-ratio: 640 / 440;
   }
-  @media (max-width: 760px) {
-    .strip {
-      grid-template-columns: 1fr 1fr;
-    }
+  .mosaic :global(.m0) {
+    grid-row: span 2;
+    aspect-ratio: auto;
   }
-  .two {
+  .offices {
+    list-style: none;
+    margin: 0 0 40px;
+    padding: 0;
     display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: clamp(32px, 6vw, 80px);
-    align-items: start;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
   }
-  aside {
-    display: grid;
-    gap: 14px;
+  .offices li {
+    background: var(--navy);
+    color: var(--on-dark);
+    border-radius: var(--r-lg);
+    padding: clamp(26px, 4vw, 44px);
   }
-  .fact {
-    display: grid;
-    gap: 2px;
-    padding: 18px 22px;
-    background: var(--paper);
-    border-radius: var(--r);
-    border-left: 3px solid var(--gold);
+  .offices .label {
+    color: var(--sky);
   }
-  .fact b {
+  .city {
     font-family: var(--font-display);
-    font-size: 2rem;
-    color: var(--navy);
+    font-weight: 700;
+    font-size: clamp(3rem, 6vw, 5rem);
     line-height: 1;
+    text-transform: uppercase;
+    color: var(--white);
+    margin: 10px 0 8px;
   }
-  .fact span {
-    color: var(--muted);
-    font-size: 0.95rem;
+  html[lang='mr'] .city {
+    text-transform: none;
+    line-height: 1.2;
   }
-  .reg {
-    padding: 18px 22px;
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-  }
-  .reg h3 {
-    font-size: 1rem;
-    margin-bottom: 10px;
-  }
-  .reg ul {
+  .cities {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    gap: 8px;
-    font-size: 0.95rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
   }
-  .reg li {
-    display: grid;
+  .cities li {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    text-transform: uppercase;
+    color: var(--navy);
+    background: var(--white);
+    padding: 8px 22px;
+    border-radius: 999px;
+    line-height: 1.2;
   }
-  .reg span {
-    font-size: 0.8rem;
+  html[lang='mr'] .cities li {
+    text-transform: none;
+  }
+  .regs {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px 64px;
+    align-items: center;
+  }
+  .regs h2 {
+    margin: 0;
+  }
+  .regs dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .regs dt {
+    font-size: 0.85rem;
     color: var(--muted);
   }
-  @media (max-width: 860px) {
-    .two {
-      grid-template-columns: 1fr;
-    }
-    aside {
+  .regs dd {
+    margin: 4px 0 0;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    color: var(--navy);
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 900px) {
+    .mosaic {
       grid-template-columns: 1fr 1fr;
     }
-    .reg {
-      grid-column: 1 / -1;
+    .mosaic :global(.m0) {
+      grid-row: span 1;
+      grid-column: span 2;
+      aspect-ratio: 16 / 9;
+    }
+    .regs {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 1100px) {
+    .regs {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 700px) {
+    .regs dl {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 600px) {
+    .offices {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .regs dl {
+      grid-template-columns: 1fr;
     }
   }
 </style>

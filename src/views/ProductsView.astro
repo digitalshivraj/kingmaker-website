@@ -1,10 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import PhotoMock from '../components/PhotoMock.astro';
+import Photo from '../components/Photo.astro';
+import Icon from '../components/Icon.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getCollection } from 'astro:content';
-import { projects, sectors, sectorNames } from '../data/portfolio';
+import { projects, sectors, sectorNames, type Sector } from '../data/portfolio';
 import { whatsappLink } from '../data/site';
 import { t } from '../i18n/ui';
 import { localize, byLang, entrySlug, type Lang } from '../i18n/utils';
@@ -16,238 +17,383 @@ const { lang } = Astro.props;
 const ui = t(lang);
 const L = (p: string) => localize(p, lang);
 const products = byLang(await getCollection('products'), lang).sort((a, b) => a.data.order - b.data.order);
-const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const enProducts = byLang(await getCollection('products'), 'en');
+const enSector = (id: string) => enProducts.find((p) => entrySlug(p.id) === entrySlug(id))?.data.sector as Sector;
+const key = (s: Sector) => `s${sectors.indexOf(s)}`;
 const projName = (p: (typeof projects)[number]) => (lang === 'mr' && p.marathi ? p.marathi : p.name);
+const statusClass = (s: string) => (s === 'Live' ? 'live' : s === 'Pilot' ? 'pilot' : '');
+const productSectors = sectors.filter((s) => products.some((p) => enSector(p.id) === s));
+const origin = Astro.site?.origin ?? '';
+const listLd = {
+  '@type': 'ItemList',
+  name: ui.productsPage.readyH2,
+  itemListElement: products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.data.title, url: origin + L(`/products/${entrySlug(p.id)}/`) })),
+};
 ---
 
-<Base lang={lang} title={ui.productsPage.title} description={ui.productsPage.desc(products.length, projects.length)}>
+<Base lang={lang} title={ui.productsPage.title} description={ui.productsPage.desc(products.length, projects.length)} jsonLd={[listLd]}>
   <PageHead
     lang={lang}
     title={ui.productsPage.title}
-    marathi={ui.productsPage.sub}
+    variant="pattern"
     intro={ui.productsPage.intro(products.length, projects.length)}
     crumbs={[{ label: ui.nav.products, href: L('/products/') }]}
-  >
-    <nav class="jump" aria-label="Sectors">
-      {sectors.map((s) => <a href={`#${slug(s)}`}>{sectorNames[s][lang]}</a>)}
-    </nav>
-  </PageHead>
+  />
 
-  <section class="section">
-    <div class="wrap">
-      <div class="head" data-reveal>
-        <h2>{ui.productsPage.readyH2}</h2>
-        <p>{ui.productsPage.readyP}</p>
+  <section class="section tight">
+    <div class="wrap wide">
+      <div class="bar">
+        <div class="tabs" role="tablist" data-tabs="bento">
+          <button type="button" role="tab" aria-selected="true" data-filter="all">{ui.x.common.all}</button>
+          {productSectors.map((s) => <button type="button" role="tab" aria-selected="false" data-filter={key(s)}>{sectorNames[s][lang]}</button>)}
+        </div>
+        <label class="search">
+          <Icon name="search" size={18} />
+          <span class="sr-only">{ui.x.common.search}</span>
+          <input type="search" placeholder={ui.x.common.search} data-search="bento all-projects" autocomplete="off" />
+        </label>
       </div>
-      <div class="flag-grid">
+      <ul class="bento" id="bento">
         {
           products.map((p, i) => {
             const href = L(`/products/${entrySlug(p.id)}/`);
+            const sec = enSector(p.id);
             return (
-              <article class="flag" data-reveal style={`--rd: ${(i % 2) * 0.08}s`}>
-                <a href={href} class="vis" aria-label={p.data.title}>
-                  <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} lang={lang} />
+              <li class={`t${i}`} data-cat={key(sec)} data-text={`${p.data.title} ${p.data.marathi} ${p.data.tagline}`.toLowerCase()} data-reveal style={`--rd: ${(i % 3) * 0.06}s`}>
+                <a href={href}>
+                  <Photo name={p.data.photo} w={i === 0 ? 1100 : 760} h={i === 0 ? 1000 : 640} sizes="(max-width: 760px) 100vw, 50vw" />
+                  <span class="shade" />
+                  <span class="txt">
+                    <span class="label">{sectorNames[sec][lang]}</span>
+                    <h2 class="nm">{p.data.title}</h2>
+                    <span class="tag">{p.data.tagline}</span>
+                    <span class="st">{p.data.status}</span>
+                  </span>
+                  <span class="go" aria-hidden="true">
+                    <Icon name="arrow" size={20} />
+                  </span>
                 </a>
-                <h3>
-                  <a href={href}>{p.data.title}</a>
-                </h3>
-                <p>{p.data.tagline}</p>
-                <span class="status">{p.data.status}</span>
-              </article>
+              </li>
             );
           })
         }
-      </div>
+        <li class="tcta" data-reveal>
+          <div class="cta-tile">
+            <h2 class="d-sm">{ui.x.products.customH}</h2>
+            <p>{ui.x.products.customP}</p>
+            <a class="btn gold" href={L('/contact/')}>
+              {ui.x.products.customBtn}
+              <Icon name="arrow" size={18} />
+            </a>
+          </div>
+        </li>
+      </ul>
+      <p class="empty" hidden>{ui.x.common.noResults}</p>
     </div>
   </section>
 
-  <section class="section paper">
+  <section class="section sand">
     <div class="wrap">
-      <div class="head" data-reveal>
-        <h2>{ui.productsPage.allH2}</h2>
-        <p>{ui.productsPage.allP}</p>
+      <div class="head center">
+        <h2 class="d-md" data-reveal>{ui.productsPage.allH2}</h2>
+        <p class="intro" data-reveal>{ui.productsPage.allP}</p>
       </div>
-      {
-        sectors.map((sec) => {
-          const list = projects.filter((p) => p.sector === sec);
-          return (
-            <div class="sector" id={slug(sec)}>
-              <h3>{sectorNames[sec][lang]}</h3>
-              <ul>
-                {list.map((p) => (
-                  <li data-reveal>
-                    <div class="name">
-                      <b>{p.product ? <a href={L(`/products/${p.product}/`)}>{projName(p)}</a> : projName(p)}</b>
-                    </div>
-                    <p>{lang === 'mr' ? p.summaryMr : p.summary}</p>
-                    <div class="meta">
-                      <span class={`st ${slug(p.status)}`}>{ui.common.status[p.status]}</span>
-                      {p.stack && <span class="stack">{p.stack}</span>}
-                      <a href={whatsappLink(ui.productsPage.askMsg(p.name))} target="_blank" rel="noopener">
-                        {ui.productsPage.ask}
-                      </a>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })
-      }
+      <div class="tabs-wrap">
+        <div class="tabs" role="tablist" data-tabs="all-projects">
+          <button type="button" role="tab" aria-selected="true" data-filter="all">{ui.x.common.all}</button>
+          {sectors.map((s) => <button type="button" role="tab" aria-selected="false" data-filter={key(s)}>{sectorNames[s][lang]}</button>)}
+        </div>
+      </div>
+      <ul class="projects" id="all-projects">
+        {
+          projects.map((p) => (
+            <li data-cat={key(p.sector)} data-text={`${p.name} ${p.marathi ?? ''} ${p.summary}`.toLowerCase()}>
+              <p class="label">{sectorNames[p.sector][lang]}</p>
+              <h3>{p.product ? <a href={L(`/products/${p.product}/`)}>{projName(p)}</a> : projName(p)}</h3>
+              <p class="sum">{lang === 'mr' ? p.summaryMr : p.summary}</p>
+              <div class="meta">
+                <span class={`status ${statusClass(p.status)}`}>{ui.common.status[p.status]}</span>
+                <a class="arrow-link" href={whatsappLink(ui.productsPage.askMsg(p.name))} target="_blank" rel="noopener">
+                  {ui.productsPage.ask}
+                  <Icon name="arrow" size={16} />
+                </a>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
   <CtaBand lang={lang} title={ui.productsPage.ctaTitle} text={ui.productsPage.ctaText} message={ui.productsPage.ctaMsg} />
 </Base>
 
+<script>
+  // Free-text search across the product bento and the full project list
+  document.querySelectorAll<HTMLInputElement>('input[data-search]').forEach((input) => {
+    const lists = input.dataset.search!.split(' ').map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const empty = document.querySelector<HTMLElement>('.empty');
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      lists.forEach((list) =>
+        list.querySelectorAll<HTMLElement>('[data-text]').forEach((el) => el.classList.toggle('nomatch', !!q && !el.dataset.text!.includes(q))),
+      );
+      const bento = lists[0];
+      if (empty && bento) empty.hidden = !q || bento.querySelectorAll('[data-text]:not(.nomatch):not([hidden])').length > 0;
+    });
+  });
+</script>
+
 <style>
-  .jump {
+  .bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 22px;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: clamp(28px, 4vw, 44px);
   }
-  .jump a {
-    font-size: 0.88rem;
-    padding: 6px 14px;
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    height: 52px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: var(--on-dark);
-    text-decoration: none;
-  }
-  .jump a:hover {
-    border-color: var(--gold-2);
-    color: var(--gold-2);
-  }
-  .flag-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px 48px;
-  }
-  .flag .vis {
-    display: block;
-    margin-bottom: 18px;
-    text-decoration: none;
-    color: inherit;
-  }
-  .sub {
-    color: var(--gold-3);
-    margin-bottom: 2px;
-  }
-  .flag h3 {
-    font-size: 1.4rem;
-    margin-bottom: 4px;
-  }
-  .flag h3 a {
-    color: var(--navy);
-    text-decoration: none;
-  }
-  .flag h3 a:hover {
-    color: var(--gold-3);
-  }
-  .flag p {
+    background: var(--sand);
     color: var(--muted);
+    min-width: min(320px, 100%);
   }
-  .status {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 0.85rem;
-    color: var(--navy);
-    background: var(--paper-2);
-    padding: 4px 12px;
-    border-radius: 999px;
+  .search input {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    color: var(--text);
+    width: 100%;
+    outline: none;
   }
-  .sector {
-    padding-top: 28px;
-    margin-top: 28px;
-    border-top: 2px solid var(--line);
-    scroll-margin-top: 90px;
+  .search:focus-within {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
   }
-  .sector h3 {
-    font-size: 1.35rem;
-    margin-bottom: 18px;
-  }
-  .sector ul {
+  .bento {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(280px, 24vw);
+    gap: 18px;
+  }
+  .bento .t0 {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .bento .t3,
+  .bento .t6 {
+    grid-column: span 2;
+  }
+  .bento .tcta {
+    grid-column: span 3;
+  }
+  .cta-tile {
+    height: 100%;
+    border-radius: var(--r-lg);
+    background: var(--sky-2);
+    padding: clamp(28px, 4vw, 48px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
     gap: 16px;
   }
-  .sector li {
+  .cta-tile h2 {
+    margin: 0;
+    color: var(--navy);
+    max-width: 22ch;
+  }
+  .cta-tile p {
+    margin: 0;
+    max-width: 52ch;
+    color: var(--navy);
+  }
+  .bento li[hidden],
+  .bento li.nomatch,
+  .projects li[hidden],
+  .projects li.nomatch {
+    display: none;
+  }
+  .bento li > a {
+    position: relative;
+    display: block;
+    height: 100%;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    color: var(--white);
+    text-decoration: none;
+    background: var(--navy);
+  }
+  .bento :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.9s var(--ease);
+  }
+  .bento li > a:hover :global(img) {
+    transform: scale(1.06);
+  }
+  .shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5, 12, 26, 0) 30%, rgba(5, 12, 26, 0.88) 100%);
+  }
+  .txt {
+    position: absolute;
+    left: 24px;
+    right: 80px;
+    bottom: 22px;
     display: grid;
     gap: 6px;
-    align-content: start;
-    padding: 18px 20px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: var(--r);
+    justify-items: start;
   }
-  .name {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 12px;
-    align-items: baseline;
+  .txt .label {
+    color: var(--gold-2);
   }
-  .name b {
-    font-family: var(--font-display);
-    font-weight: 600;
-    color: var(--navy);
-    font-size: 1.05rem;
+  .nm {
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    color: var(--white);
+    margin: 0;
   }
-  html[lang='mr'] .name b {
-    font-family: var(--font-body);
-    font-weight: 700;
+  .t0 .nm {
+    font-size: clamp(2.8rem, 5vw, 4.6rem);
   }
-  .name a {
-    color: var(--navy);
-    text-decoration: none;
-  }
-  .name a:hover {
-    color: var(--gold-3);
-  }
-  .name .marathi {
-    color: var(--gold-3);
-    font-size: 0.95rem;
-  }
-  .sector p {
-    color: var(--muted);
-    font-size: 0.98rem;
-  }
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 14px;
-    align-items: center;
-    font-size: 0.85rem;
+  .tag {
+    color: var(--on-dark);
+    font-size: 1rem;
+    line-height: 1.4;
   }
   .st {
-    padding: 2px 10px;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    padding: 4px 12px;
     border-radius: 999px;
-    background: var(--paper-2);
+    background: rgba(255, 255, 255, 0.16);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .go {
+    position: absolute;
+    right: 20px;
+    bottom: 22px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--white);
+    color: var(--navy);
+    transition: transform 0.3s var(--ease), background 0.2s;
+  }
+  .bento li > a:hover .go {
+    transform: translateX(4px);
+    background: var(--gold-2);
+  }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 0;
+  }
+
+  .tabs-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+  .tabs-wrap .tabs {
+    background: var(--white);
+    justify-content: center;
+  }
+  @media (max-width: 640px) {
+    .tabs-wrap .tabs {
+      justify-content: flex-start;
+    }
+  }
+  .projects {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .projects li {
+    background: var(--white);
+    border-radius: var(--r-lg);
+    padding: 24px 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .projects li > * {
+    margin: 0;
+  }
+  .projects h3 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+  .projects h3 a {
     color: var(--navy);
   }
-  .st.live {
-    background: #dff3e7;
-    color: #1f6b43;
-  }
-  .st.pilot,
-  .st.demo-ready {
-    background: #e3ecf8;
-    color: #1f467c;
-  }
-  .st.in-build {
-    background: #fbefd6;
-    color: #7a5410;
-  }
-  .stack {
+  .sum {
     color: var(--muted);
+    font-size: 0.97rem;
+    margin: 0;
   }
-  @media (max-width: 760px) {
-    .flag-grid,
-    .sector ul {
+  .meta {
+    margin-top: auto;
+    padding-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .meta .arrow-link {
+    font-size: 0.9rem;
+  }
+  @media (max-width: 1100px) {
+    .bento {
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: minmax(260px, 40vw);
+    }
+    .bento .t0 {
+      grid-row: span 1;
+    }
+    .bento .t3,
+    .bento .t6,
+    .bento .tcta {
+      grid-column: span 1;
+    }
+    .projects {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .bento {
       grid-template-columns: 1fr;
+      grid-auto-rows: 340px;
+    }
+    .bento .t0 {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+    .projects {
+      grid-template-columns: 1fr;
+    }
+    .search {
+      width: 100%;
     }
   }
 </style>

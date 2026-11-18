@@ -1,0 +1,196 @@
+---
+import Photo from './Photo.astro';
+import type { PhotoKey } from '../data/images';
+
+export interface Story {
+  /** Headline lines; the last line is highlighted. */
+  big: string[];
+  text: string[];
+  photo: PhotoKey;
+  btn?: string;
+  href?: string;
+}
+interface Props {
+  items: Story[];
+  label?: string;
+}
+const { items, label } = Astro.props;
+---
+
+<section class="story" aria-label={label}>
+  {
+    items.map((s, i) => (
+      <article class:list={['panel', `tone-${i % 3}`]}>
+        <div class="panel-photo">
+          <Photo name={s.photo} w={1000} h={1100} sizes="(max-width: 860px) 100vw, 50vw" />
+        </div>
+        <div class="panel-text">
+          <ol class="steps-chips" aria-hidden="true">
+            {items.map((_, j) => (
+              <li class:list={{ on: j === i }}>{`0${j + 1}`}</li>
+            ))}
+          </ol>
+          <h2 class="d-lg">
+            {s.big.map((line, k) =>
+              k === s.big.length - 1 && s.big.length > 1 ? (
+                <span class="hl">{line}</span>
+              ) : (
+                <>
+                  {line}
+                  <br />
+                </>
+              ),
+            )}
+          </h2>
+          <div class="panel-foot">
+            {s.text.map((p) => (
+              <p>{p}</p>
+            ))}
+            {s.btn && s.href && (
+              <a class="btn" href={s.href}>
+                {s.btn}
+              </a>
+            )}
+          </div>
+        </div>
+      </article>
+    ))
+  }
+</section>
+
+<style>
+  .story {
+    position: relative;
+  }
+  .panel {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .panel-photo {
+    position: relative;
+    overflow: hidden;
+    background: var(--navy-2);
+  }
+  .panel-photo :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .panel-text {
+    display: flex;
+    flex-direction: column;
+    padding: calc(var(--head-h) + 48px) clamp(28px, 5vw, 80px) clamp(40px, 6vw, 72px);
+  }
+  .steps-chips {
+    list-style: none;
+    margin: 0 0 28px;
+    padding: 0;
+    display: flex;
+    gap: 8px;
+  }
+  .steps-chips li {
+    width: 44px;
+    height: 34px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.16);
+  }
+  .panel h2 {
+    margin: 0;
+  }
+  .panel-foot {
+    margin-top: auto;
+    padding-top: 40px;
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+    max-width: 56ch;
+  }
+  .panel-foot p {
+    font-size: 1.12rem;
+    margin: 0;
+  }
+  .panel-foot .btn {
+    margin-top: 6px;
+  }
+  .tone-0 .panel-text {
+    background: var(--navy);
+    color: var(--on-dark);
+  }
+  .tone-0 h2 {
+    color: var(--white);
+  }
+  .tone-0 .hl {
+    color: var(--sky);
+  }
+  .tone-0 .btn {
+    background: var(--sky-2);
+    color: var(--navy);
+  }
+  .tone-0 .steps-chips li.on {
+    background: var(--sky);
+    color: var(--navy);
+  }
+  .tone-1 .panel-text {
+    background: var(--gold-2);
+    color: var(--ink);
+  }
+  .tone-1 h2 {
+    color: var(--navy);
+  }
+  .tone-1 .hl {
+    color: var(--gold-3);
+  }
+  .tone-1 .btn {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .tone-1 .steps-chips li {
+    background: rgba(15, 39, 71, 0.12);
+  }
+  .tone-1 .steps-chips li.on {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .tone-2 .panel-text {
+    background: var(--royal);
+    color: var(--on-dark);
+  }
+  .tone-2 h2 {
+    color: var(--white);
+  }
+  .tone-2 .hl {
+    color: var(--gold-2);
+  }
+  .tone-2 .btn {
+    background: var(--gold);
+    color: var(--ink);
+  }
+  .tone-2 .steps-chips li.on {
+    background: var(--gold-2);
+    color: var(--ink);
+  }
+  @media (max-width: 860px) {
+    .panel {
+      position: relative;
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+    .panel-photo {
+      height: 46vh;
+      min-height: 280px;
+    }
+    .panel-text {
+      padding: 40px var(--gutter) 48px;
+    }
+  }
+</style>

@@ -3,84 +3,139 @@ import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import CtaBand from '../components/CtaBand.astro';
 import Photo from '../components/Photo.astro';
+import Icon from '../components/Icon.astro';
 import { getCollection } from 'astro:content';
+import { postCats, newsCats } from '../data/groups';
 import { t } from '../i18n/ui';
-import { localize, byLang, isPublished, entrySlug, fmtDate, type Lang } from '../i18n/utils';
+import { localize, byLang, isPublished, entrySlug, fmtDate, fmtDateShort, type Lang } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const ui = t(lang);
+const xc = ui.x.common;
 const L = (p: string) => localize(p, lang);
 const all = await getCollection('blog', isPublished);
 const byDate = (a: { data: { date: Date } }, b: { data: { date: Date } }) => b.data.date.valueOf() - a.data.date.valueOf();
 const posts = byLang(all, lang).sort(byDate);
+const enTags = new Map(byLang(all, 'en').map((p) => [entrySlug(p.id), p.data.tags]));
+const catOf = (slug: string) => postCats(enTags.get(slug) ?? []);
+const [featured, ...rest] = posts;
 const enOnly = lang === 'mr' ? byLang(all, 'en').sort(byDate).filter((p) => !posts.some((o) => entrySlug(o.id) === entrySlug(p.id))) : [];
-const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
+const tabLabels = [xc.all, ...ui.x.home.newsTabs.slice(1)];
+const PAGE = 12;
 const desc =
   lang === 'mr'
     ? 'किंगमेकर एंटरप्रायझेसचे लेख: महाराष्ट्रातील शासकीय कार्यालये, पोलीस, हॉस्पिटल, राजकीय संघटना आणि व्यवसायांसाठी सॉफ्टवेअरची सोपी माहिती.'
     : 'Articles from Kingmaker Enterprises on software for government offices, police, hospitals, political organisations and businesses in Maharashtra, written in plain language.';
+const list = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: posts.slice(0, 30).map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    url: new URL(L(`/blog/${entrySlug(p.id)}/`), Astro.site ?? 'https://kingmakerenterprises.in').toString(),
+    name: p.data.title,
+  })),
+};
 ---
 
 <Base lang={lang} title={ui.blog.title} description={desc}>
-  <PageHead lang={lang} title={ui.blog.title} marathi={lang === 'mr' ? 'Blog' : 'लेख'} intro={ui.blog.intro} crumbs={[{ label: ui.nav.blog, href: L('/blog/') }]}>
-    <p class="tags">{tags.map((tg) => <span>{tg}</span>)}</p>
-  </PageHead>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(list)} />
+  <PageHead lang={lang} title={ui.x.nav.insights} variant="plain" intro={ui.blog.intro} crumbs={[{ label: ui.nav.blog, href: L('/blog/') }]} />
 
-  <section class="section">
+  {
+    featured && (
+      <section class="section tight">
+        <div class="wrap wide">
+          <a class="feat" href={L(`/blog/${entrySlug(featured.id)}/`)} data-reveal>
+            <span class="feat-ph">
+              <Photo name={featured.data.cover} w={1100} h={720} eager sizes="(max-width: 900px) 100vw, 60vw" />
+            </span>
+            <span class="feat-text">
+              <span class="kicker">{xc.latest}</span>
+              <span class="feat-title">{featured.data.title}</span>
+              <span class="feat-desc">{featured.data.description}</span>
+              <span class="feat-meta">
+                <time datetime={featured.data.date.toISOString()}>{fmtDate(featured.data.date, lang)}</time>
+                <span>
+                  {featured.data.readingMinutes} {ui.blog.minRead}
+                </span>
+              </span>
+              <span class="btn sky">
+                {xc.readMore}
+                <Icon name="arrow" size={18} />
+              </span>
+            </span>
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section tight">
     <div class="wrap">
-      <div class="posts">
+      <div class="bar">
+        <div class="tabs" role="tablist" aria-label={ui.blog.title} data-blog-tabs>
+          {
+            tabLabels.map((label, i) => (
+              <button type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-filter={newsCats[i]}>
+                {label}
+              </button>
+            ))
+          }
+        </div>
+        <label class="search">
+          <Icon name="search" size={18} />
+          <span class="sr-only">{xc.search}</span>
+          <input type="search" placeholder={xc.search} data-blog-search autocomplete="off" />
+        </label>
+      </div>
+
+      <ul class="grid" id="post-grid" data-page={PAGE}>
         {
-          posts.map((p, i) => {
-            const href = L(`/blog/${entrySlug(p.id)}/`);
+          rest.map((p, i) => {
+            const slug = entrySlug(p.id);
+            const text = [p.data.title, p.data.description, ...p.data.tags].join(' ').toLowerCase();
             return (
-              <article data-reveal style={`--rd: ${(i % 2) * 0.08}s`}>
-                <a href={href} class="cover" aria-hidden="true" tabindex="-1">
-                  <Photo name={p.data.cover} w={720} h={420} sizes="(max-width: 760px) 100vw, 50vw" />
-                </a>
-                <div class="meta">
-                  <time datetime={p.data.date.toISOString()}>{fmtDate(p.data.date, lang)}</time>
-                  <span>
-                    {p.data.readingMinutes} {ui.blog.minRead}
+              <li data-cat={catOf(slug).join(' ')} data-text={text} class:list={{ clip: i >= PAGE }}>
+                <a class="photo-card" href={L(`/blog/${slug}/`)}>
+                  <span class="ph">
+                    <Photo name={p.data.cover} w={640} h={420} sizes="(max-width: 640px) 100vw, (max-width: 1000px) 50vw, 400px" />
+                    <span class="chip">{p.data.tags[0]}</span>
                   </span>
-                </div>
-                <h2>
-                  <a href={href}>{p.data.title}</a>
-                </h2>
-                <p>{p.data.description}</p>
-                <div class="post-tags">
-                  {p.data.tags.map((tg) => (
-                    <span>{tg}</span>
-                  ))}
-                </div>
-              </article>
+                  <span class="meta">
+                    <time datetime={p.data.date.toISOString()}>{fmtDateShort(p.data.date, lang)}</time>
+                    <span>
+                      {p.data.readingMinutes} {ui.blog.minRead}
+                    </span>
+                  </span>
+                  <h3>{p.data.title}</h3>
+                  <p class="desc">{p.data.description}</p>
+                </a>
+              </li>
             );
           })
         }
+      </ul>
+      <p class="empty" hidden>{xc.noResults}</p>
+      <div class="center more-row">
+        <button class="btn navy" type="button" data-more hidden={rest.length <= PAGE}>
+          {xc.showMore}
+        </button>
       </div>
 
       {
         enOnly.length > 0 && (
           <div class="en-block">
-            <div class="head">
-              <h2>{ui.blog.inEnglish}</h2>
-              <p>{ui.blog.englishNote}</p>
-            </div>
+            <h2 class="d-sm">{ui.blog.inEnglish}</h2>
+            <p>{ui.blog.englishNote}</p>
             <ul class="en-list" lang="en">
               {enOnly.map((p) => (
-                <li data-reveal>
-                  <a href={localize(`/blog/${entrySlug(p.id)}/`, 'en')} class="cover" aria-hidden="true" tabindex="-1">
-                    <Photo name={p.data.cover} w={360} h={220} sizes="160px" />
-                  </a>
-                  <div>
-                    <time datetime={p.data.date.toISOString()}>{fmtDate(p.data.date, 'en')}</time>
-                    <h3>
-                      <a href={localize(`/blog/${entrySlug(p.id)}/`, 'en')}>{p.data.title}</a>
-                    </h3>
-                    <p>{p.data.description}</p>
-                  </div>
+                <li>
+                  <a href={localize(`/blog/${entrySlug(p.id)}/`, 'en')}>{p.data.title}</a>
+                  <time datetime={p.data.date.toISOString()}>{fmtDateShort(p.data.date, 'en')}</time>
                 </li>
               ))}
             </ul>
@@ -93,129 +148,240 @@ const desc =
   <CtaBand lang={lang} />
 </Base>
 
+<script>
+  const grid = document.getElementById('post-grid');
+  const tabs = document.querySelector<HTMLElement>('[data-blog-tabs]');
+  const search = document.querySelector<HTMLInputElement>('[data-blog-search]');
+  const moreBtn = document.querySelector<HTMLButtonElement>('[data-more]');
+  const empty = document.querySelector<HTMLElement>('.empty');
+  if (grid && tabs && moreBtn) {
+    const page = Number(grid.dataset.page) || 12;
+    const items = Array.from(grid.querySelectorAll<HTMLElement>('li'));
+    let filter = 'all';
+    let q = '';
+    let shown = page;
+    const apply = () => {
+      const matches = items.filter((el) => (filter === 'all' || el.dataset.cat!.split(' ').includes(filter)) && (!q || el.dataset.text!.includes(q)));
+      items.forEach((el) => {
+        el.hidden = !matches.includes(el);
+        el.classList.remove('clip');
+      });
+      matches.forEach((el, i) => el.classList.toggle('clip', i >= shown));
+      moreBtn.hidden = matches.length <= shown;
+      if (empty) empty.hidden = matches.length > 0;
+    };
+    tabs.querySelectorAll<HTMLButtonElement>('button[data-filter]').forEach((btn) =>
+      btn.addEventListener('click', () => {
+        tabs.querySelectorAll('button').forEach((b) => b.setAttribute('aria-selected', String(b === btn)));
+        filter = btn.dataset.filter!;
+        shown = page;
+        apply();
+      }),
+    );
+    search?.addEventListener('input', () => {
+      q = search.value.trim().toLowerCase();
+      shown = page;
+      apply();
+    });
+    moreBtn.addEventListener('click', () => {
+      shown += page;
+      apply();
+    });
+  }
+</script>
+
 <style>
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 20px;
-  }
-  .tags span {
-    font-size: 0.85rem;
-    padding: 4px 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: var(--on-dark-muted);
-  }
-  .posts {
+  .feat {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px 56px;
-  }
-  .cover {
-    display: block;
-    border-radius: 14px;
+    grid-template-columns: 1.35fr 1fr;
+    border-radius: var(--r-xl);
     overflow: hidden;
-    margin-bottom: 16px;
+    background: var(--navy);
+    color: var(--on-dark);
+    text-decoration: none;
+    min-height: 520px;
   }
-  .cover img {
+  .feat-ph {
+    position: relative;
+    overflow: hidden;
+    background: var(--navy-2);
+  }
+  .feat-ph :global(img) {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
-    aspect-ratio: 720 / 420;
+    height: 100%;
     object-fit: cover;
-    transition: transform 0.4s;
+    transition: transform 0.9s var(--ease);
   }
-  article:hover .cover img {
-    transform: scale(1.03);
+  .feat:hover .feat-ph :global(img) {
+    transform: scale(1.04);
   }
-  .meta {
+  .feat-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding: clamp(28px, 4vw, 56px);
+  }
+  .feat .kicker {
+    color: var(--sky);
+  }
+  .feat-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 3.4vw, 3rem);
+    line-height: 1.02;
+    color: var(--white);
+  }
+  html[lang='mr'] .feat-title {
+    line-height: 1.25;
+  }
+  .feat-desc {
+    font-size: 1.05rem;
+  }
+  .feat-meta {
     display: flex;
     gap: 16px;
-    font-size: 0.88rem;
-    color: var(--muted);
+    font-size: 0.9rem;
+    color: var(--on-dark-muted);
+    margin-top: auto;
   }
-  h2 {
-    font-size: 1.45rem;
-    margin: 10px 0 8px;
-  }
-  h2 a {
-    color: var(--navy);
-    text-decoration: none;
-  }
-  h2 a:hover {
-    color: var(--gold-3);
-  }
-  article p {
-    color: var(--muted);
-  }
-  .post-tags {
+  .bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 12px;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: clamp(28px, 4vw, 44px);
   }
-  .post-tags span {
-    font-size: 0.8rem;
-    padding: 3px 10px;
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 18px;
+    height: 52px;
     border-radius: 999px;
-    background: var(--paper-2);
-    color: var(--navy);
+    background: var(--sand);
+    color: var(--muted);
+    min-width: min(320px, 100%);
   }
-  .en-block {
-    margin-top: clamp(48px, 7vw, 80px);
-    padding-top: clamp(32px, 5vw, 48px);
-    border-top: 2px solid var(--line);
+  .search input {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    color: var(--text);
+    width: 100%;
+    outline: none;
   }
-  .en-block .head h2 {
-    font-size: 1.5rem;
+  .search:focus-within {
+    box-shadow: 0 0 0 2px var(--royal);
   }
-  .en-list {
+  .grid {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(32px, 4vw, 48px) clamp(20px, 2.4vw, 32px);
+  }
+  .grid li.clip {
+    display: none;
+  }
+  .grid .ph :global(img) {
+    aspect-ratio: 640 / 420;
+  }
+  .meta {
+    display: flex;
+    gap: 14px;
+    font-size: 0.86rem;
+    color: var(--muted);
+    margin-bottom: -6px;
+  }
+  .grid h3 {
+    font-size: 1.2rem;
+  }
+  .desc {
+    color: var(--muted);
+    margin: 0;
+    font-size: 0.97rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 0;
+  }
+  .more-row {
+    margin-top: clamp(36px, 5vw, 56px);
+  }
+  .en-block {
+    margin-top: clamp(48px, 7vw, 80px);
+    padding-top: clamp(32px, 5vw, 48px);
+    border-top: 1px solid var(--line);
+  }
+  .en-list {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 0;
+    display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px 40px;
+    gap: 0 40px;
   }
   .en-list li {
-    display: grid;
-    grid-template-columns: 160px 1fr;
+    display: flex;
+    justify-content: space-between;
     gap: 16px;
-    align-items: start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
   }
-  .en-list .cover {
-    margin: 0;
-    border-radius: 10px;
-  }
-  .en-list .cover img {
-    aspect-ratio: 360 / 220;
-  }
-  .en-list time {
-    font-size: 0.82rem;
-    color: var(--muted);
-  }
-  .en-list h3 {
-    font-size: 1.05rem;
-    margin: 4px 0 4px;
-  }
-  .en-list h3 a {
+  .en-list a {
     color: var(--navy);
+    font-weight: 600;
     text-decoration: none;
   }
-  .en-list h3 a:hover {
-    color: var(--gold-3);
-  }
-  .en-list p {
-    font-size: 0.92rem;
+  .en-list time {
     color: var(--muted);
+    font-size: 0.86rem;
+    white-space: nowrap;
   }
-  @media (max-width: 760px) {
-    .posts,
+  @media (max-width: 1000px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .feat {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+    .feat-ph {
+      aspect-ratio: 16 / 10;
+    }
+  }
+  @media (max-width: 640px) {
+    .grid,
     .en-list {
       grid-template-columns: 1fr;
     }
-    .en-list li {
-      grid-template-columns: 120px 1fr;
+    .bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .bar .tabs {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      scrollbar-width: none;
+      max-width: 100%;
+      align-self: stretch;
+    }
+    .search {
+      min-width: 0;
+      max-width: 100%;
+    }
+    .bar .tabs button {
+      white-space: nowrap;
     }
   }
 </style>

@@ -6,8 +6,9 @@ import Photo from '../components/Photo.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { whatsappLink } from '../data/site';
+import { groupOf } from '../data/groups';
 import { t } from '../i18n/ui';
-import { localize, byLang, isPublished, entrySlug, type Lang } from '../i18n/utils';
+import { localize, byLang, isPublished, entrySlug, fmtDateShort, type Lang } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -18,13 +19,14 @@ const ui = t(lang);
 const L = (p: string) => localize(p, lang);
 const { Content } = await render(service);
 const all = byLang(await getCollection('services'), lang).sort((a, b) => a.data.order - b.data.order);
-const others = all.filter((s) => s.id !== service.id).slice(0, 4);
-const wa = whatsappLink(ui.servicePage.discussMsg(service.data.title));
 const slug = entrySlug(service.id);
+const sameGroup = all.filter((s) => s.id !== service.id && groupOf(entrySlug(s.id)) === groupOf(slug));
+const others = [...sameGroup, ...all.filter((s) => s.id !== service.id && !sameGroup.includes(s))].slice(0, 4);
+const wa = whatsappLink(ui.servicePage.discussMsg(service.data.title));
 const posts = byLang(await getCollection('blog', isPublished), lang)
   .filter((p) => (p.body ?? '').includes(`/services/${slug}/`))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 5);
+  .slice(0, 6);
 const origin = Astro.site?.origin ?? '';
 const serviceLd = {
   '@type': 'Service',
@@ -52,107 +54,200 @@ const serviceLd = {
   <PageHead
     lang={lang}
     title={service.data.title}
-    marathi={service.data.marathi}
     intro={service.data.summary}
+    photo={service.data.photo}
+    kicker={ui.x.nav.groups[groupOf(slug)]}
     crumbs={[
       { label: ui.nav.services, href: L('/services/') },
       { label: service.data.title, href: L(`/services/${slug}/`) },
     ]}
-  />
+  >
+    <div class="btn-row">
+      <a class="btn gold" href={wa} target="_blank" rel="noopener">
+        <Icon name="whatsapp" />
+        <span>{ui.servicePage.discuss}</span>
+      </a>
+      <a class="btn ghost" href={L('/services/')}>{ui.x.nav.allServices}</a>
+    </div>
+  </PageHead>
 
-  <section class="section">
+  <section class="section tight">
     <div class="wrap layout">
-      <div>
-        <Photo name={service.data.photo} w={1000} h={480} class="cover" eager sizes="(max-width: 860px) 100vw, 60vw" />
-        <div class="prose">
-          <Content />
-        </div>
+      <div class="prose" data-reveal>
+        <Content />
       </div>
-      <aside>
-        <div class="box">
-          <h3>{ui.servicePage.get}</h3>
+      <aside data-reveal style="--rd: 0.1s">
+        <div class="box get">
+          <h2 class="d-sm">{ui.servicePage.get}</h2>
           <ul class="check-list">
             {service.data.deliverables.map((d) => <li>{d}</li>)}
           </ul>
         </div>
-        <div class="box">
+        <div class="box for">
           <h3>{ui.servicePage.builtFor}</h3>
-          <ul class="plain">
+          <ul class="chips">
             {service.data.forWhom.map((f) => <li>{f}</li>)}
           </ul>
-        </div>
-        <a class="btn gold wide" href={wa} target="_blank" rel="noopener">
-          <Icon name="whatsapp" />
-          <span>{ui.servicePage.discuss}</span>
-        </a>
-        {posts.length > 0 && (
-          <div class="box">
-            <h3>{ui.blog.onThis}</h3>
-            <ul class="plain">
-              {posts.map((p) => <li><a href={L(`/blog/${entrySlug(p.id)}/`)}>{p.data.title}</a></li>)}
-            </ul>
-          </div>
-        )}
-        <div class="box others">
-          <h3>{ui.servicePage.others}</h3>
-          <ul class="plain">
-            {others.map((o) => <li><a href={L(`/services/${entrySlug(o.id)}/`)}>{o.data.title}</a></li>)}
-          </ul>
+          <a class="btn navy" href={wa} target="_blank" rel="noopener">
+            <Icon name="whatsapp" />
+            <span>{ui.servicePage.discuss}</span>
+          </a>
         </div>
       </aside>
     </div>
   </section>
 
-  <CtaBand lang={lang} />
+  {
+    posts.length > 0 && (
+      <section class="section sand">
+        <div class="wrap">
+          <h2 class="d-md" data-reveal>{ui.blog.onThis}</h2>
+          <ul class="posts">
+            {posts.map((p, i) => (
+              <li data-reveal style={`--rd: ${(i % 3) * 0.06}s`}>
+                <a class="photo-card" href={L(`/blog/${entrySlug(p.id)}/`)}>
+                  <span class="ph">
+                    <Photo name={p.data.cover} w={640} h={400} sizes="(max-width: 700px) 100vw, 33vw" />
+                  </span>
+                  <time class="label" datetime={p.data.date.toISOString()}>{fmtDateShort(p.data.date, lang)}</time>
+                  <h3>{p.data.title}</h3>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section">
+    <div class="wrap">
+      <div class="others-head">
+        <h2 class="d-md" data-reveal>{ui.servicePage.others}</h2>
+        <a class="arrow-link" href={L('/services/')}>{ui.x.nav.allServices}<Icon name="arrow" size={18} /></a>
+      </div>
+      <ul class="others">
+        {
+          others.map((o, i) => (
+            <li data-reveal style={`--rd: ${i * 0.06}s`}>
+              <a class="photo-card" href={L(`/services/${entrySlug(o.id)}/`)}>
+                <span class="ph">
+                  <Photo name={o.data.photo} w={520} h={380} sizes="(max-width: 700px) 50vw, 25vw" />
+                  <span class="chip">{ui.x.nav.groups[groupOf(entrySlug(o.id))]}</span>
+                </span>
+                <h3>{o.data.title}</h3>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} message={ui.servicePage.discussMsg(service.data.title)} />
 </Base>
 
 <style>
   .layout {
     display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: clamp(32px, 6vw, 80px);
+    grid-template-columns: 1fr 400px;
+    gap: clamp(32px, 6vw, 88px);
     align-items: start;
   }
-  .cover {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1000 / 480;
-    object-fit: cover;
-    border-radius: 16px;
-    margin-bottom: 32px;
-  }
   aside {
-    display: grid;
-    gap: 20px;
     position: sticky;
-    top: 96px;
+    top: calc(var(--head-h) + 36px);
+    display: grid;
+    gap: 16px;
   }
   .box {
-    background: var(--paper);
-    border-radius: var(--r);
-    padding: 22px;
+    border-radius: var(--r-lg);
+    padding: 28px;
   }
-  .box h3 {
-    font-size: 1.05rem;
-    margin-bottom: 12px;
+  .get {
+    background: var(--navy);
+    color: var(--on-dark);
   }
-  .plain {
+  .get h2 {
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+  .get :global(.check-list li::before) {
+    background-color: var(--gold-2);
+  }
+  .for {
+    background: var(--sand);
+    display: grid;
+    gap: 16px;
+  }
+  .for h3 {
+    margin: 0;
+  }
+  .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chips li {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--navy);
+    font-size: 0.95rem;
+  }
+  .for .btn {
+    justify-self: start;
+  }
+  .posts,
+  .others {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 8px;
-    color: var(--muted);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px 24px;
   }
-  .wide {
-    justify-content: center;
+  .posts .ph {
+    aspect-ratio: 640 / 400;
   }
-  @media (max-width: 860px) {
+  .others {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .others .ph {
+    aspect-ratio: 520 / 380;
+  }
+  .others-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+  .others-head h2 {
+    margin: 0;
+  }
+  @media (max-width: 1000px) {
     .layout {
       grid-template-columns: 1fr;
     }
     aside {
       position: static;
+    }
+    .posts,
+    .others {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 600px) {
+    .posts {
+      grid-template-columns: 1fr;
+    }
+    .others-head {
+      flex-direction: column;
+      align-items: start;
     }
   }
 </style>

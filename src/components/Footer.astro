@@ -1,42 +1,51 @@
 ---
 import Icon from './Icon.astro';
+import { getCollection } from 'astro:content';
 import { site } from '../data/site';
-import { t, navLinks } from '../i18n/ui';
-import { localize, type Lang } from '../i18n/utils';
+import { t } from '../i18n/ui';
+import { localize, byLang, entrySlug, type Lang } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const ui = t(lang);
-const links = navLinks(lang);
+const L = (p: string) => localize(p, lang);
 const year = new Date().getFullYear();
+const products = byLang(await getCollection('products'), lang).sort((a, b) => a.data.order - b.data.order);
+const services = byLang(await getCollection('services'), lang)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 7);
+const band = ui.x.home.band;
+const company = [
+  { label: ui.nav.about, href: L('/about/') },
+  { label: ui.nav.government, href: L('/government/') },
+  { label: ui.x.nav.insights, href: L('/blog/') },
+  { label: ui.nav.contact, href: L('/contact/') },
+  { label: ui.footer.privacy, href: L('/privacy/') },
+  { label: ui.footer.terms, href: L('/terms/') },
+];
 ---
 
+<div class="fband" aria-hidden="true">
+  <div class="marquee" style="--dur: 38s">
+    <div class="marquee-track">
+      {[0, 1, 2, 3].flatMap(() => band).map((w) => <span>{w}</span>)}
+    </div>
+  </div>
+</div>
+
 <footer class="site-footer">
-  <div class="wrap grid">
-    <div class="col about">
-      <img src="/logo-white.svg" alt="Kingmaker Enterprises" width="204" height="65" />
+  <div class="wrap wide top">
+    <div class="about">
+      <a href={L('/')} aria-label={ui.nav.home}>
+        <img src="/logo-white.svg" alt="Kingmaker Enterprises" width="320" height="102" loading="lazy" />
+      </a>
       <p>{ui.footer.about}</p>
-    </div>
-    <div class="col">
-      <h4>{ui.footer.pages}</h4>
-      <ul>
-        {links.map((i) => <li><a href={i.href}>{i.label}</a></li>)}
-        <li><a href={localize('/privacy/', lang)}>{ui.footer.privacy}</a></li>
-        <li><a href={localize('/terms/', lang)}>{ui.footer.terms}</a></li>
-      </ul>
-    </div>
-    <div class="col">
-      <h4>{ui.footer.contact}</h4>
       <ul class="contact">
         <li>
           <Icon name="whatsapp" size={18} />
           <a href={site.whatsapp} target="_blank" rel="noopener">{site.phoneDisplay} {ui.footer.waLabel}</a>
-        </li>
-        <li>
-          <Icon name="phone" size={18} />
-          <a href={`tel:${site.phoneIntl}`}>{site.phoneDisplay}</a>
         </li>
         <li>
           <Icon name="mail" size={18} />
@@ -52,116 +61,207 @@ const year = new Date().getFullYear();
         </li>
       </ul>
     </div>
-    <div class="col">
-      <h4>{ui.footer.registered}</h4>
-      <ul class="reg">
-        <li><span>{ui.footer.legalName}</span>{ui.common.legalName}</li>
-        <li><span>{ui.footer.office}</span>{lang === 'mr' ? site.registeredOfficeMarathi : site.registeredOffice}</li>
-        <li><span>{ui.footer.udyam}</span>{site.udyam}</li>
-        <li><span>{ui.footer.gstin}</span>{site.gstin}</li>
-        <li><span>{ui.footer.shopAct}</span>{site.shopAct}</li>
-        <li><span>{ui.footer.since}</span>{site.since}</li>
-      </ul>
-    </div>
+    <nav class="cols" aria-label="Footer">
+      <div>
+        <h2 class="fh">{ui.x.nav.company}</h2>
+        <ul>{company.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      </div>
+      <div>
+        <h2 class="fh">{ui.nav.products}</h2>
+        <ul>{products.map((p) => <li><a href={L(`/products/${entrySlug(p.id)}/`)}>{p.data.title}</a></li>)}</ul>
+      </div>
+      <div>
+        <h2 class="fh">{ui.nav.services}</h2>
+        <ul>
+          {services.map((s) => <li><a href={L(`/services/${entrySlug(s.id)}/`)}>{s.data.title}</a></li>)}
+          <li><a class="all" href={L('/services/')}>{ui.x.nav.allServices} <Icon name="arrow" size={16} /></a></li>
+        </ul>
+      </div>
+    </nav>
   </div>
-  <div class="wrap legal">
+
+  <div class="wrap wide reg">
+    <h2 class="fh">{ui.footer.registered}</h2>
+    <dl>
+      <div><dt>{ui.footer.legalName}</dt><dd>{ui.common.legalName}</dd></div>
+      <div class="office"><dt>{ui.footer.office}</dt><dd>{lang === 'mr' ? site.registeredOfficeMarathi : site.registeredOffice}</dd></div>
+      <div><dt>{ui.footer.udyam}</dt><dd>{site.udyam}</dd></div>
+      <div><dt>{ui.footer.gstin}</dt><dd>{site.gstin}</dd></div>
+      <div><dt>{ui.footer.shopAct}</dt><dd>{site.shopAct}</dd></div>
+      <div><dt>{ui.footer.since}</dt><dd>{site.since}</dd></div>
+    </dl>
+  </div>
+
+  <div class="wrap wide legal">
     <span>{ui.footer.copyright(year)}</span>
-    <span>{ui.footer.place}</span>
     <a class="dev" href="https://devdootcare.in">{ui.footer.devdoot}</a>
   </div>
 </footer>
 
 <style>
+  .fband {
+    background: var(--royal);
+    padding-block: clamp(18px, 2.6vw, 30px);
+  }
+  .fband span {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--sky-2);
+  }
+  html[lang='mr'] .fband span {
+    text-transform: none;
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    line-height: 1.2;
+  }
   .site-footer {
     background: var(--ink);
     color: var(--on-dark-muted);
-    padding-top: clamp(48px, 7vw, 80px);
-    font-size: 0.95rem;
-    border-top: 3px solid var(--gold);
+    padding-top: clamp(56px, 8vw, 96px);
+    font-size: 0.98rem;
   }
-  .grid {
+  .site-footer a {
+    color: var(--white);
+    text-decoration: none;
+  }
+  .site-footer a:hover {
+    color: var(--gold-2);
+  }
+  .top {
     display: grid;
-    grid-template-columns: 1.4fr 0.7fr 1.1fr 1.1fr;
-    gap: 40px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid var(--line-dark);
+    grid-template-columns: 1fr 1.35fr;
+    gap: clamp(40px, 7vw, 120px);
+    padding-bottom: 56px;
   }
   .about img {
-    height: 54px;
-    width: auto;
-    margin-bottom: 12px;
-  }
-  .about .marathi {
-    color: var(--gold-2);
-    margin-bottom: 10px;
+    width: min(320px, 80%);
+    height: auto;
+    margin-bottom: 26px;
   }
   .about p {
-    max-width: 38ch;
+    max-width: 44ch;
+    margin-bottom: 24px;
   }
-  h4 {
-    color: var(--white);
-    margin-bottom: 14px;
-  }
-  ul {
+  .contact {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 9px;
-  }
-  a {
-    color: var(--on-dark);
-    text-decoration: none;
-  }
-  a:hover {
-    color: var(--gold-2);
+    gap: 10px;
   }
   .contact li {
-    display: grid;
-    grid-template-columns: 18px 1fr;
+    display: flex;
     gap: 10px;
-    align-items: start;
+    align-items: flex-start;
   }
-  .contact svg {
+  .contact :global(svg) {
+    flex: none;
     margin-top: 4px;
     color: var(--gold-2);
   }
-  .reg li {
+  .cols {
     display: grid;
-    gap: 1px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .fh {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--sky);
+    line-height: 1.3;
+    margin: 0 0 18px;
+  }
+  html[lang='mr'] .fh {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0;
+  }
+  .cols ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 11px;
+  }
+  .cols a {
+    font-family: var(--font-ui);
+    font-weight: 500;
+    font-size: 0.97rem;
+  }
+  html[lang='mr'] .cols a {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.04rem;
+  }
+  .cols a.all {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gold-2);
+  }
+  .reg {
+    border-top: 1px solid var(--line-dark);
+    padding-block: 32px;
+  }
+  .reg dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(6, auto);
+    gap: 18px 32px;
+    font-size: 0.9rem;
+  }
+  .reg dt {
+    color: var(--on-dark-muted);
+    opacity: 0.8;
+    font-size: 0.8rem;
+  }
+  .reg dd {
+    margin: 2px 0 0;
     color: var(--on-dark);
   }
-  .reg span {
-    font-size: 0.8rem;
-    color: var(--on-dark-muted);
-  }
   .legal {
+    border-top: 1px solid var(--line-dark);
+    padding-block: 24px 96px;
     display: flex;
-    justify-content: space-between;
-    gap: 16px;
     flex-wrap: wrap;
-    padding-block: 20px 28px;
+    justify-content: space-between;
+    gap: 12px 32px;
     font-size: 0.88rem;
   }
   .legal .dev {
-    flex-basis: 100%;
     color: var(--on-dark-muted);
-    font-size: 0.84rem;
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
-  @media (max-width: 960px) {
-    .grid {
+  @media (max-width: 1100px) {
+    .reg dl {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .reg .office {
+      grid-column: span 2;
+    }
+  }
+  @media (max-width: 1100px) {
+    .top {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 640px) {
+    .cols {
       grid-template-columns: 1fr 1fr;
     }
-  }
-  @media (max-width: 560px) {
-    .grid {
-      grid-template-columns: 1fr;
-      gap: 30px;
+    .cols > div:first-child {
+      grid-column: span 2;
     }
-    .legal {
-      padding-bottom: 90px;
+    .reg dl {
+      grid-template-columns: 1fr 1fr;
+    }
+    .reg .office {
+      grid-column: span 2;
     }
   }
 </style>

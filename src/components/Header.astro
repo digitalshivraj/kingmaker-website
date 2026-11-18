@@ -1,8 +1,11 @@
 ---
 import Icon from './Icon.astro';
+import { getCollection } from 'astro:content';
 import { site, whatsappLink } from '../data/site';
-import { t, navLinks } from '../i18n/ui';
-import { localize, stripLang, type Lang } from '../i18n/utils';
+import { sectorNames, type Sector } from '../data/portfolio';
+import { serviceGroups } from '../data/groups';
+import { t } from '../i18n/ui';
+import { localize, stripLang, byLang, entrySlug, type Lang } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -10,102 +13,200 @@ interface Props {
 }
 const { lang, altPath } = Astro.props;
 const ui = t(lang);
+const x = ui.x.nav;
+const L = (p: string) => localize(p, lang);
 const base = stripLang(Astro.url.pathname);
-const links = navLinks(lang);
 const wa = whatsappLink(ui.hero.waMessage);
-const enHref = lang === 'en' ? Astro.url.pathname : altPath;
-const mrHref = lang === 'mr' ? Astro.url.pathname : altPath;
+// The 404 page has no address of its own, so its language links go to the home pages.
+const here = Astro.url.pathname.startsWith('/404') ? localize('/', lang) : Astro.url.pathname;
+const enHref = lang === 'en' ? here : altPath;
+const mrHref = lang === 'mr' ? here : altPath;
+
+const services = byLang(await getCollection('services'), lang);
+const svc = (slug: string) => services.find((s) => entrySlug(s.id) === slug)!;
+
+const products = byLang(await getCollection('products'), lang).sort((a, b) => a.data.order - b.data.order);
+const sectors = [...new Set(products.map((p) => p.data.sector))] as Sector[];
+
+const simple = [
+  { label: ui.nav.government, href: L('/government/'), key: '/government/' },
+  { label: ui.nav.about, href: L('/about/'), key: '/about/' },
+  { label: x.insights, href: L('/blog/'), key: '/blog/' },
+];
+const isOn = (key: string) => base.startsWith(key);
 ---
 
-<header class="site-header">
-  <div class="wrap bar">
-    <a class="brand" href={localize('/', lang)} aria-label={`${site.name} ${ui.nav.home}`}>
-      <img src="/logo-white.svg" alt="Kingmaker Enterprises" width="204" height="65" />
+<header class="site-header" data-header>
+  <div class="hbar">
+    <a class="brand" href={L('/')} aria-label={`${site.name} ${ui.nav.home}`}>
+      <img src="/logo.svg" alt="Kingmaker Enterprises" width="204" height="65" />
     </a>
+
     <nav class="primary" aria-label="Main">
       <ul>
+        <li>
+          <button class="mtrig" type="button" aria-expanded="false" aria-controls="mega-services" data-current={isOn('/services/') ? 'true' : undefined}>
+            {ui.nav.services}<Icon name="chevron" size={16} />
+          </button>
+        </li>
+        <li>
+          <button class="mtrig" type="button" aria-expanded="false" aria-controls="mega-products" data-current={isOn('/products/') ? 'true' : undefined}>
+            {ui.nav.products}<Icon name="chevron" size={16} />
+          </button>
+        </li>
         {
-          links.map((item) => (
+          simple.map((l) => (
             <li>
-              <a href={item.href} aria-current={base.startsWith(item.key) ? 'page' : undefined}>
-                {item.label}
+              <a href={l.href} aria-current={isOn(l.key) ? 'page' : undefined}>
+                {l.label}
               </a>
             </li>
           ))
         }
       </ul>
     </nav>
-    <div class="lang" role="group" aria-label={ui.nav.langGroup}>
+
+    <div class="util">
+      <a class="util-link" href={L('/contact/')} aria-current={isOn('/contact/') ? 'page' : undefined}>{ui.nav.contact}</a>
+      <div class="lang" role="group" aria-label={ui.nav.langGroup}>
+        <Icon name="globe" size={18} />
+        <a href={enHref} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined}>EN</a>
+        <a href={mrHref} hreflang="mr" lang="mr" aria-current={lang === 'mr' ? 'true' : undefined}>मराठी</a>
+      </div>
+      <a class="btn gold wa" href={wa} target="_blank" rel="noopener">
+        <Icon name="whatsapp" size={18} />
+        <span>{ui.nav.whatsapp}</span>
+      </a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label={ui.nav.openMenu} data-open={ui.nav.openMenu} data-close={ui.nav.closeMenu}>
+        <span class="burger" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mega" id="mega-services" hidden>
+    <div class="mega-intro">
+      <p class="mega-title">{ui.nav.services}</p>
+      <p>{x.servicesLine}</p>
+      <a class="btn sky" href={L('/services/')}>{x.allServices}</a>
+    </div>
+    <div class="mega-cols">
+      {
+        serviceGroups.map(([g, slugs]) => (
+          <div>
+            <p class="mega-group">{x.groups[g]}</p>
+            <ul>
+              {slugs.map((slug) => (
+                <li>
+                  <a href={L(`/services/${slug}/`)}>{svc(slug).data.title}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="mega" id="mega-products" hidden>
+    <div class="mega-intro">
+      <p class="mega-title">{ui.nav.products}</p>
+      <p>{x.productsLine}</p>
+      <a class="btn sky" href={L('/products/')}>{x.allProducts}</a>
+    </div>
+    <div class="mega-cols products">
+      {
+        sectors.map((sec) => (
+          <div>
+            <p class="mega-group">{sectorNames[sec]?.[lang] ?? sec}</p>
+            <ul>
+              {products
+                .filter((p) => p.data.sector === sec)
+                .map((p) => (
+                  <li>
+                    <a href={L(`/products/${entrySlug(p.id)}/`)}>
+                      {p.data.title}
+                      <small>{p.data.tagline}</small>
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</header>
+<div class="scrim" hidden></div>
+
+<nav id="mobile-nav" class="mnav" aria-label="Main (mobile)" hidden>
+  <div class="mnav-top">
+    <a class="brand" href={L('/')} aria-label={`${site.name} ${ui.nav.home}`}>
+      <img src="/logo.svg" alt="Kingmaker Enterprises" width="160" height="51" />
+    </a>
+    <button class="close-btn round" type="button" aria-label={ui.nav.closeMenu}>
+      <Icon name="close" size={22} />
+    </button>
+  </div>
+  <div class="mnav-body">
+    <details>
+      <summary>{ui.nav.services}<Icon name="chevron" size={20} /></summary>
+      <ul>
+        {serviceGroups.flatMap(([, slugs]) => slugs).map((slug) => <li><a href={L(`/services/${slug}/`)}>{svc(slug).data.title}</a></li>)}
+        <li><a class="all" href={L('/services/')}>{x.allServices}</a></li>
+      </ul>
+    </details>
+    <details>
+      <summary>{ui.nav.products}<Icon name="chevron" size={20} /></summary>
+      <ul>
+        {products.map((p) => <li><a href={L(`/products/${entrySlug(p.id)}/`)}>{p.data.title}</a></li>)}
+        <li><a class="all" href={L('/products/')}>{x.allProducts}</a></li>
+      </ul>
+    </details>
+    {simple.map((l) => <a class="mlink" href={l.href} aria-current={isOn(l.key) ? 'page' : undefined}>{l.label}</a>)}
+    <a class="mlink" href={L('/contact/')} aria-current={isOn('/contact/') ? 'page' : undefined}>{ui.nav.contact}</a>
+    <div class="mnav-lang" role="group" aria-label={ui.nav.langGroup}>
       <a href={enHref} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined}>{ui.nav.langEn}</a>
       <a href={mrHref} hreflang="mr" lang="mr" aria-current={lang === 'mr' ? 'true' : undefined}>{ui.nav.langMr}</a>
     </div>
-    <a class="btn gold cta" href={wa} target="_blank" rel="noopener">
-      <Icon name="whatsapp" size={20} />
-      <span>{ui.nav.whatsapp}</span>
-    </a>
-    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label={ui.nav.openMenu} data-open={ui.nav.openMenu} data-close={ui.nav.closeMenu}>
-      <Icon name="menu" size={26} />
-    </button>
   </div>
-</header>
-
-<div class="drawer-bg" hidden></div>
-<nav id="mobile-nav" class="drawer" aria-label="Main (mobile)" hidden>
-  <div class="drawer-top">
-    <img src="/mark.svg" alt="" width="36" height="36" />
-    <span>{lang === 'mr' ? site.marathiName : site.name}</span>
-    <button class="close-btn" type="button" aria-label={ui.nav.closeMenu}>
-      <Icon name="close" size={24} />
-    </button>
-  </div>
-  <ul>
-    <li><a href={localize('/', lang)}>{ui.nav.home}</a></li>
-    {
-      links.map((item) => (
-        <li>
-          <a href={item.href} aria-current={base.startsWith(item.key) ? 'page' : undefined}>
-            {item.label}
-          </a>
-        </li>
-      ))
-    }
-  </ul>
-  <div class="drawer-lang" role="group" aria-label={ui.nav.langGroup}>
-    <a href={enHref} hreflang="en" lang="en" aria-current={lang === 'en' ? 'true' : undefined}>{ui.nav.langEn}</a>
-    <a href={mrHref} hreflang="mr" lang="mr" aria-current={lang === 'mr' ? 'true' : undefined}>{ui.nav.langMr}</a>
-  </div>
-  <div class="drawer-contact">
+  <div class="mnav-foot">
     <a class="btn gold" href={wa} target="_blank" rel="noopener">
       <Icon name="whatsapp" />
       <span>{ui.nav.whatsapp} {site.phoneDisplay}</span>
     </a>
-    <a href={`mailto:${site.email}`}>{site.email}</a>
+    <a class="mail" href={`mailto:${site.email}`}>{site.email}</a>
   </div>
 </nav>
 
-
 <style>
   .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: rgba(10, 24, 48, 0.86);
-    -webkit-backdrop-filter: saturate(160%) blur(14px);
-    backdrop-filter: saturate(160%) blur(14px);
-    border-bottom: 1px solid var(--line-dark);
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(var(--w-wide), 100% - 24px);
+    z-index: 60;
+    background: var(--white);
+    border-radius: 18px;
+    box-shadow: 0 10px 40px -18px rgba(10, 24, 48, 0.35);
+    transition: box-shadow 0.3s, top 0.3s;
   }
-  .bar {
+  .site-header.scrolled {
+    box-shadow: 0 14px 44px -14px rgba(10, 24, 48, 0.42);
+  }
+  .hbar {
     display: flex;
     align-items: center;
     gap: 18px;
-    height: 76px;
+    height: var(--head-h);
+    padding: 0 18px 0 22px;
   }
   .brand img {
-    height: 48px;
+    height: 46px;
     width: auto;
   }
   .primary {
-    margin-left: auto;
+    margin-inline: auto;
   }
   .primary ul {
     display: flex;
@@ -114,188 +215,354 @@ const mrHref = lang === 'mr' ? Astro.url.pathname : altPath;
     margin: 0;
     padding: 0;
   }
-  .primary a {
-    position: relative;
-    display: block;
-    padding: 10px 13px;
-    color: var(--on-dark);
-    text-decoration: none;
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 0.93rem;
-    border-radius: 8px;
-    transition: color 0.15s, background 0.15s;
-  }
-  html[lang='mr'] .primary a {
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: 1rem;
-  }
-  .primary a:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--white);
-  }
-  .primary a[aria-current='page'] {
-    color: var(--gold-2);
-  }
-  .primary a[aria-current='page']::after {
-    content: '';
-    position: absolute;
-    left: 13px;
-    right: 13px;
-    bottom: 5px;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--gold);
-  }
-
-  .lang,
-  .drawer-lang {
+  .primary a,
+  .mtrig {
     display: inline-flex;
-    padding: 3px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-  }
-  .lang a,
-  .drawer-lang a {
-    padding: 5px 12px;
-    border-radius: 999px;
-    color: var(--on-dark-muted);
-    text-decoration: none;
-    font-size: 0.86rem;
-    font-weight: 600;
-    line-height: 1.4;
-    transition: background 0.15s, color 0.15s;
-  }
-  .lang a[lang='mr'],
-  .drawer-lang a[lang='mr'] {
-    font-family: var(--font-body);
-  }
-  .lang a:hover,
-  .drawer-lang a:hover {
-    color: var(--white);
-  }
-  .lang a[aria-current='true'],
-  .drawer-lang a[aria-current='true'] {
-    background: var(--gold);
-    color: var(--ink);
-  }
-
-  .cta {
-    min-height: 42px;
-    padding: 6px 18px;
-  }
-  .menu-btn,
-  .close-btn {
-    display: none;
-    background: none;
-    border: 0;
-    color: var(--white);
-    padding: 8px;
-    cursor: pointer;
-    border-radius: 8px;
-  }
-  .menu-btn {
-    margin-left: auto;
-  }
-
-  .drawer-bg {
-    position: fixed;
-    inset: 0;
-    background: rgba(5, 12, 26, 0.55);
-    z-index: 55;
-    animation: fade 0.2s both;
-  }
-  .drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: min(360px, 88vw);
-    background: var(--navy);
-    z-index: 56;
-    display: flex;
-    flex-direction: column;
-    padding: 14px 22px 28px;
-    overflow-y: auto;
-    box-shadow: -20px 0 60px -20px rgba(0, 0, 0, 0.6);
-    animation: slide 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  }
-  .drawer[hidden],
-  .drawer-bg[hidden] {
-    display: none;
-  }
-  .drawer-top {
-    display: flex;
     align-items: center;
-    gap: 10px;
-    color: var(--white);
-    font-family: var(--font-display);
+    gap: 6px;
+    padding: 10px 15px;
+    border: 0;
+    background: transparent;
+    color: var(--navy);
+    text-decoration: none;
+    font-family: var(--font-ui);
     font-weight: 600;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--line-dark);
+    font-size: 0.97rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
   }
-  html[lang='mr'] .drawer-top {
+  html[lang='mr'] .primary a,
+  html[lang='mr'] .mtrig,
+  html[lang='mr'] .util-link {
     font-family: var(--font-body);
     font-weight: 700;
+    font-size: 1.05rem;
   }
-  .drawer-top .close-btn {
-    display: inline-flex;
-    margin-left: auto;
+  .mtrig :global(svg) {
+    transition: transform 0.25s var(--ease);
   }
-  .drawer ul {
-    list-style: none;
-    margin: 0;
-    padding: 6px 0 14px;
+  .mtrig[aria-expanded='true'] :global(svg) {
+    transform: rotate(180deg);
   }
-  .drawer ul a {
-    display: block;
-    padding: 13px 4px;
-    color: var(--white);
-    text-decoration: none;
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 1.1rem;
-    border-bottom: 1px solid var(--line-dark);
+  .primary a:hover,
+  .mtrig:hover,
+  .mtrig[aria-expanded='true'] {
+    background: var(--sand);
   }
-  html[lang='mr'] .drawer ul a {
-    font-family: var(--font-body);
-    font-weight: 600;
-  }
-  .drawer ul a[aria-current='page'] {
-    color: var(--gold-2);
-  }
-  .drawer-lang {
-    align-self: flex-start;
-    margin: 4px 0 20px;
-  }
-  .drawer-lang a {
-    font-size: 0.95rem;
-    padding: 7px 16px;
-  }
-  .drawer-contact {
-    margin-top: auto;
-    display: grid;
-    gap: 14px;
-  }
-  .drawer-contact .btn {
-    justify-content: center;
-  }
-  .drawer-contact > a:not(.btn) {
-    color: var(--gold-2);
-    text-decoration: none;
-    text-align: center;
+  .primary a[aria-current='page'],
+  .mtrig[data-current] {
+    color: var(--royal);
+    box-shadow: inset 0 -2px 0 var(--gold);
+    border-radius: 0;
   }
 
-  @keyframes slide {
+  .util {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .util-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .util-link:hover,
+  .util-link[aria-current='page'] {
+    color: var(--navy);
+  }
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 4px 4px 10px;
+    border-radius: 999px;
+    background: var(--sand);
+    color: var(--navy);
+  }
+  .lang a {
+    padding: 5px 11px;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .lang a[lang='mr'] {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+  }
+  .lang a:hover {
+    color: var(--navy);
+  }
+  .lang a[aria-current='true'] {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .wa {
+    min-height: 44px;
+    padding: 8px 18px;
+    font-size: 0.92rem;
+  }
+
+  .menu-btn {
+    display: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--navy);
+    cursor: pointer;
+    place-items: center;
+  }
+  .burger {
+    display: grid;
+    gap: 6px;
+  }
+  .burger i {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--white);
+  }
+
+  /* Mega menus */
+  .mega {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.34fr) 1fr;
+    border-top: 1px solid var(--line);
+    border-radius: 0 0 18px 18px;
+    overflow: hidden;
+    animation: drop 0.28s var(--ease) both;
+  }
+  .mega[hidden] {
+    display: none;
+  }
+  .mega-intro {
+    background: var(--navy);
+    color: var(--on-dark);
+    padding: 36px 34px 40px;
+    display: grid;
+    align-content: start;
+    gap: 14px;
+  }
+  .mega-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 3.2rem;
+    line-height: 0.95;
+    text-transform: uppercase;
+    color: var(--white);
+    margin: 0;
+  }
+  html[lang='mr'] .mega-title {
+    text-transform: none;
+    font-size: 2.8rem;
+    line-height: 1.1;
+  }
+  .mega-intro p {
+    margin: 0;
+    color: var(--on-dark-muted);
+    max-width: 34ch;
+  }
+  .mega-intro .btn {
+    justify-self: start;
+    margin-top: 8px;
+    min-height: 44px;
+    padding: 8px 20px;
+    font-size: 0.92rem;
+  }
+  .mega-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    padding: 36px 40px 40px;
+    background: var(--white);
+  }
+  .mega-group {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--royal);
+    margin: 0 0 12px;
+  }
+  html[lang='mr'] .mega-group {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .mega-cols ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+  }
+  .mega-cols a {
+    display: grid;
+    gap: 2px;
+    padding: 7px 0;
+    color: var(--navy);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-weight: 500;
+    font-size: 0.98rem;
+    transition: color 0.2s, transform 0.2s var(--ease);
+  }
+  html[lang='mr'] .mega-cols a {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  .mega-cols a:hover {
+    color: var(--royal);
+    transform: translateX(4px);
+  }
+  .mega-cols small {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.86rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+  .scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: rgba(5, 12, 26, 0.45);
+    animation: fade 0.25s both;
+  }
+  .scrim[hidden] {
+    display: none;
+  }
+
+  /* Mobile menu */
+  .mnav {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    animation: fade 0.2s both;
+    overflow-y: auto;
+  }
+  .mnav[hidden] {
+    display: none;
+  }
+  .mnav-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mnav-top img {
+    height: 42px;
+    width: auto;
+  }
+  .mnav-body {
+    padding: 8px 20px 20px;
+    display: grid;
+  }
+  .mnav details {
+    border-bottom: 1px solid var(--line);
+  }
+  .mnav summary,
+  .mlink {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 2px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--navy);
+    text-decoration: none;
+    list-style: none;
+    cursor: pointer;
+  }
+  html[lang='mr'] .mnav summary,
+  html[lang='mr'] .mlink {
+    text-transform: none;
+    font-size: 1.8rem;
+    line-height: 1.2;
+  }
+  .mnav summary::-webkit-details-marker {
+    display: none;
+  }
+  .mnav details[open] summary :global(svg) {
+    transform: rotate(180deg);
+  }
+  .mlink {
+    border-bottom: 1px solid var(--line);
+  }
+  .mlink[aria-current='page'] {
+    color: var(--royal);
+  }
+  .mnav details ul {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    display: grid;
+  }
+  .mnav details li a {
+    display: block;
+    padding: 9px 2px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 1.05rem;
+  }
+  .mnav details li a.all {
+    color: var(--royal);
+    font-weight: 600;
+  }
+  .mnav-lang {
+    display: inline-flex;
+    justify-self: start;
+    margin-top: 22px;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--sand);
+  }
+  .mnav-lang a {
+    padding: 8px 18px;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .mnav-lang a[aria-current='true'] {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .mnav-foot {
+    margin-top: auto;
+    padding: 20px;
+    display: grid;
+    gap: 12px;
+    background: var(--sand);
+  }
+  .mnav-foot .mail {
+    text-align: center;
+    color: var(--navy);
+  }
+
+  @keyframes drop {
     from {
-      transform: translateX(40px);
       opacity: 0;
+      transform: translateY(-8px);
     }
     to {
-      transform: none;
       opacity: 1;
+      transform: none;
     }
   }
   @keyframes fade {
@@ -307,64 +574,122 @@ const mrHref = lang === 'mr' ? Astro.url.pathname : altPath;
     }
   }
 
-  @media (max-width: 1060px) {
-    .primary a {
-      padding: 10px 10px;
-      font-size: 0.9rem;
+  @media (max-width: 1240px) {
+    .primary a,
+    .mtrig {
+      padding: 10px 11px;
+      font-size: 0.93rem;
     }
-    .cta span {
+    .util-link {
       display: none;
     }
-    .cta {
-      padding: 6px 12px;
-    }
   }
-  @media (max-width: 900px) {
+  @media (max-width: 1060px) {
     .primary,
-    .cta {
+    .wa,
+    .mega {
+      display: none !important;
+    }
+    .menu-btn {
+      display: grid;
+    }
+    .util {
+      margin-left: auto;
+      gap: 10px;
+    }
+    .lang :global(svg) {
       display: none;
     }
     .lang {
-      margin-left: auto;
+      padding: 4px;
     }
-    .lang a {
-      padding: 4px 10px;
-      font-size: 0.8rem;
+  }
+  @media (max-width: 560px) {
+    :root {
+      --head-h: 66px;
     }
-    .menu-btn {
-      display: inline-flex;
-      margin-left: 0;
-    }
-    .bar {
-      height: 66px;
-      gap: 10px;
+    .hbar {
+      padding: 0 10px 0 14px;
     }
     .brand img {
-      height: 40px;
+      height: 38px;
+    }
+    .lang a {
+      padding: 5px 9px;
     }
   }
 </style>
 
 <script>
-  const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
-  const panel = document.getElementById('mobile-nav');
-  const bg = document.querySelector<HTMLElement>('.drawer-bg');
-  const closeBtn = document.querySelector<HTMLButtonElement>('.close-btn');
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const scrim = document.querySelector<HTMLElement>('.scrim');
+  const triggers = Array.from(document.querySelectorAll<HTMLButtonElement>('.mtrig'));
+  let openId: string | null = null;
+  let closeTimer = 0;
 
+  function closeMega() {
+    triggers.forEach((b) => {
+      b.setAttribute('aria-expanded', 'false');
+      const panel = document.getElementById(b.getAttribute('aria-controls')!);
+      if (panel) panel.hidden = true;
+    });
+    if (scrim) scrim.hidden = true;
+    openId = null;
+  }
+  function openMega(btn: HTMLButtonElement) {
+    const id = btn.getAttribute('aria-controls')!;
+    if (openId === id) return;
+    closeMega();
+    btn.setAttribute('aria-expanded', 'true');
+    const panel = document.getElementById(id);
+    if (panel) panel.hidden = false;
+    if (scrim) scrim.hidden = false;
+    openId = id;
+  }
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  triggers.forEach((btn) => {
+    btn.addEventListener('click', () => (btn.getAttribute('aria-expanded') === 'true' ? closeMega() : openMega(btn)));
+    if (finePointer) {
+      btn.addEventListener('mouseenter', () => {
+        clearTimeout(closeTimer);
+        openMega(btn);
+      });
+    }
+  });
+  if (finePointer && header) {
+    header.addEventListener('mouseleave', () => {
+      closeTimer = window.setTimeout(closeMega, 180);
+    });
+    header.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+  }
+  scrim?.addEventListener('click', closeMega);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && openId) {
+      const btn = triggers.find((b) => b.getAttribute('aria-controls') === openId);
+      closeMega();
+      btn?.focus();
+    }
+  });
+
+  const onScroll = () => header?.classList.toggle('scrolled', window.scrollY > 40);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Mobile menu
+  const menuBtn = document.querySelector<HTMLButtonElement>('.menu-btn');
+  const panel = document.getElementById('mobile-nav');
+  const closeBtn = document.querySelector<HTMLButtonElement>('.mnav .close-btn');
   function setOpen(open: boolean) {
-    if (!btn || !panel || !bg) return;
-    btn.setAttribute('aria-expanded', String(open));
-    btn.setAttribute('aria-label', open ? btn.dataset.close || 'Close menu' : btn.dataset.open || 'Open menu');
+    if (!menuBtn || !panel) return;
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? menuBtn.dataset.close || 'Close menu' : menuBtn.dataset.open || 'Open menu');
     panel.hidden = !open;
-    bg.hidden = !open;
     document.documentElement.style.overflow = open ? 'hidden' : '';
     if (open) closeBtn?.focus();
-    else btn.focus();
+    else menuBtn.focus();
   }
-
-  btn?.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+  menuBtn?.addEventListener('click', () => setOpen(true));
   closeBtn?.addEventListener('click', () => setOpen(false));
-  bg?.addEventListener('click', () => setOpen(false));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && panel && !panel.hidden) setOpen(false);
   });

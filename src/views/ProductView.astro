@@ -1,13 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
-import PageHead from '../components/PageHead.astro';
 import PhotoMock from '../components/PhotoMock.astro';
+import Photo from '../components/Photo.astro';
 import Icon from '../components/Icon.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { whatsappLink } from '../data/site';
 import { t } from '../i18n/ui';
-import { localize, byLang, isPublished, entrySlug, type Lang } from '../i18n/utils';
+import { localize, byLang, isPublished, entrySlug, fmtDateShort, type Lang } from '../i18n/utils';
 
 interface Props {
   lang: Lang;
@@ -18,13 +18,13 @@ const ui = t(lang);
 const L = (p: string) => localize(p, lang);
 const { Content } = await render(product);
 const all = byLang(await getCollection('products'), lang).sort((a, b) => a.data.order - b.data.order);
-const others = all.filter((p) => p.id !== product.id).slice(0, 3);
+const others = all.filter((p) => p.id !== product.id);
 const wa = whatsappLink(ui.productPage.demoMsg(product.data.title));
 const slug = entrySlug(product.id);
 const posts = byLang(await getCollection('blog', isPublished), lang)
   .filter((p) => (p.body ?? '').includes(`/products/${slug}/`))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 5);
+  .slice(0, 6);
 const origin = Astro.site?.origin ?? '';
 const productLd = {
   '@type': 'SoftwareApplication',
@@ -41,33 +41,34 @@ const productLd = {
   provider: { '@id': `${origin}/#organization` },
   offers: { '@type': 'Offer', availability: 'https://schema.org/InStock', priceCurrency: 'INR', description: ui.productPage.ctaText },
 };
+const crumbs = [
+  { label: ui.nav.home, href: L('/') },
+  { label: ui.nav.products, href: L('/products/') },
+  { label: product.data.title, href: L(`/products/${slug}/`) },
+];
+const crumbLd = {
+  '@type': 'BreadcrumbList',
+  itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.label, item: origin + c.href })),
+};
 ---
 
-<Base lang={lang} title={product.data.title} description={`${product.data.title}: ${product.data.tagline} ${product.data.highlights[0]}.`} jsonLd={[productLd]}>
-  <PageHead
-    lang={lang}
-    title={product.data.title}
-    marathi={product.data.marathi}
-    intro={product.data.tagline}
-    crumbs={[
-      { label: ui.nav.products, href: L('/products/') },
-      { label: product.data.title, href: L(`/products/${slug}/`) },
-    ]}
-  />
-
-  <section class="section top">
-    <div class="wrap grid">
-      <div>
-        <h2>{ui.productPage.what}</h2>
-        <ul class="check-list big">
-          {product.data.highlights.map((h) => <li>{h}</li>)}
-        </ul>
-        <div class="actions">
+<Base lang={lang} title={product.data.title} description={`${product.data.title}: ${product.data.tagline} ${product.data.highlights[0]}.`} jsonLd={[productLd, crumbLd]}>
+  <section class="p-hero">
+    <div class="wrap wide grid">
+      <div class="text">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>{crumbs.slice(0, 2).map((c) => <li><a href={c.href}>{c.label}</a></li>)}</ol>
+        </nav>
+        <p class="kicker">{product.data.sector}</p>
+        <h1 class="d-xl">{product.data.title}</h1>
+        <p class="tagline">{product.data.tagline}</p>
+        <p class="status-line"><span class="dot" />{product.data.status}</p>
+        <div class="btn-row">
           <a class="btn gold" href={wa} target="_blank" rel="noopener">
             <Icon name="whatsapp" />
             <span>{ui.productPage.demo}</span>
           </a>
-          <span class="status">{product.data.status}</span>
+          <a class="btn ghost-light" href={L('/products/')}>{ui.x.nav.allProducts}</a>
         </div>
       </div>
       <div class="visual">
@@ -76,37 +77,97 @@ const productLd = {
     </div>
   </section>
 
-  <section class="section paper">
+  <section class="section what">
+    <div class="wrap">
+      <h2 class="d-md" data-reveal>{ui.productPage.what}</h2>
+      <ol class="hl">
+        {
+          product.data.highlights.map((h, i) => (
+            <li data-reveal style={`--rd: ${(i % 3) * 0.07}s`}>
+              <span class="num">{String(i + 1).padStart(2, '0')}</span>
+              <p>{h}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section sand">
     <div class="wrap layout">
-      <div class="prose">
+      <div class="prose" data-reveal>
         <Content />
       </div>
-      <aside>
+      <aside data-reveal style="--rd: 0.1s">
         <div class="box">
           <h3>{ui.productPage.users}</h3>
-          <ul class="plain">
+          <ul class="chips">
             {product.data.users.map((u) => <li>{u}</li>)}
           </ul>
         </div>
-        <div class="box">
-          <h3>{ui.productPage.sector}</h3>
-          <p>{product.data.sector}</p>
-        </div>
-        {posts.length > 0 && (
-          <div class="box">
-            <h3>{ui.blog.onThis}</h3>
-            <ul class="plain">
-              {posts.map((p) => <li><a href={L(`/blog/${entrySlug(p.id)}/`)}>{p.data.title}</a></li>)}
-            </ul>
-          </div>
-        )}
-        <div class="box">
-          <h3>{ui.productPage.others}</h3>
-          <ul class="plain">
-            {others.map((o) => <li><a href={L(`/products/${entrySlug(o.id)}/`)}>{o.data.title}</a></li>)}
-          </ul>
+        <div class="box navy">
+          <h3>{ui.productPage.ctaTitle(product.data.title)}</h3>
+          <p>{ui.productPage.ctaText}</p>
+          <a class="btn gold" href={wa} target="_blank" rel="noopener">
+            <Icon name="whatsapp" />
+            <span>{ui.productPage.demo}</span>
+          </a>
         </div>
       </aside>
+    </div>
+  </section>
+
+  {
+    posts.length > 0 && (
+      <section class="section">
+        <div class="wrap">
+          <h2 class="d-md" data-reveal>{ui.blog.onThis}</h2>
+          <ul class="posts">
+            {posts.map((p, i) => (
+              <li data-reveal style={`--rd: ${(i % 3) * 0.06}s`}>
+                <a class="photo-card" href={L(`/blog/${entrySlug(p.id)}/`)}>
+                  <span class="ph">
+                    <Photo name={p.data.cover} w={640} h={400} sizes="(max-width: 700px) 100vw, 33vw" />
+                  </span>
+                  <time class="label" datetime={p.data.date.toISOString()}>{fmtDateShort(p.data.date, lang)}</time>
+                  <h3>{p.data.title}</h3>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section royal">
+    <div class="wrap">
+      <h2 class="d-md">{ui.productPage.others}</h2>
+    </div>
+    <div class="carousel" data-carousel data-slide-label={ui.x.common.slide} style="--cw: min(78%, 440px)">
+      <ul class="track" tabindex="0">
+        {
+          others.map((o) => (
+            <li>
+              <a class="photo-card" href={L(`/products/${entrySlug(o.id)}/`)}>
+                <span class="ph op">
+                  <Photo name={o.data.photo} w={600} h={460} sizes="440px" />
+                  <span class="chip">{o.data.sector}</span>
+                </span>
+                <h3>{o.data.title}</h3>
+                <span class="otag">{o.data.tagline}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="wrap car-foot">
+        <div class="dots" data-dots></div>
+        <div class="arrows">
+          <button class="round prev" type="button" data-prev aria-label={ui.x.common.prev}><Icon name="arrow" /></button>
+          <button class="round" type="button" data-next aria-label={ui.x.common.next}><Icon name="arrow" /></button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -114,61 +175,195 @@ const productLd = {
 </Base>
 
 <style>
+  .p-hero {
+    background: radial-gradient(900px 520px at 85% 30%, rgba(127, 178, 232, 0.22), transparent 60%), var(--navy);
+    color: var(--on-dark);
+    padding: calc(var(--head-h) + clamp(56px, 8vw, 104px)) 0 clamp(56px, 8vw, 104px);
+    overflow: hidden;
+  }
   .grid {
     display: grid;
     grid-template-columns: 1fr 1.05fr;
-    gap: clamp(32px, 6vw, 72px);
+    gap: clamp(32px, 5vw, 80px);
     align-items: center;
   }
-  .big {
-    font-size: 1.08rem;
-    gap: 14px;
-  }
-  .actions {
+  .crumbs ol {
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 0;
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 16px;
-    margin-top: 28px;
+    gap: 6px;
+    font-size: 0.9rem;
   }
-  .status {
-    font-size: 0.88rem;
-    color: var(--navy);
-    background: var(--paper-2);
-    padding: 4px 12px;
-    border-radius: 999px;
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: 6px;
+    color: var(--on-dark-muted);
+  }
+  .crumbs a {
+    color: var(--on-dark-muted);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--gold-2);
+  }
+  .p-hero .kicker {
+    color: var(--gold-2);
+  }
+  .p-hero h1 {
+    color: var(--white);
+    margin-bottom: 22px;
+  }
+  .tagline {
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    color: var(--on-dark);
+    max-width: 34ch;
+    line-height: 1.4;
+  }
+  .status-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0 30px;
+    color: var(--sky-2);
+    font-size: 0.98rem;
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--gold-2);
+    box-shadow: 0 0 0 5px rgba(227, 194, 122, 0.2);
+  }
+  .hl {
+    list-style: none;
+    margin: clamp(32px, 4vw, 48px) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px;
+  }
+  .hl li {
+    background: var(--sand);
+    border-radius: var(--r-lg);
+    padding: 26px 24px;
+    display: grid;
+    gap: 12px;
+    align-content: start;
+  }
+  .num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 0.9;
+    color: var(--royal);
+  }
+  .hl p {
+    font-size: 1.08rem;
+    color: var(--text);
+    margin: 0;
   }
   .layout {
     display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: clamp(32px, 6vw, 80px);
+    grid-template-columns: 1fr 380px;
+    gap: clamp(32px, 6vw, 88px);
     align-items: start;
+  }
+  aside {
+    position: sticky;
+    top: calc(var(--head-h) + 36px);
+    display: grid;
+    gap: 16px;
   }
   .box {
     background: var(--white);
-    border-radius: var(--r);
-    padding: 22px;
-    margin-bottom: 20px;
+    border-radius: var(--r-lg);
+    padding: 26px;
+    display: grid;
+    gap: 14px;
   }
   .box h3 {
-    font-size: 1.05rem;
-    margin-bottom: 10px;
+    margin: 0;
   }
-  .box p {
-    color: var(--muted);
+  .box.navy {
+    background: var(--navy);
+    color: var(--on-dark);
   }
-  .plain {
+  .box.navy h3 {
+    color: var(--white);
+  }
+  .box.navy .btn {
+    justify-self: start;
+  }
+  .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chips li {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--sand);
+    color: var(--navy);
+    font-size: 0.95rem;
+  }
+  .posts {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 8px;
-    color: var(--muted);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px 24px;
   }
-  @media (max-width: 860px) {
+  .posts .ph {
+    aspect-ratio: 640 / 400;
+  }
+  .royal h2 {
+    margin-bottom: 36px;
+  }
+  .op {
+    aspect-ratio: 600 / 460;
+  }
+  .otag {
+    color: var(--sky-2);
+    font-size: 0.98rem;
+  }
+  @media (max-width: 1000px) {
     .grid,
     .layout {
       grid-template-columns: 1fr;
+    }
+    aside {
+      position: static;
+    }
+    .hl,
+    .posts {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 1100px) and (min-width: 601px) {
+    /* five highlights: three on top, two wider below */
+    .hl {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .hl li {
+      grid-column: span 2;
+    }
+    .hl li:nth-child(n + 4) {
+      grid-column: span 3;
+    }
+  }
+  @media (max-width: 600px) {
+    .hl,
+    .posts {
+      grid-template-columns: 1fr;
+    }
+    .hl li,
+    .hl li:nth-child(n + 4) {
+      grid-column: auto;
     }
   }
 </style>

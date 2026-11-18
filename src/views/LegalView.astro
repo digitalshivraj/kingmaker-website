@@ -20,7 +20,7 @@ const desc =
 ---
 
 <Base lang={lang} title={title} description={desc}>
-  <PageHead lang={lang} title={title} crumbs={[{ label: title, href: L(`/${kind}/`) }]} intro={ui.legal.updated} />
+  <PageHead lang={lang} title={title} variant="plain" crumbs={[{ label: title, href: L(`/${kind}/`) }]} intro={ui.legal.updated} />
   <section class="section">
     <div class="wrap prose">
       {lang === 'mr' && <p class="note">{ui.legal.mrNote}</p>}
@@ -105,8 +105,8 @@ const desc =
   .note {
     padding: 16px 20px;
     border-left: 3px solid var(--gold);
-    background: var(--paper);
-    border-radius: 0 var(--r) var(--r) 0;
+    background: var(--sand);
+    border-radius: 0 var(--r-lg) var(--r-lg) 0;
     color: var(--navy);
     font-size: 1rem;
   }

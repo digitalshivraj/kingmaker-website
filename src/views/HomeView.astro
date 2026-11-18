@@ -1,13 +1,15 @@
 ---
 import Base from '../layouts/Base.astro';
-import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
 import PhotoMock from '../components/PhotoMock.astro';
 import Photo from '../components/Photo.astro';
 import CtaBand from '../components/CtaBand.astro';
+import StoryPanels from '../components/StoryPanels.astro';
 import { getCollection } from 'astro:content';
-import { site } from '../data/site';
-import { projects } from '../data/portfolio';
+import { site, whatsappLink } from '../data/site';
+import { projects, sectorNames, type Sector } from '../data/portfolio';
+import type { PhotoKey } from '../data/images';
+import { postCats, newsCats } from '../data/groups';
 import { t } from '../i18n/ui';
 import { localize, byLang, isPublished, entrySlug, fmtDateShort, type Lang } from '../i18n/utils';
 
@@ -16,27 +18,47 @@ interface Props {
 }
 const { lang } = Astro.props;
 const ui = t(lang);
+const x = ui.x.home;
 const L = (p: string) => localize(p, lang);
 
 const products = byLang(await getCollection('products'), lang).sort((a, b) => a.data.order - b.data.order);
-const featured = products.slice(0, 4);
+const sectors = [...new Set(products.map((p) => p.data.sector))] as Sector[];
+const sectorKey = (s: string) => `s${sectors.indexOf(s as Sector)}`;
+const sectorLabel = (s: string) => sectorNames[s as Sector]?.[lang] ?? s;
 const services = byLang(await getCollection('services'), lang).sort((a, b) => a.data.order - b.data.order);
-const topServices = services.slice(0, 6);
+const bento = services.slice(0, 6);
 const moreServices = services.slice(6);
 
+// Blog posts for the "What's new" carousel, with a category taken from the English tags
 const allPosts = await getCollection('blog', isPublished);
-const byDate = (a: { data: { date: Date } }, b: { data: { date: Date } }) => b.data.date.valueOf() - a.data.date.valueOf();
-const ownPosts = byLang(allPosts, lang).sort(byDate);
-const enPosts = lang === 'mr' ? byLang(allPosts, 'en').sort(byDate).filter((p) => !ownPosts.some((o) => entrySlug(o.id) === entrySlug(p.id))) : [];
-const posts = [...ownPosts.map((p) => ({ p, en: false })), ...enPosts.map((p) => ({ p, en: true }))].slice(0, 3);
+const enTags = new Map(byLang(allPosts, 'en').map((p) => [entrySlug(p.id), p.data.tags]));
+const catOf = (slug: string) => postCats(enTags.get(slug) ?? []);
+const posts = byLang(allPosts, lang)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 18);
 
-const sectorIcons = ['shield', 'landmark', 'users', 'hospital', 'tractor', 'truck'];
 const stats = [
   [String(projects.length), ui.stats[0][1]],
   ['9', ui.stats[1][1]],
   [String(site.since), ui.stats[2][1]],
   ['2', ui.stats[3][1]],
 ];
+
+// Word marquee: words and photo chips alternate
+const chipRows: PhotoKey[][] = [
+  ['team', 'police', 'developer', 'whatsapp'],
+  ['citizen', 'security', 'doctor'],
+  ['policeTeam', 'nurses', 'farmer', 'movers'],
+];
+// Darker gold and blue than the brand fills, so the words on white keep a 3:1 contrast
+const wordGold = '#b07f22';
+const wordSky = '#4f86c6';
+const wordColors = [
+  ['var(--navy)', wordGold, 'var(--royal)', wordSky],
+  [wordGold, 'var(--royal)', 'var(--navy)'],
+  ['var(--royal)', wordSky, wordGold, 'var(--navy)'],
+];
+const storyPhotos: PhotoKey[] = ['team', 'citizen', 'security'];
 
 const faqLd = {
   '@type': 'FAQPage',
@@ -60,14 +82,167 @@ const listLd = {
 ---
 
 <Base lang={lang} title={lang === 'mr' ? site.marathiName : site.name} description={ui.common.siteDesc} jsonLd={[faqLd, listLd]}>
-  <Hero lang={lang} />
+  <!-- Hero -->
+  <section class="hero">
+    <Photo name="hero" w={1800} h={1100} class="hero-bg" eager sizes="100vw" />
+    <div class="hero-shade"></div>
+    <div class="wrap wide hero-in">
+      <p class="hero-kicker">{ui.hero.intro}</p>
+      <h1>
+        <span class="d-xl big">{x.heroBig[0]}</span>
+        <span class="d-xl big accent">{x.heroBig[1]}</span>
+        <span class="small">{x.heroSmall}</span>
+      </h1>
+      <p class="hero-lede">{ui.hero.lede}</p>
+      <div class="btn-row">
+        <a class="btn gold" href={whatsappLink(ui.hero.waMessage)} target="_blank" rel="noopener">
+          <Icon name="whatsapp" />
+          <span>{ui.hero.cta1}</span>
+        </a>
+        <a class="btn light" href={L('/products/')}>{ui.hero.cta2}</a>
+      </div>
+      <ul class="facts">
+        {ui.hero.facts.map((f) => <li><Icon name="check" size={16} />{f}</li>)}
+      </ul>
+    </div>
+  </section>
 
-  <section class="stats" aria-label="Key facts">
+  <!-- Moving words -->
+  <section class="words" aria-label={ui.sectorsTitle}>
+    {
+      x.marquee.map((row, r) => (
+        <div class:list={['marquee', { reverse: r % 2 === 1 }]} style={`--dur: ${46 + r * 8}s`}>
+          <div class="marquee-track">
+            {[0, 1].map((copy) =>
+              row.map((w, i) => (
+                <>
+                  <span class="word" style={`color: ${wordColors[r][i % wordColors[r].length]}`} aria-hidden={copy === 1 ? 'true' : undefined}>
+                    {w}
+                  </span>
+                  <span class="wchip" aria-hidden="true">
+                    <Photo name={chipRows[r][i % chipRows[r].length]} w={220} h={220} sizes="160px" />
+                  </span>
+                </>
+              )),
+            )}
+          </div>
+        </div>
+      ))
+    }
+  </section>
+
+  <!-- Find your platform -->
+  <section class="section find">
+    <div class="wrap center head">
+      <h2 class="d-lg" data-reveal>{x.findH2}</h2>
+      <p class="intro" data-reveal>{x.findP}</p>
+      <div class="tabs" role="tablist" data-tabs="find-track" data-reveal>
+        <button type="button" role="tab" aria-selected="true" data-filter="all">{x.featured}</button>
+        {sectors.map((s) => <button type="button" role="tab" aria-selected="false" data-filter={sectorKey(s)}>{sectorLabel(s)}</button>)}
+      </div>
+    </div>
+    <div class="carousel center-snap" data-carousel data-slide-label={ui.x.common.slide}>
+      <ul class="track" id="find-track" tabindex="0">
+        {
+          products.map((p, i) => {
+            const href = L(`/products/${entrySlug(p.id)}/`);
+            return (
+              <li class:list={['pcard', { 'is-active': i === 0 }]} data-cat={sectorKey(p.data.sector)}>
+                <a href={href} class="pcard-visual" aria-label={p.data.title}>
+                  <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} lang={lang} />
+                </a>
+                <div class="pcard-text">
+                  <p class="label">{sectorLabel(p.data.sector)}</p>
+                  <h3>
+                    <a href={href}>{p.data.title}</a>
+                  </h3>
+                  <p>{p.data.tagline}</p>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+      <div class="wrap car-foot">
+        <div class="dots" data-dots></div>
+        <div class="arrows">
+          <button class="round prev" type="button" data-prev aria-label={ui.x.common.prev}><Icon name="arrow" /></button>
+          <button class="round" type="button" data-next aria-label={ui.x.common.next}><Icon name="arrow" /></button>
+        </div>
+      </div>
+    </div>
+    <div class="wrap center more-row">
+      <a class="btn navy" href={L('/products/')}>{ui.products.all(projects.length)}</a>
+    </div>
+  </section>
+
+  <!-- Story panels -->
+  <StoryPanels
+    label={ui.why.h2}
+    items={x.story.map((st, i) => ({ big: st.big, text: [st.text], photo: storyPhotos[i], btn: st.btn, href: L(st.href) }))}
+  />
+
+  <!-- Services bento -->
+  <section class="section ink services">
+    <div class="wrap wide">
+      <div class="head split">
+        <div>
+          <p class="kicker" data-reveal>{ui.services.eyebrow}</p>
+          <h2 class="d-lg" data-reveal>{x.servicesH2}</h2>
+        </div>
+        <p data-reveal>{ui.services.p}</p>
+      </div>
+      <ul class="bento">
+        {
+          bento.map((s, i) => (
+            <li class:list={[`b${i}`]} data-reveal style={`--rd: ${(i % 3) * 0.08}s`}>
+              <a href={L(`/services/${entrySlug(s.id)}/`)}>
+                <Photo name={s.data.photo} w={i === 0 ? 1000 : 700} h={i === 0 ? 900 : 520} sizes="(max-width: 760px) 100vw, 40vw" />
+                <span class="b-shade" />
+                <span class="b-icon">
+                  <Icon name={s.data.icon} size={22} />
+                </span>
+                <span class="b-text">
+                  <h3>{s.data.title}</h3>
+                  <span class="b-sum">{s.data.summary}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="more-services" data-reveal>
+        {moreServices.map((s) => <a href={L(`/services/${entrySlug(s.id)}/`)}>{s.data.title}</a>)}
+        <a class="btn gold" href={L('/services/')}>{ui.services.all}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Built for Maharashtra -->
+  <section class="state">
+    <div class="state-photo">
+      <Photo name="road" w={1100} h={1000} sizes="(max-width: 860px) 100vw, 50vw" />
+    </div>
+    <div class="state-text">
+      <h2 class="d-lg" data-reveal>
+        {x.stateBig[0]}
+        <br />
+        <span class="accent">{x.stateBig[1]}</span>
+      </h2>
+      <div data-reveal>
+        <p>{x.stateText}</p>
+        <a class="btn sky" href={L('/about/')}>{x.stateBtn}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section stats-sec">
     <div class="wrap">
-      <ul>
+      <h2 class="d-md center" data-reveal>{x.statsH2}</h2>
+      <ul class="stats-grid">
         {
           stats.map(([n, label], i) => (
-            <li data-reveal style={`--rd: ${i * 0.08}s`}>
+            <li class="stat" data-reveal style={`--rd: ${i * 0.08}s`}>
               <b>{n}</b>
               <span>{label}</span>
             </li>
@@ -77,123 +252,23 @@ const listLd = {
     </div>
   </section>
 
-  <section class="section tight sectors">
+  <!-- Process -->
+  <section class="section sand process">
     <div class="wrap">
-      <p class="eyebrow">{ui.sectorsTitle}</p>
-      <ul>
-        {
-          ui.sectors.map(([name, note], i) => (
-            <li data-reveal style={`--rd: ${i * 0.06}s`}>
-              <span class="ic">
-                <Icon name={sectorIcons[i]} size={24} />
-              </span>
-              <b>{name}</b>
-              <span>{note}</span>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <section class="section products">
-    <div class="wrap">
-      <div class="head" data-reveal>
-        <p class="eyebrow">{ui.products.eyebrow}</p>
-        <h2>{ui.products.h2}</h2>
-        <p>{ui.products.p}</p>
-      </div>
-      <div class="feature-list">
-        {
-          featured.map((p, i) => {
-            const href = L(`/products/${entrySlug(p.id)}/`);
-            return (
-              <article class:list={['feature', { flip: i % 2 === 1 }]} data-reveal>
-                <div class="text">
-                  <h3>
-                    <a href={href}>{p.data.title}</a>
-                  </h3>
-                  <p class="tag">{p.data.tagline}</p>
-                  <ul class="check-list">
-                    {p.data.highlights.slice(0, 3).map((h) => (
-                      <li>{h}</li>
-                    ))}
-                  </ul>
-                  <a class="more" href={href}>
-                    {ui.products.readAbout} {p.data.title}
-                    <Icon name="arrow" size={18} />
-                  </a>
-                </div>
-                <div class="visual">
-                  <PhotoMock photo={p.data.photo} variant={p.data.mock} title={p.data.title} lang={lang} />
-                </div>
-              </article>
-            );
-          })
-        }
-      </div>
-      <div class="all">
-        <a class="btn navy" href={L('/products/')}>{ui.products.all(projects.length)}</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section paper services">
-    <div class="wrap">
-      <div class="head" data-reveal>
-        <p class="eyebrow">{ui.services.eyebrow}</p>
-        <h2>{ui.services.h2}</h2>
-        <p>{ui.services.p}</p>
-      </div>
-      <ul class="service-grid">
-        {
-          topServices.map((s, i) => {
-            const href = L(`/services/${entrySlug(s.id)}/`);
-            return (
-              <li data-reveal style={`--rd: ${(i % 3) * 0.08}s`}>
-                <a class="card" href={href}>
-                  <span class="ph">
-                    <Photo name={s.data.photo} w={520} h={300} sizes="(max-width: 700px) 100vw, 33vw" />
-                    <span class="badge">
-                      <Icon name={s.data.icon} size={20} />
-                    </span>
-                  </span>
-                  <span class="body">
-                    <h3>{s.data.title}</h3>
-                    <p>{s.data.summary}</p>
-                    <span class="go">
-                      <Icon name="arrow" size={18} />
-                    </span>
-                  </span>
-                </a>
-              </li>
-            );
-          })
-        }
-      </ul>
-      <div class="more-services" data-reveal>
-        {moreServices.map((s) => <a href={L(`/services/${entrySlug(s.id)}/`)}>{s.data.title}</a>)}
-        <a class="btn ghost" href={L('/services/')}>{ui.services.all}</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section process">
-    <div class="wrap grid2">
-      <div class="head" data-reveal>
-        <p class="eyebrow">{ui.process.eyebrow}</p>
-        <h2>{ui.process.h2}</h2>
-        <p>{ui.process.p}</p>
+      <div class="head split">
+        <div>
+          <p class="kicker" data-reveal>{ui.process.eyebrow}</p>
+          <h2 class="d-md" data-reveal>{ui.process.h2}</h2>
+        </div>
+        <p data-reveal>{ui.process.p}</p>
       </div>
       <ol class="steps">
         {
           ui.process.steps.map(([title, text], i) => (
             <li data-reveal style={`--rd: ${i * 0.07}s`}>
-              <span class="n">{i + 1}</span>
-              <div>
-                <h3>{title}</h3>
-                <p>{text}</p>
-              </div>
+              <span class="num">{`0${i + 1}`}</span>
+              <h3>{title}</h3>
+              <p>{text}</p>
             </li>
           ))
         }
@@ -201,31 +276,12 @@ const listLd = {
     </div>
   </section>
 
-  <section class="section ink why">
-    <Photo name="road" w={1600} h={700} class="why-bg" sizes="100vw" />
-    <div class="wrap why-wrap">
-      <div class="head" data-reveal>
-        <p class="eyebrow">{ui.why.eyebrow}</p>
-        <h2>{ui.why.h2}</h2>
-      </div>
-      <div class="why-grid">
-        {
-          ui.why.items.map(([title, text], i) => (
-            <div data-reveal style={`--rd: ${i * 0.08}s`}>
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
+  <!-- FAQ -->
   <section class="section faq">
-    <div class="wrap grid2">
-      <div class="head" data-reveal>
-        <p class="eyebrow">{ui.faq.eyebrow}</p>
-        <h2>{ui.faq.h2}</h2>
+    <div class="wrap faq-grid">
+      <div>
+        <p class="kicker" data-reveal>{ui.faq.eyebrow}</p>
+        <h2 class="d-md" data-reveal>{ui.faq.h2}</h2>
       </div>
       <div class="acc" data-reveal>
         {
@@ -243,50 +299,51 @@ const listLd = {
     </div>
   </section>
 
-  <section class="section tight gem">
-    <div class="wrap gem-inner" data-reveal>
-      <div>
-        <h2>{ui.gem.h2}</h2>
-        <p>{ui.gem.p}</p>
-      </div>
-      <a class="btn ghost" href={L('/government/')}>{ui.gem.btn}</a>
-    </div>
-  </section>
-
-  <section class="section blog">
+  <!-- What's new -->
+  <section class="section royal news">
     <div class="wrap">
-      <div class="head" data-reveal>
-        <p class="eyebrow">{ui.blog.eyebrow}</p>
-        <h2>{ui.blog.h2}</h2>
-        <p>{ui.blog.p}</p>
-      </div>
-      <div class="post-grid">
+      <p class="kicker">{x.newsKicker}</p>
+      <div class="news-tabs" role="tablist" data-tabs="news-track">
         {
-          posts.map(({ p, en }, i) => {
-            const href = localize(`/blog/${entrySlug(p.id)}/`, en ? 'en' : lang);
+          x.newsTabs.map((label, i) => (
+            <button type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-filter={newsCats[i]}>
+              {label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+    <div class="carousel" data-carousel data-slide-label={ui.x.common.slide} style="--cw: min(80%, 620px)">
+      <ul class="track" id="news-track" tabindex="0">
+        {
+          posts.map((p) => {
+            const slug = entrySlug(p.id);
+            const href = L(`/blog/${slug}/`);
             return (
-              <article data-reveal style={`--rd: ${i * 0.08}s`}>
-                <a href={href} class="cover" aria-hidden="true" tabindex="-1">
-                  <Photo name={p.data.cover} w={600} h={360} sizes="(max-width: 1000px) 50vw, 33vw" />
+              <li data-cat={catOf(slug).join(' ')}>
+                <a class="photo-card" href={href}>
+                  <span class="ph">
+                    <Photo name={p.data.cover} w={760} h={470} sizes="(max-width: 760px) 85vw, 620px" />
+                    <span class="chip">{p.data.tags[0]}</span>
+                  </span>
+                  <h3>{p.data.title}</h3>
+                  <time class="when" datetime={p.data.date.toISOString()}>{fmtDateShort(p.data.date, lang)}</time>
                 </a>
-                <div class="meta">
-                  <time datetime={p.data.date.toISOString()}>{fmtDateShort(p.data.date, lang)}</time>
-                  {en && <span class="en-badge">{ui.blog.inEnglish}</span>}
-                </div>
-                <h3>
-                  <a href={href} lang={en ? 'en' : undefined}>
-                    {p.data.title}
-                  </a>
-                </h3>
-                <p lang={en ? 'en' : undefined}>{p.data.description}</p>
-              </article>
+              </li>
             );
           })
         }
+      </ul>
+      <div class="wrap car-foot">
+        <div class="dots" data-dots></div>
+        <div class="arrows">
+          <button class="round prev" type="button" data-prev aria-label={ui.x.common.prev}><Icon name="arrow" /></button>
+          <button class="round" type="button" data-next aria-label={ui.x.common.next}><Icon name="arrow" /></button>
+        </div>
       </div>
-      <div class="all">
-        <a class="btn ghost" href={L('/blog/')}>{ui.blog.all}</a>
-      </div>
+    </div>
+    <div class="wrap center more-row">
+      <a class="btn light" href={L('/blog/')}>{ui.blog.all}</a>
     </div>
   </section>
 
@@ -294,227 +351,315 @@ const listLd = {
 </Base>
 
 <style>
-  .stats {
-    background: linear-gradient(90deg, var(--navy) 0%, var(--navy-2) 100%);
-    color: var(--on-dark);
-    border-top: 1px solid var(--line-dark);
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: max(680px, 100svh);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    color: var(--white);
   }
-  .stats ul {
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: zoom 16s var(--ease) both;
+  }
+  .hero-shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(5, 12, 26, 0.86) 0%, rgba(5, 12, 26, 0.55) 48%, rgba(5, 12, 26, 0.15) 100%),
+      linear-gradient(180deg, rgba(5, 12, 26, 0.35) 0%, rgba(5, 12, 26, 0) 30%, rgba(5, 12, 26, 0.55) 100%);
+  }
+  .hero-in {
+    position: relative;
+    z-index: 1;
+    padding-top: calc(var(--head-h) + 80px);
+    padding-bottom: clamp(48px, 7vw, 96px);
+  }
+  .hero-kicker {
+    font-family: var(--font-ui);
+    font-weight: 500;
+    color: var(--gold-2);
+    margin-bottom: 18px;
+  }
+  html[lang='mr'] .hero-kicker {
+    font-family: var(--font-body);
+    font-weight: 700;
+  }
+  .hero h1 {
+    color: var(--white);
+    margin: 0 0 26px;
+    max-width: 15ch;
+  }
+  html[lang='mr'] .hero h1 {
+    max-width: 20ch;
+  }
+  .hero h1 .big {
+    display: block;
+  }
+  .hero h1 .accent {
+    color: var(--gold-2);
+  }
+  .hero h1 .small {
+    display: block;
+    margin-top: 14px;
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: clamp(1.25rem, 2.4vw, 2rem);
+    line-height: 1.2;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    color: var(--on-dark);
+  }
+  html[lang='mr'] .hero h1 .small {
+    font-family: var(--font-body);
+    font-weight: 700;
+  }
+  .hero-lede {
+    max-width: 56ch;
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+    color: var(--on-dark);
+    margin-bottom: 30px;
+  }
+  .facts {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    font-size: 0.95rem;
+    color: var(--on-dark-muted);
+  }
+  .facts li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .facts :global(svg) {
+    color: var(--gold-2);
+  }
+
+  /* Moving words */
+  .words {
+    padding-block: clamp(48px, 7vw, 96px);
+    display: grid;
+    gap: clamp(6px, 1vw, 14px);
+    overflow: hidden;
+  }
+  .word {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(4.4rem, 11vw, 10.5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  html[lang='mr'] .word {
+    text-transform: none;
+    font-size: clamp(3.6rem, 9vw, 8.4rem);
+    line-height: 1.25;
+  }
+  .wchip {
+    flex: none;
+    width: clamp(70px, 9vw, 140px);
+    height: clamp(70px, 9vw, 140px);
+    border-radius: clamp(14px, 1.8vw, 26px);
+    overflow: hidden;
+    background: var(--sand-2);
+  }
+  .wchip :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Find your platform */
+  .find .head {
+    margin-inline: auto;
+    max-width: 1100px;
+  }
+  .find .tabs {
+    justify-content: center;
+  }
+  @media (max-width: 640px) {
+    .find .tabs {
+      justify-content: flex-start;
+    }
+  }
+  .find .intro {
+    margin-bottom: 34px;
+  }
+  .center-snap {
+    --cw: min(80vw, 760px);
+  }
+  .center-snap .track {
+    padding-inline: calc((100vw - var(--cw)) / 2);
+    scroll-padding-inline: calc((100vw - var(--cw)) / 2);
+  }
+  .center-snap .track > * {
+    scroll-snap-align: center;
+  }
+  .pcard {
+    display: grid;
+    gap: 22px;
+    transition: opacity 0.4s, transform 0.5s var(--ease);
+    opacity: 0.42;
+    transform: scale(0.9);
+  }
+  .pcard.is-active {
+    opacity: 1;
+    transform: none;
+  }
+  .pcard-visual {
+    display: block;
+  }
+  .pcard-text {
+    text-align: center;
+    max-width: 52ch;
+    margin-inline: auto;
+  }
+  .pcard h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    line-height: 1;
+    text-transform: uppercase;
+    margin: 6px 0 10px;
+  }
+  html[lang='mr'] .pcard h3 {
+    text-transform: none;
+    line-height: 1.2;
+  }
+  .pcard h3 a {
+    color: var(--navy);
+    text-decoration: none;
+  }
+  .pcard h3 a:hover {
+    color: var(--royal);
+  }
+  .pcard-text p:last-child {
+    color: var(--muted);
+    font-size: 1.08rem;
+  }
+  .more-row {
+    margin-top: clamp(36px, 5vw, 56px);
+  }
+
+  /* Services bento */
+  .split {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 32px 64px;
+    align-items: end;
+    max-width: none;
+  }
+  .split h2 {
+    margin: 0;
+  }
+  .services .split p {
+    color: var(--on-dark-muted);
+  }
+  .bento {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(260px, 22vw);
+    gap: 18px;
   }
-  .stats li {
-    display: grid;
-    gap: 2px;
-    padding: 26px 24px;
-    border-left: 1px solid var(--line-dark);
+  .bento .b0 {
+    grid-column: span 2;
+    grid-row: span 2;
   }
-  .stats li:first-child {
-    border-left: 0;
-    padding-left: 0;
+  .bento .b3,
+  .bento .b4,
+  .bento .b5 {
+    grid-column: span 2;
   }
-  .stats b {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(1.7rem, 3vw, 2.3rem);
-    line-height: 1;
-    color: var(--gold-2);
-    font-variant-numeric: tabular-nums;
-  }
-  .stats span {
-    font-size: 0.92rem;
-    color: var(--on-dark-muted);
-  }
-
-  .sectors {
-    border-bottom: 1px solid var(--line);
-  }
-  .sectors ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 16px;
-  }
-  .sectors li {
-    display: grid;
-    gap: 6px;
-    align-content: start;
-    font-size: 0.9rem;
-    color: var(--muted);
-    padding: 18px 16px;
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    background: var(--white);
-    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-  }
-  .sectors li:hover {
-    border-color: rgba(201, 149, 46, 0.5);
-    box-shadow: var(--shadow);
-    transform: translateY(-2px);
-  }
-  .sectors .ic {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    background: var(--paper);
-    color: var(--gold-3);
-    display: grid;
-    place-items: center;
-    margin-bottom: 6px;
-  }
-  .sectors b {
-    color: var(--navy);
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.95rem;
-    line-height: 1.3;
-  }
-  html[lang='mr'] .sectors b {
-    font-family: var(--font-body);
-    font-weight: 700;
-  }
-
-  .feature-list {
-    display: grid;
-    gap: clamp(48px, 7vw, 88px);
-  }
-  .feature {
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: clamp(28px, 5vw, 64px);
-    align-items: center;
-  }
-  .feature.flip .text {
-    order: 2;
-  }
-  .sector {
-    color: var(--gold-3);
-    margin-bottom: 6px;
-  }
-  .feature h3 {
-    font-size: clamp(1.5rem, 2.6vw, 2rem);
-  }
-  .feature h3 a {
-    color: var(--navy);
-    text-decoration: none;
-  }
-  .feature h3 a:hover {
-    color: var(--gold-3);
-  }
-  .tag {
-    font-size: 1.1rem;
-    color: var(--muted);
-    margin-bottom: 18px;
-  }
-  .more {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 20px;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-decoration: none;
-  }
-  html[lang='mr'] .more {
-    font-family: var(--font-body);
-    font-weight: 700;
-  }
-  .more svg {
-    transition: transform 0.2s;
-  }
-  .more:hover svg {
-    transform: translateX(4px);
-  }
-  .all {
-    margin-top: clamp(40px, 6vw, 64px);
-    text-align: center;
-  }
-
-  .service-grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-  .card {
-    display: grid;
-    grid-template-rows: auto 1fr;
+  .bento a {
+    position: relative;
+    display: block;
     height: 100%;
-    background: var(--white);
-    border: 1px solid var(--line);
     border-radius: var(--r-lg);
     overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
-  }
-  .card:hover {
-    box-shadow: var(--shadow);
-    transform: translateY(-4px);
-    border-color: rgba(201, 149, 46, 0.5);
-    color: inherit;
-  }
-  .card .ph {
-    position: relative;
-    display: block;
-  }
-  .card .ph img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 520 / 300;
-    object-fit: cover;
-    display: block;
-  }
-  .badge {
-    position: absolute;
-    left: 18px;
-    bottom: -20px;
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: var(--navy);
-    color: var(--gold-2);
-    display: grid;
-    place-items: center;
-    box-shadow: 0 8px 20px -8px rgba(10, 24, 48, 0.6);
-  }
-  .card .body {
-    display: grid;
-    gap: 8px;
-    padding: 32px 20px 20px;
-    position: relative;
-  }
-  .card h3 {
-    font-size: 1.12rem;
-    margin: 0;
-  }
-  .card p {
-    color: var(--muted);
-    font-size: 0.96rem;
-    margin: 0;
-  }
-  .card .go {
-    margin-top: 6px;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 1.5px solid var(--navy);
-    color: var(--navy);
-    display: grid;
-    place-items: center;
-    transition: background 0.2s, color 0.2s;
-  }
-  .card:hover .go {
-    background: var(--navy);
     color: var(--white);
+    text-decoration: none;
+    background: var(--navy);
+  }
+  .bento :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.9s var(--ease);
+  }
+  .bento a:hover :global(img) {
+    transform: scale(1.06);
+  }
+  .b-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5, 12, 26, 0.05) 30%, rgba(5, 12, 26, 0.85) 100%);
+  }
+  .b-icon {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.16);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: var(--gold-2);
+  }
+  .b-text {
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    bottom: 20px;
+    display: grid;
+    gap: 6px;
+  }
+  .b-text h3 {
+    color: var(--white);
+    margin: 0;
+    font-size: 1.3rem;
+  }
+  .b0 .b-text h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 3.6vw, 3.4rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  html[lang='mr'] .b0 .b-text h3 {
+    text-transform: none;
+    line-height: 1.2;
+  }
+  .b-sum {
+    color: var(--on-dark);
+    font-size: 0.98rem;
+    line-height: 1.45;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s var(--ease), opacity 0.3s;
+  }
+  .b0 .b-sum,
+  .bento a:hover .b-sum,
+  .bento a:focus-visible .b-sum {
+    max-height: 6em;
+    opacity: 1;
   }
   .more-services {
     margin-top: 28px;
@@ -524,301 +669,231 @@ const listLd = {
     align-items: center;
   }
   .more-services a:not(.btn) {
-    font-size: 0.92rem;
-    padding: 8px 16px;
+    font-size: 0.95rem;
+    padding: 10px 18px;
     border-radius: 999px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    color: var(--navy);
+    border: 1px solid var(--line-dark);
+    color: var(--on-dark);
     text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
   }
   .more-services a:not(.btn):hover {
-    border-color: var(--gold);
-    color: var(--gold-3);
+    border-color: var(--gold-2);
+    color: var(--gold-2);
   }
   .more-services .btn {
     margin-left: auto;
   }
 
-  .grid2 {
+  /* Built for Maharashtra */
+  .state {
     display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: clamp(32px, 6vw, 80px);
-    align-items: start;
+    grid-template-columns: 1fr 1fr;
+    background: var(--navy);
+    min-height: min(92vh, 860px);
+  }
+  .state-photo {
+    position: relative;
+    background: var(--navy-2);
+    padding: clamp(32px, 4vw, 56px) 0 0 0;
+  }
+  .state-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-right-radius: 100% 58%;
+  }
+  .state-text {
+    padding: clamp(56px, 8vw, 110px) clamp(28px, 5vw, 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+    color: var(--on-dark);
+  }
+  .state-text h2 {
+    color: var(--white);
+  }
+  .state-text p {
+    color: var(--on-dark);
+    font-size: 1.15rem;
+    max-width: 50ch;
+    margin-bottom: 26px;
+  }
+
+  .stats-sec h2 {
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+
+  /* Process */
+  .process .split p,
+  .faq p {
+    color: var(--muted);
   }
   .steps {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 22px;
-  }
-  .steps li {
-    display: grid;
-    grid-template-columns: 44px 1fr;
+    grid-template-columns: repeat(5, 1fr);
     gap: 18px;
   }
-  .n {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--navy);
-    color: var(--gold-2);
-    font-family: var(--font-display);
-    font-weight: 600;
-    display: grid;
-    place-items: center;
-  }
-  .steps h3 {
-    font-size: 1.15rem;
-    margin-bottom: 4px;
-    padding-top: 8px;
-  }
-  .steps p {
-    color: var(--muted);
-  }
-
-  .why {
-    position: relative;
-    overflow: hidden;
-  }
-  .why-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.35;
-    filter: saturate(0.7);
-  }
-  .why::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, var(--ink) 0%, rgba(10, 24, 48, 0.72) 55%, rgba(10, 24, 48, 0.35) 100%);
-  }
-  .why-wrap {
-    position: relative;
-    z-index: 1;
-  }
-  .why-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-  }
-  .why-grid > div {
-    padding: 22px;
-    border-radius: var(--r);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
-  }
-  .why-grid h3 {
-    font-size: 1.12rem;
-    padding-top: 14px;
-    border-top: 2px solid var(--gold);
-  }
-
-  .acc {
-    display: grid;
-    gap: 10px;
-  }
-  .acc details {
-    border: 1px solid var(--line);
-    border-radius: var(--r);
+  .steps li {
     background: var(--white);
-    overflow: hidden;
-  }
-  .acc details[open] {
-    border-color: rgba(201, 149, 46, 0.5);
-    box-shadow: var(--shadow);
-  }
-  .acc summary {
-    list-style: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
-    font-family: var(--font-display);
-    font-weight: 600;
-    color: var(--navy);
-    font-size: 1.02rem;
-  }
-  html[lang='mr'] .acc summary {
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 1.08rem;
-  }
-  .acc summary::-webkit-details-marker {
-    display: none;
-  }
-  .acc summary i {
-    margin-left: auto;
-    flex: none;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    border: 1.5px solid var(--navy);
-    position: relative;
-    transition: transform 0.25s, background 0.2s;
-  }
-  .acc summary i::before,
-  .acc summary i::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 12px;
-    height: 2px;
-    background: var(--navy);
-    transform: translate(-50%, -50%);
-  }
-  .acc summary i::after {
-    transform: translate(-50%, -50%) rotate(90deg);
-  }
-  .acc details[open] summary i {
-    transform: rotate(45deg);
-    background: var(--gold);
-    border-color: var(--gold);
-  }
-  .acc details[open] summary i::before,
-  .acc details[open] summary i::after {
-    background: var(--ink);
-  }
-  .acc details p {
-    padding: 0 20px 18px;
-    color: var(--muted);
-    max-width: 68ch;
-  }
-
-  .gem {
-    background: var(--paper);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-  .gem-inner {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 32px;
-    align-items: center;
-  }
-  .gem h2 {
-    font-size: 1.5rem;
-  }
-  .gem p {
-    color: var(--muted);
-    max-width: 70ch;
-  }
-
-  .post-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
-  }
-  .post-grid article {
+    border-radius: var(--r-lg);
+    padding: 26px 22px 28px;
     display: grid;
     align-content: start;
-  }
-  .post-grid .cover {
-    display: block;
-    margin-bottom: 14px;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .post-grid .cover img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 600 / 360;
-    object-fit: cover;
-    transition: transform 0.4s;
-  }
-  .post-grid article:hover .cover img {
-    transform: scale(1.03);
-  }
-  .post-grid .meta {
-    display: flex;
     gap: 10px;
-    align-items: center;
-    font-size: 0.88rem;
-    color: var(--muted);
   }
-  .en-badge {
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: var(--paper-2);
-    color: var(--navy);
+  .num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 3.4rem;
+    line-height: 0.9;
+    color: var(--royal);
   }
-  .post-grid h3 {
-    font-size: 1.2rem;
-    margin: 8px 0;
+  .steps h3 {
+    margin: 0;
+    font-size: 1.15rem;
   }
-  .post-grid h3 a {
-    color: var(--navy);
-    text-decoration: none;
-  }
-  .post-grid h3 a:hover {
-    color: var(--gold-3);
-  }
-  .post-grid p {
-    color: var(--muted);
+  .steps p {
     font-size: 0.98rem;
+    color: var(--muted);
   }
 
-  @media (max-width: 1000px) {
-    .sectors ul {
-      grid-template-columns: repeat(3, 1fr);
+  /* FAQ */
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+
+  /* What's new */
+  .news-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 34px;
+    margin-bottom: clamp(32px, 4vw, 48px);
+  }
+  .news-tabs button {
+    border: 0;
+    background: none;
+    padding: 0 0 8px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.2rem, 4.6vw, 4.2rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--sky-2);
+    border-bottom: 4px solid transparent;
+    opacity: 0.75;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  html[lang='mr'] .news-tabs button {
+    text-transform: none;
+    line-height: 1.25;
+    font-size: clamp(1.9rem, 3.8vw, 3.4rem);
+  }
+  .news-tabs button:hover {
+    opacity: 1;
+  }
+  .news-tabs button[aria-selected='true'] {
+    color: var(--white);
+    opacity: 1;
+    border-color: var(--gold);
+  }
+  .news .photo-card .ph {
+    aspect-ratio: 760 / 470;
+  }
+  .news .photo-card h3 {
+    color: var(--white);
+    font-size: 1.3rem;
+  }
+  .when {
+    color: var(--sky-2);
+    font-size: 0.9rem;
+  }
+
+  @keyframes zoom {
+    from {
+      transform: scale(1.08);
     }
-    .service-grid,
-    .post-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .why-grid {
-      grid-template-columns: repeat(2, 1fr);
+    to {
+      transform: scale(1);
     }
   }
-  @media (max-width: 760px) {
-    .stats ul {
+
+  @media (max-width: 1100px) {
+    /* five steps: three on top, two wider below */
+    .steps {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .steps li {
+      grid-column: span 2;
+    }
+    .steps li:nth-child(n + 4) {
+      grid-column: span 3;
+    }
+    .bento {
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: minmax(240px, 34vw);
+    }
+    .bento .b0 {
+      grid-row: span 1;
+    }
+    .bento .b3,
+    .bento .b4 {
+      grid-column: span 1;
+    }
+  }
+  @media (max-width: 860px) {
+    .state {
+      grid-template-columns: 1fr;
+    }
+    .state-photo {
+      height: 52vh;
+      min-height: 300px;
+    }
+    .split,
+    .faq-grid {
+      grid-template-columns: 1fr;
+    }
+    .steps {
       grid-template-columns: 1fr 1fr;
-    }
-    .stats li {
-      padding: 18px 16px;
-    }
-    .stats li:nth-child(odd) {
-      border-left: 0;
-      padding-left: 0;
-    }
-    .feature,
-    .feature.flip {
-      grid-template-columns: 1fr;
-    }
-    .feature.flip .text {
-      order: 0;
-    }
-    .grid2,
-    .gem-inner {
-      grid-template-columns: 1fr;
     }
     .more-services .btn {
       margin-left: 0;
-      width: 100%;
-      justify-content: center;
     }
   }
   @media (max-width: 560px) {
-    .sectors ul {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    .sectors li {
-      padding: 14px 12px;
-    }
-    .service-grid,
-    .post-grid,
-    .why-grid {
+    .bento {
       grid-template-columns: 1fr;
+      grid-auto-rows: 280px;
+    }
+    .bento .b0,
+    .bento .b5 {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+    .b-sum {
+      max-height: 6em;
+      opacity: 1;
+    }
+    .steps {
+      grid-template-columns: 1fr;
+    }
+    .steps li,
+    .steps li:nth-child(n + 4) {
+      grid-column: auto;
+    }
+    .center-snap {
+      --cw: 86vw;
+    }
+    .hero h1 .big {
+      font-size: clamp(3rem, 14vw, 4.4rem);
     }
   }
 </style>

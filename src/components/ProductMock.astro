@@ -17,7 +17,8 @@ const strings = {
     idcard: { cls: 'Class 6, PM SHRI School', qc: 'QC: 1,204 approved, 36 to recheck' },
     opd: { stats: ['OPD today', 'Waiting', 'IPD beds'], hd: ['Token', 'Patient', 'Doctor', 'Status'], rows: [['A-21', 'Ramesh Kale', 'Dr. Deshmukh', 'In room'], ['A-22', 'Savita Joshi', 'Dr. Deshmukh', 'Waiting'], ['B-07', 'Ajay Pawar', 'Dr. Rane', 'Pharmacy']] },
     queue: { app: 'Devdoot', token: 'Your token', now: 'Now serving: 11', eta: 'Estimated wait: 25 minutes', doc: 'Dr. A. Deshmukh, Paediatrics' },
-    logistics: { stats: ['Bookings today', 'Franchises', 'On time'] },
+    logistics: { stats: ['Bookings today', 'Franchises', 'On time'], steps: ['Booked', 'Picked up', 'In transit', 'Out for delivery', 'Delivered'], hd: ['AWB', 'Route', 'Franchise', 'Status'], rows: [['MH 48213', 'Pune to Patna', 'Hadapsar', 'In transit'], ['MH 48219', 'Mumbai to Muzaffarpur', 'Thane', 'Picked up']] },
+    names: ['Aarav Kumar', 'Priya Singh', 'Rohan Das'],
   },
   mr: {
     lodge: { stats: ['लॉज ऑनलाइन', 'आजचे पाहुणे', 'अलर्ट'], hd: ['लॉज', 'पाहुणा', 'ओळखपत्र', 'वेळ'], rows: [['हॉटेल साई, नांदेड', 'र. पाटील', 'आधार'], ['लॉज गोदावरी', 'स. शेख', 'DL'], ['हॉटेल प्रिया', 'अ. कुमार', 'नाही'], ['लॉज श्रीराम', 'व. जाधव', 'मतदार']] },
@@ -27,7 +28,8 @@ const strings = {
     idcard: { cls: 'इयत्ता 6, PM SHRI शाळा', qc: 'तपासणी: 1,204 मंजूर, 36 पुन्हा तपासायचे' },
     opd: { stats: ['आज OPD', 'प्रतीक्षेत', 'IPD खाटा'], hd: ['टोकन', 'रुग्ण', 'डॉक्टर', 'स्थिती'], rows: [['A-21', 'रमेश काळे', 'डॉ. देशमुख', 'आत'], ['A-22', 'सविता जोशी', 'डॉ. देशमुख', 'प्रतीक्षेत'], ['B-07', 'अजय पवार', 'डॉ. राणे', 'औषधालय']] },
     queue: { app: 'देवदूत', token: 'तुमचा टोकन', now: 'सध्या सुरू: 11', eta: 'अंदाजे वेळ: 25 मिनिटे', doc: 'डॉ. ए. देशमुख, बालरोग' },
-    logistics: { stats: ['आजची बुकिंग', 'फ्रँचायझी', 'वेळेवर'] },
+    logistics: { stats: ['आजची बुकिंग', 'फ्रँचायझी', 'वेळेवर'], steps: ['बुकिंग', 'उचलले', 'मार्गावर', 'डिलिव्हरीसाठी निघाले', 'पोहोचले'], hd: ['AWB', 'मार्ग', 'फ्रँचायझी', 'स्थिती'], rows: [['MH 48213', 'पुणे ते पाटणा', 'हडपसर', 'मार्गावर'], ['MH 48219', 'मुंबई ते मुझफ्फरपूर', 'ठाणे', 'उचलले']] },
+    names: ['आरव कुमार', 'प्रिया सिंह', 'रोहन दास'],
   },
 };
 const T = strings[lang];
@@ -35,7 +37,7 @@ const times = ['21:10', '21:04', '20:52', '20:41'];
 const amounts = ['₹ 18,500', '₹ 22,000', '₹ 18,500'];
 ---
 
-<div class:list={['mock', variant, { compact }]} role="img" aria-label={`Illustration of the ${title} screen`}>
+<div class:list={['mock', variant, { compact }]} role="img" aria-label={lang === 'mr' ? `${title} स्क्रीनचे उदाहरण` : `Illustration of the ${title} screen`}>
   <div class="chrome">
     <span class="dot"></span><span class="dot"></span><span class="dot"></span>
     <span class="ttl">{title}</span>
@@ -104,7 +106,7 @@ const amounts = ['₹ 18,500', '₹ 22,000', '₹ 18,500'];
     {
       variant === 'idcard' && (
         <div class="cards">
-          {['Aarav Kumar', 'Priya Singh', 'Rohan Das'].map((n) => (
+          {T.names.map((n) => (
             <div class="card">
               <i class="photo" />
               <b>{n}</b>
@@ -155,13 +157,16 @@ const amounts = ['₹ 18,500', '₹ 22,000', '₹ 18,500'];
             <div><b>19</b><span>{T.logistics.stats[1]}</span></div>
             <div><b>96%</b><span>{T.logistics.stats[2]}</span></div>
           </div>
-          <div class="track">
-            <span class="done">Booked</span><span class="done">Picked up</span><span class="on">In transit</span><span>Out for delivery</span><span>Delivered</span>
+          <div class="steps-track">
+            {T.logistics.steps.map((st, i) => (
+              <span class:list={{ done: i < 2, on: i === 2 }}>{st}</span>
+            ))}
           </div>
           <div class="rows">
-            <div class="row hd"><span>AWB</span><span>Route</span><span>Franchise</span><span>Status</span></div>
-            <div class="row"><span>MH 48213</span><span>Pune to Patna</span><span>Hadapsar</span><span>In transit</span></div>
-            <div class="row"><span>MH 48219</span><span>Mumbai to Muzaffarpur</span><span>Thane</span><span>Picked up</span></div>
+            <div class="row hd">{T.logistics.hd.map((h) => <span>{h}</span>)}</div>
+            {T.logistics.rows.map((r) => (
+              <div class="row">{r.map((c) => <span>{c}</span>)}</div>
+            ))}
           </div>
         </>
       )
@@ -330,13 +335,13 @@ const amounts = ['₹ 18,500', '₹ 22,000', '₹ 18,500'];
     background: var(--line);
   }
   .steps,
-  .track {
+  .steps-track {
     display: flex;
     gap: 4px;
     flex-wrap: wrap;
   }
   .steps span,
-  .track span {
+  .steps-track span {
     flex: 1;
     text-align: center;
     padding: 5px 4px;
@@ -347,12 +352,12 @@ const amounts = ['₹ 18,500', '₹ 22,000', '₹ 18,500'];
     white-space: nowrap;
   }
   .steps .done,
-  .track .done {
+  .steps-track .done {
     background: #dff3e7;
     color: #1f6b43;
   }
   .steps .on,
-  .track .on {
+  .steps-track .on {
     background: var(--navy);
     color: var(--white);
   }

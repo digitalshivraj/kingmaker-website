@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import Icon from '../components/Icon.astro';
+import Photo from '../components/Photo.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { site, whatsappLink } from '../data/site';
 import { projects } from '../data/portfolio';
@@ -14,62 +15,37 @@ interface Props {
 const { lang } = Astro.props;
 const ui = t(lang);
 const g = ui.government;
+const gx = ui.x.gov;
 const L = (p: string) => localize(p, lang);
 const gov = projects.filter((p) => p.sector === 'Government and police' || p.name === 'JanSeva');
 const wa = whatsappLink(g.docsMsg);
 const projName = (p: (typeof projects)[number]) => (lang === 'mr' && p.marathi ? p.marathi : p.name);
 const tradeName = lang === 'mr' ? `${site.marathiName} (${site.name})` : site.name;
+const statusClass = (s: string) => (s === 'Live' ? 'live' : s === 'Pilot' ? 'pilot' : '');
+const ids = ['vendor', 'services', 'procurement', 'data', 'work'];
+const catIcons = ['code', 'mobile', 'file', 'spark', 'whatsapp', 'globe', 'users'];
 ---
 
 <Base lang={lang} title={lang === 'mr' ? 'शासकीय आणि GeM' : 'Government and GeM'} description={g.desc}>
-  <PageHead lang={lang} title={g.title} marathi={g.sub} intro={g.intro} crumbs={[{ label: ui.nav.government, href: L('/government/') }]} photo="government" />
+  <PageHead lang={lang} title={g.title} intro={g.intro} crumbs={[{ label: ui.nav.government, href: L('/government/') }]} photo="government" />
 
-  <section class="section">
-    <div class="wrap two">
-      <div data-reveal>
-        <h2>{g.vendorH2}</h2>
-        <p class="lede">{g.vendorP}</p>
-        <table class="reg">
-          <tbody>
-            <tr><th>{g.rows.trade}</th><td>{tradeName}</td></tr>
-            <tr><th>{g.rows.legal}</th><td>{ui.common.proprietor}</td></tr>
-            <tr><th>{g.rows.constitution}</th><td>{g.rows.constitutionV(site.since)}</td></tr>
-            <tr><th>{g.rows.udyam}</th><td>{site.udyam} {g.rows.udyamV}</td></tr>
-            <tr><th>{g.rows.gstin}</th><td>{site.gstin}</td></tr>
-            <tr><th>{g.rows.shop}</th><td>{g.rows.shopV(site.shopAct)}</td></tr>
-            <tr><th>{g.rows.activities}</th><td>{g.rows.activitiesV}</td></tr>
-            <tr><th>{g.rows.address}</th><td>{lang === 'mr' ? site.registeredOfficeMarathi : site.registeredOffice}</td></tr>
-            <tr><th>{g.rows.contact}</th><td>{site.email}, {site.phoneDisplay}</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="side" data-reveal style="--rd: 0.1s">
-        <div class="box">
-          <h3>{g.docsH3}</h3>
-          <ul class="check-list">
-            {g.docs.map((d) => <li>{d}</li>)}
-          </ul>
-          <a class="btn gold" href={wa} target="_blank" rel="noopener">
-            <Icon name="whatsapp" />
-            <span>{g.docsBtn}</span>
-          </a>
-        </div>
-      </div>
+  <nav class="subnav" aria-label={ui.nav.government}>
+    <div class="wrap wide">
+      <span class="sub-title">{ui.gem.btn}</span>
+      <ul>
+        {gx.nav.map((label, i) => <li><a href={`#${ids[i]}`}>{label}</a></li>)}
+      </ul>
     </div>
-  </section>
+  </nav>
 
-  <section class="section paper">
+  <section class="section tight">
     <div class="wrap">
-      <div class="head" data-reveal>
-        <h2>{g.catH2}</h2>
-        <p>{g.catP}</p>
-      </div>
-      <ul class="cats">
+      <ul class="stats-grid">
         {
-          g.categories.map(([title, text], i) => (
-            <li data-reveal style={`--rd: ${(i % 3) * 0.07}s`}>
-              <b>{title}</b>
-              <span>{text}</span>
+          gx.stats.map(([n, label], i) => (
+            <li class="stat" data-reveal style={`--rd: ${i * 0.07}s`}>
+              <b>{n === '2019' ? String(site.since) : n}</b>
+              <span>{label}</span>
             </li>
           ))
         }
@@ -77,42 +53,97 @@ const tradeName = lang === 'mr' ? `${site.marathiName} (${site.name})` : site.na
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="vendor">
     <div class="wrap two">
       <div data-reveal>
-        <h2>{g.howH2}</h2>
-        <ol class="steps">
-          {
-            g.how.map(([title, text]) => (
-              <li>
-                <b>{title}</b>
-                <span>{text}</span>
-              </li>
-            ))
-          }
-        </ol>
+        <h2 class="d-md">{g.vendorH2}</h2>
+        <p class="intro">{g.vendorP}</p>
+        <dl class="reg">
+          <div><dt>{g.rows.trade}</dt><dd>{tradeName}</dd></div>
+          <div><dt>{g.rows.legal}</dt><dd>{ui.common.proprietor}</dd></div>
+          <div><dt>{g.rows.constitution}</dt><dd>{g.rows.constitutionV(site.since)}</dd></div>
+          <div><dt>{g.rows.udyam}</dt><dd>{site.udyam} {g.rows.udyamV}</dd></div>
+          <div><dt>{g.rows.gstin}</dt><dd>{site.gstin}</dd></div>
+          <div><dt>{g.rows.shop}</dt><dd>{g.rows.shopV(site.shopAct)}</dd></div>
+          <div><dt>{g.rows.activities}</dt><dd>{g.rows.activitiesV}</dd></div>
+          <div><dt>{g.rows.address}</dt><dd>{lang === 'mr' ? site.registeredOfficeMarathi : site.registeredOffice}</dd></div>
+          <div><dt>{g.rows.contact}</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a>, <a href={`tel:${site.phoneIntl}`}>{site.phoneDisplay}</a></dd></div>
+        </dl>
       </div>
-      <div data-reveal style="--rd: 0.1s">
-        <h2>{g.dataH2}</h2>
+      <aside class="docs" data-reveal style="--rd: 0.1s">
+        <h3>{g.docsH3}</h3>
         <ul class="check-list">
-          {g.data.map((d) => <li>{d}</li>)}
+          {g.docs.map((d) => <li>{d}</li>)}
         </ul>
-      </div>
+        <a class="btn gold" href={wa} target="_blank" rel="noopener">
+          <Icon name="whatsapp" />
+          <span>{g.docsBtn}</span>
+        </a>
+      </aside>
     </div>
   </section>
 
-  <section class="section paper">
+  <section class="section sand" id="services">
     <div class="wrap">
-      <div class="head" data-reveal>
-        <h2>{g.workH2}</h2>
+      <div class="head center">
+        <h2 class="d-md" data-reveal>{g.catH2}</h2>
+        <p class="intro" data-reveal>{g.catP}</p>
       </div>
+      <ul class="cats">
+        {
+          g.categories.map(([title, text], i) => (
+            <li data-reveal style={`--rd: ${(i % 3) * 0.07}s`}>
+              <span class="ic">
+                <Icon name={catIcons[i]} size={22} />
+              </span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section royal" id="procurement">
+    <div class="wrap">
+      <h2 class="d-md" data-reveal>{g.howH2}</h2>
+      <ol class="flow">
+        {
+          g.how.map(([title, text], i) => (
+            <li data-reveal style={`--rd: ${i * 0.08}s`}>
+              <span class="num">{`0${i + 1}`}</span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="data" id="data">
+    <div class="data-photo">
+      <Photo name="security" w={1000} h={900} sizes="(max-width: 860px) 100vw, 50vw" />
+    </div>
+    <div class="data-text">
+      <h2 class="d-md" data-reveal>{g.dataH2}</h2>
+      <ul class="check-list" data-reveal>
+        {g.data.map((d) => <li>{d}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section sand" id="work">
+    <div class="wrap">
+      <h2 class="d-md" data-reveal>{g.workH2}</h2>
       <ul class="gov">
         {
           gov.map((p, i) => (
-            <li data-reveal style={`--rd: ${(i % 2) * 0.07}s`}>
-              <b>{p.product ? <a href={L(`/products/${p.product}/`)}>{projName(p)}</a> : projName(p)}</b>
-              <span>{lang === 'mr' ? p.summaryMr : p.summary}</span>
-              <em>{ui.common.status[p.status]}</em>
+            <li data-reveal style={`--rd: ${(i % 3) * 0.07}s`}>
+              <h3>{p.product ? <a href={L(`/products/${p.product}/`)}>{projName(p)}</a> : projName(p)}</h3>
+              <p>{lang === 'mr' ? p.summaryMr : p.summary}</p>
+              <span class={`status ${statusClass(p.status)}`}>{ui.common.status[p.status]}</span>
             </li>
           ))
         }
@@ -124,48 +155,95 @@ const tradeName = lang === 'mr' ? `${site.marathiName} (${site.name})` : site.na
 </Base>
 
 <style>
+  .subnav {
+    position: sticky;
+    top: calc(var(--head-h) + 18px);
+    z-index: 20;
+    margin-top: 24px;
+  }
+  .subnav .wrap {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 10px 18px;
+    background: var(--sand);
+    border-radius: 999px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sub-title {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+  .subnav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 4px;
+  }
+  .subnav a {
+    display: block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+  .subnav a:hover {
+    background: var(--white);
+    color: var(--navy);
+  }
   .two {
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: clamp(32px, 6vw, 72px);
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: clamp(32px, 6vw, 88px);
     align-items: start;
   }
   .reg {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 20px;
+    margin: 32px 0 0;
+    border-top: 1px solid var(--line);
   }
-  .reg th,
-  .reg td {
-    text-align: left;
-    padding: 12px 10px;
+  .reg div {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 20px;
+    padding: 14px 0;
     border-bottom: 1px solid var(--line);
-    vertical-align: top;
   }
-  .reg th {
-    font-family: var(--font-display);
+  .reg dt {
+    font-family: var(--font-ui);
     font-weight: 600;
+    font-size: 0.92rem;
     color: var(--navy);
-    width: 220px;
-    font-size: 0.95rem;
   }
-  html[lang='mr'] .reg th {
+  html[lang='mr'] .reg dt {
     font-family: var(--font-body);
     font-weight: 700;
   }
-  .reg td {
-    color: var(--muted);
-  }
-  .box {
-    background: var(--paper);
-    border-radius: var(--r-lg);
-    padding: 28px;
-    display: grid;
-    gap: 18px;
-    border: 1px solid var(--line);
-  }
-  .box h3 {
+  .reg dd {
     margin: 0;
+    color: var(--text);
+  }
+  .docs {
+    position: sticky;
+    top: calc(var(--head-h) + 100px);
+    background: var(--navy);
+    color: var(--on-dark);
+    border-radius: var(--r-lg);
+    padding: 30px;
+    display: grid;
+    gap: 20px;
+  }
+  .docs h3 {
+    color: var(--white);
+    margin: 0;
+  }
+  .docs .btn {
+    justify-self: start;
   }
   .cats {
     list-style: none;
@@ -173,133 +251,166 @@ const tradeName = lang === 'mr' ? `${site.marathiName} (${site.name})` : site.na
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-  .cats li {
-    display: grid;
-    gap: 6px;
-    padding: 20px;
-    background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    border-top: 3px solid var(--gold);
-  }
-  .cats b {
-    font-family: var(--font-display);
-    font-weight: 600;
-    color: var(--navy);
-  }
-  html[lang='mr'] .cats b {
-    font-family: var(--font-body);
-    font-weight: 700;
-  }
-  .cats span {
-    color: var(--muted);
-    font-size: 0.97rem;
-  }
-  .steps {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    counter-reset: s;
-    display: grid;
     gap: 18px;
   }
-  .steps li {
+  .cats li {
+    background: var(--white);
+    border-radius: var(--r-lg);
+    padding: 26px;
     display: grid;
-    grid-template-columns: 40px 1fr;
-    gap: 14px;
-    counter-increment: s;
+    gap: 10px;
+    align-content: start;
   }
-  .steps li::before {
-    content: counter(s);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--navy);
-    color: var(--gold-2);
+  .cats li:last-child:nth-child(3n + 1),
+  .gov li:last-child:nth-child(3n + 1) {
+    grid-column: 1 / -1;
+  }
+  .cats h3 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+  .cats p {
+    color: var(--muted);
+    margin: 0;
+  }
+  .ic {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
     display: grid;
     place-items: center;
-    font-family: var(--font-display);
-    font-weight: 600;
-    grid-row: span 2;
-  }
-  .steps b {
-    font-family: var(--font-display);
-    font-weight: 600;
+    background: var(--sky-2);
     color: var(--navy);
-    padding-top: 7px;
   }
-  html[lang='mr'] .steps b {
-    font-family: var(--font-body);
+  .flow {
+    list-style: none;
+    margin: clamp(32px, 5vw, 56px) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    counter-reset: none;
+  }
+  .flow li {
+    border-top: 2px solid rgba(255, 255, 255, 0.25);
+    padding-top: 22px;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .flow .num {
+    font-family: var(--font-display);
     font-weight: 700;
+    font-size: 4rem;
+    line-height: 0.9;
+    color: var(--gold-2);
   }
-  .steps span {
-    color: var(--muted);
-    grid-column: 2;
+  .flow h3 {
+    margin: 0;
+  }
+  .data {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: min(80vh, 760px);
+  }
+  .data-photo {
+    position: relative;
+    background: var(--navy-2);
+  }
+  .data-photo :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .data-text {
+    background: var(--gold-2);
+    padding: clamp(48px, 7vw, 104px) clamp(28px, 5vw, 80px);
+    display: grid;
+    align-content: center;
+    gap: 32px;
+  }
+  .data-text h2 {
+    margin: 0;
+  }
+  .data-text :global(.check-list li::before) {
+    background-color: var(--navy);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e3c27a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E");
+  }
+  .data-text li {
+    font-size: 1.1rem;
+    color: var(--ink);
   }
   .gov {
     list-style: none;
-    margin: 0;
+    margin: clamp(32px, 4vw, 48px) 0 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
   }
   .gov li {
-    display: grid;
-    gap: 4px;
-    padding: 18px 20px;
     background: var(--white);
-    border: 1px solid var(--line);
-    border-radius: var(--r);
+    border-radius: var(--r-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
-  .gov b {
-    font-family: var(--font-display);
-    font-weight: 600;
+  .gov .status {
+    margin-top: auto;
+  }
+  .gov h3 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+  .gov h3 a {
     color: var(--navy);
-    font-size: 1.05rem;
   }
-  html[lang='mr'] .gov b {
-    font-family: var(--font-body);
-    font-weight: 700;
-  }
-  .gov a {
-    color: var(--navy);
-    text-decoration: none;
-  }
-  .gov span {
+  .gov p {
     color: var(--muted);
+    margin: 0;
+    font-size: 0.97rem;
   }
-  .gov em {
-    font-style: normal;
-    font-size: 0.85rem;
-    color: var(--gold-3);
-  }
-  @media (max-width: 860px) {
+  @media (max-width: 1000px) {
     .two,
-    .gov {
+    .data {
       grid-template-columns: 1fr;
     }
-    .cats {
+    .docs {
+      position: static;
+    }
+    .data-photo {
+      height: 46vh;
+      min-height: 280px;
+    }
+    .cats,
+    .gov {
       grid-template-columns: 1fr 1fr;
     }
-    .reg th {
-      width: 150px;
+    .cats li:last-child:nth-child(3n + 1),
+    .gov li:last-child:nth-child(3n + 1) {
+      grid-column: auto;
+    }
+    .cats li:last-child:nth-child(odd),
+    .gov li:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+    .flow {
+      grid-template-columns: 1fr 1fr;
     }
   }
-  @media (max-width: 520px) {
-    .cats {
+  @media (max-width: 640px) {
+    .cats,
+    .gov,
+    .flow {
       grid-template-columns: 1fr;
     }
-    .reg th,
-    .reg td {
-      display: block;
-      width: auto;
-      padding: 6px 0;
-    }
-    .reg td {
-      padding-bottom: 14px;
+    .reg div {
+      grid-template-columns: 1fr;
+      gap: 4px;
     }
   }
 </style>
