@@ -48,7 +48,7 @@ const en = {
     ['Logistics and business', 'Franchise panels, CRMs, ledgers'],
   ],
   stats: [
-    ['38', 'projects delivered or in progress'],
+    ['36', 'projects delivered or in progress'],
     ['9', 'sectors, from police to prop trading'],
     ['2019', 'the year the firm was registered'],
     ['2', 'languages on every screen: Marathi and English'],
@@ -459,7 +459,7 @@ const mr: Dict = {
     ['लॉजिस्टिक्स आणि व्यवसाय', 'फ्रँचायझी पॅनेल, CRM, खातेवही'],
   ],
   stats: [
-    ['38', 'प्रकल्प पूर्ण किंवा सुरू'],
+    ['36', 'प्रकल्प पूर्ण किंवा सुरू'],
     ['9', 'क्षेत्रे, पोलीस ते प्रॉप ट्रेडिंग'],
     ['2019', 'फर्म नोंदणीचे वर्ष'],
     ['2', 'भाषा प्रत्येक स्क्रीनवर: मराठी आणि इंग्रजी'],
